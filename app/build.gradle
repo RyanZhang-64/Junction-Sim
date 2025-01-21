@@ -42,3 +42,13 @@ application {
     // Define the main class for the application.
     mainClass = 'org.example.App'
 }
+
+// Require Processing as a dependency
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.processing:core:3.3.7'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+}
