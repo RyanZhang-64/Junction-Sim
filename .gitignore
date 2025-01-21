@@ -1,1 +1,6 @@
- 
+bin/ 
+build/ 
+.gradle/ 
+.settings/ 
+.idea/ 
+*.class 
