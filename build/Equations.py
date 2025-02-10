@@ -6,11 +6,19 @@ from build.Junction import Junction
 
 # QUESTION: are typing these methods and inputs worth it or is that too non pythonic
 
+# QUESTION is 1 traffic cycle enough, should it be 3 or 4 before we start looking at junction statistics
+
+
+## Constants  --  specific values not final
 CYCLE_LENGTH = 4 # (minutes)
+MAX_VEHICLE_MOVEMENT = 1600 # vph rate at which cars can pass through the junction
+
+## Green/Red time for the traffic lights -- implement priority etc. by changing this to a vector for each direction?
 PROPORTION_GREEN = 1 / 4.0
 PROPORTION_RED = 3 / 4.0
-MAX_VEHICLE_MOVEMENT = 1600
 
+
+# An overall efficiency score for the junction to be used for comparison
 def get_efficiency_score(vph_rates, setup):
     # TODO: implement aggregating function
     return -1
@@ -23,12 +31,12 @@ def max_queue(vph_rates, setup : Junction , direction):
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
                          * (PROPORTION_GREEN * (CYCLE_LENGTH / 60)))
     return max(0, arriving_per_cycle - leaving_per_cycle)  # max of 0 and cars accumulated after one full cycle
-    # , 3/4 arriving_per_cycle)      # NOTE: it is possible to accumulate a larger queue (=3/4 cars) before cars leave the junction (should probably include this
+    # , 3/4 arriving_per_cycle)      # NOTE: it is possible to accumulate a larger queue (=3/4 cars) before cars leave the junction (should probably include this) -- Consider how it impacts max_wait
 
     #TODO: implement for various different configurables.
     return 0
 
-
+# Note: max_wait is heavily affected by
 def max_wait(vph_rates, setup, direction):
     # DONE: complete base implementation
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
@@ -39,7 +47,6 @@ def max_wait(vph_rates, setup, direction):
     # TODO: implement for various different configurables.
     return 0
 
-
 def average_wait(vph_rates, setup, direction):
     # TODO: complete base implementation
     arriving_per_cycle = ((vph_rates[direction] / setup.get_road(direction).total_standard_lanes())
@@ -48,7 +55,8 @@ def average_wait(vph_rates, setup, direction):
     # TODO: implement for various different configurables.
     return 0
 
-
+# The average_wait time for any car at the junction
+# Used to compare overall junction setup effectivity
 def mean_statistic(vph_rates, setup):
     mean = 0
     total_vph = sum(vph_rates)
@@ -56,13 +64,15 @@ def mean_statistic(vph_rates, setup):
         mean += (vph_rates[i] / total_vph) * average_wait(vph_rates, setup, i)
     return mean
 
-
+# the variance of the max_queue's weighted by the proportion of cars from that direction
+# used to compare ..... (COMPLETE DESCRIPTION)
 def fairness_statistic(vph_rates, setup):
     total_vph = sum(vph_rates)
     values = [(vph_rates[i] / total_vph) * max_queue(vph_rates, setup, i) for i in range(0, 4)]
     return statistics.pvariance(values)
 
-
+# The max_wait time for any car at the junction
+# Used to compare outlier experiences of vehicles
 def worst_case_statistic(vph_rates,setup):
     worst_wait = 0
     for i in range(0, 4):
