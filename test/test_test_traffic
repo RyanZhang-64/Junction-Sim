@@ -1,5 +1,5 @@
 import pytest
-from main.traffic import traffic_volume_inputs, lane_configuration  # Adjust import path if needed
+from main.trafficflow import traffic_volume_inputs, lane_configuration  # Adjust import path if needed
 
 def test_traffic_volume_inputs():
     #valid case
