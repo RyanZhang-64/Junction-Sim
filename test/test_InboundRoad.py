@@ -1,7 +1,7 @@
 import pytest
 from inboundRoad import InboundRoad  
 
-def test_inbound_road():
+def test_InboundRoad():
     road = InboundRoad()
     
     #test the default values
