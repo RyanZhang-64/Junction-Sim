@@ -1,7 +1,6 @@
 import Equations
 import InboundRoad
 
-
 class Junction:
     def __init__(self):
         self.in_roads = [(InboundRoad.InboundRoad()) for i in range(0,4)]
