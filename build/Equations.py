@@ -1,5 +1,5 @@
 import statistics
-
+import numpy
 from build.Junction import Junction
 
 # NOTE: Assumed vph_rates is just the rates from North, South, West, East without the breakdown around the direction the cars are leaving to, may need to change this!
@@ -20,8 +20,13 @@ PROPORTION_RED = 3 / 4.0
 
 # An overall efficiency score for the junction to be used for comparison
 def get_efficiency_score(vph_rates, setup):
-    # TODO: implement aggregating function
-    return -1
+    FAIRNESS_EXTREME_BOUNDARY = 400
+    WORST_CASE_EXTREME_BOUNDARY = 75
+    ##TODO: include environmental factors!!!
+    total_efficiency = ((mean_statistic(vph_rates, setup)
+                        + numpy.exp(fairness_statistic(vph_rates, setup)-FAIRNESS_EXTREME_BOUNDARY))
+                        + numpy.exp(worst_case_statistic(vph_rates, setup-WORST_CASE_EXTREME_BOUNDARY)))
+    return total_efficiency
 
 
 def max_queue(vph_rates, setup : Junction , direction):
@@ -32,9 +37,9 @@ def max_queue(vph_rates, setup : Junction , direction):
                          * (PROPORTION_GREEN * (CYCLE_LENGTH / 60)))
     return max(0, arriving_per_cycle - leaving_per_cycle)  # max of 0 and cars accumulated after one full cycle
     # , 3/4 arriving_per_cycle)      # NOTE: it is possible to accumulate a larger queue (=3/4 cars) before cars leave the junction (should probably include this) -- Consider how it impacts max_wait
+    # TODO: Merge with left turn structure?
+    # TODO: implement for various different configurables.
 
-    #TODO: implement for various different configurables.
-    return 0
 
 # Note: max_wait is heavily affected by
 def max_wait(vph_rates, setup, direction):
@@ -44,16 +49,18 @@ def max_wait(vph_rates, setup, direction):
     return ((max_queue(vph_rates, setup, direction) / leaving_per_cycle) # Number of Cycles to remove cars
             * CYCLE_LENGTH) # length a cycle takes
     # NOTE: This has a rounding error as you can't complete, say 0.3 cycles, can round up maybe
+    # TODO: Merge with left turn structure?
     # TODO: implement for various different configurables.
-    return 0
+
 
 def average_wait(vph_rates, setup, direction):
     # TODO: complete base implementation
     arriving_per_cycle = ((vph_rates[direction] / setup.get_road(direction).total_standard_lanes())
                           * (CYCLE_LENGTH / 60))
     return max_wait(vph_rates, setup, direction) / arriving_per_cycle # the total time to clear the vehicles divided by the total number of vehicles arriving
+    # TODO: Merge with left turn structure?
     # TODO: implement for various different configurables.
-    return 0
+
 
 # The average_wait time for any car at the junction
 # Used to compare overall junction setup effectivity
