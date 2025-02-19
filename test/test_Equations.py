@@ -9,7 +9,7 @@ from equations import (
     worst_case_statistic
 )
 
-# Mock class for Junction
+#Mock class for Junction
 class MockRoad:
     def __init__(self, lanes):
         self.lanes = lanes
@@ -27,40 +27,40 @@ class MockJunction:
 
 @pytest.fixture
 def sample_junction():
-    # A junction with 2 lanes in each direction (N, S, W, E)
+    #A junction with 2 lanes in each direction (N, S, W, E)
     return MockJunction([2, 2, 2, 2])
 
 
 @pytest.fixture
 def vph_rates():
-    # Traffic flow rate (vehicles per hour) for North, South, West, East
+    #Traffic flow rate (vehicles per hour) for North, South, West, East
     return [1200, 800, 1000, 900]
 
 
 def test_max_queue(vph_rates, sample_junction):
-    result = max_queue(vph_rates, sample_junction, direction=0)  # North direction
-    assert result >= 0  # Queue can't be negative
+    result = max_queue(vph_rates, sample_junction, direction=0) #North direction
+    assert result >= 0 #Queue can't be negative
 
 def test_max_wait(vph_rates, sample_junction):
-    result = max_wait(vph_rates, sample_junction, direction=1)  # South direction
-    assert result >= 0  # Wait time should be non-negative
+    result = max_wait(vph_rates, sample_junction, direction=1) #South direction
+    assert result >= 0  #Wait time should be non-negative
 
 def test_average_wait(vph_rates, sample_junction):
-    result = average_wait(vph_rates, sample_junction, direction=2)  # West direction
-    assert result >= 0  # Average wait should be non-negative
+    result = average_wait(vph_rates, sample_junction, direction=2) #West direction
+    assert result >= 0 #Average wait should be non-negative
 
 def test_mean_statistic(vph_rates, sample_junction):
     result = mean_statistic(vph_rates, sample_junction)
-    assert result >= 0  # Mean wait should be non-negative
+    assert result >= 0 #Mean wait should be non-negative
 
 def test_fairness_statistic(vph_rates, sample_junction):
     result = fairness_statistic(vph_rates, sample_junction)
-    assert isinstance(result, float)  # Fairness should be a float value
-    assert result >= 0  # Variance can't be negative
+    assert isinstance(result, float) #Fairness should be a float value
+    assert result >= 0 #Variance can't be negative
 
 def test_worst_case_statistic(vph_rates, sample_junction):
     result = worst_case_statistic(vph_rates, sample_junction)
-    assert result >= 0  # Worst case should be non-negative
+    assert result >= 0 #Worst case should be non-negative
 
 if __name__ == "__main__":
     pytest.main()
