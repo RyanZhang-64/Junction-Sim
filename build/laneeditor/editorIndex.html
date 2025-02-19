@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Info Panel</title>
+        <script src="https://kit.fontawesome.com/80112adc65.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="editorStyle.css">
+    </head>
+    <body>
+        <div class="container-fluid p-0">
+            <div class="row">
+                <div class="col-7">
+                    <button class="puffin-crossing inactive" id="puffin" onclick="puffinToggle()">Puffin Inactive</button>
+                    <div class="row editor-row">
+                        <div id="columnsContainer"></div>
+                        <div class="control-lane">
+                            <button class="control-btn add-lane" onclick="increaseColumns()">+1 Lane</button>
+                            <button class="control-btn remove-lane" onclick="decreaseColumns()">-1 Lane</button>
+                        </div>
+                    </div>
+                    <div class="row border-top align-items-start">
+                        <div class="col-6 text-center bottom-menu">
+                            Hover over lanes for options<br>Click to toggle
+                        </div>
+                        <div class="col-3">
+                            <div class="container mt-3">
+                                <nav aria-label="Priority navigation">
+                                    <div class="d-flex flex-sm-column flex-row align-items-center gap-sm-2 gap-3 w-100">
+                                        <div class="text-center mb-sm-2 mb-0">
+                                            <span class="priority-label text-muted fs-5 position-relative">Priority Unset</span>
+                                        </div>
+                                        <ul class="pagination mb-0 w-100 justify-content-between">
+                                            <li class="page-item disabled flex-fill">
+                                                <a class="page-link text-center py-3" href="#" tabindex="-1" aria-disabled="true">1</a>
+                                            </li>
+                                            <li class="page-item flex-fill">
+                                                <a class="page-link text-center py-3" href="#">2</a>
+                                            </li>
+                                            <li class="page-item flex-fill">
+                                                <a class="page-link text-center py-3" href="#">3</a>
+                                            </li>
+                                            <li class="page-item flex-fill">
+                                                <a class="page-link text-center py-3" href="#">4</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="container d-flex justify-content-center align-items-center" style="height: 15vh;">
+                                <div class="d-flex flex-column" style="width: 80%; height: 80%;">
+                                    <button class="btn btn-success rounded-top-4 mb-0 flex-grow-1 fs-5">Apply</button>
+                                    <button class="btn btn-danger rounded-bottom-4 flex-grow-1 fs-5">Cancel</button>
+                                
+                                </div>
+                               </div>                             
+                        </div>
+                   </div>
+                </div>
+                <div class="col-5 info-column">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column justify-content-between p-5">
+                            <h1 class="text-center infobar-title">Junction Metrics</h5>
+                            
+                            <!-- Wait Times -->
+                            <div class="my-2">
+                                <div class="d-flex align-items-center fs-4">
+                                    <span class="stat-title"><i class="fa-solid fa-clock me-3 stat-title"></i> Wait Times</span><br>
+                                </div>
+                                <div class="px-4">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="text-secondary stat">Mean:</div>
+                                        <div class="font-weight-bold stat">xxm:xxs</div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="text-secondary stat">Maximum:</div>
+                                        <div class="font-weight-bold stat">xxm:xxs</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Queue Length -->
+                            <div class="my-2">
+                                <div class="d-flex align-items-center fs-4">
+                                    <span class="stat-title"><i class="fa-solid fa-car me-3"></i> Queue Length</span><br>
+                                </div>
+                                <div class="px-4 fs-4">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="text-secondary stat">Maximum:</div>
+                                        <div class="stat">xx cars</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Performance Score -->
+                            <div class="my-2">
+                                <div class="d-flex align-items-center fs-4">
+                                    <span class="stat-title"><i class="fa-solid fa-trophy me-3"></i> Performance Score</span>
+                                </div>
+                                <div class="text-center">
+                                    <div class="performance-score text-primary font-weight-bold stat">47.83</div>
+                                    <div class="performance-rank text-secondary stat">Top 41% of recorded scores</div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-light text-primary w-100 stat">
+                                Compare with other scores
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="editorScript.js"></script>
+    </body>
+</html>
