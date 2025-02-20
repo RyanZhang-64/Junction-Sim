@@ -3,7 +3,7 @@ class InboundRoad:
         self.total_standard_lanes = 1
         self.has_bus_lane = False
         self.has_left_lane = False
-        self.priority_factor = 0
+        self.priority_factor = 1
 
     # Here we return the number of lanes that the road has 
     def total_standard_lanes(self):
