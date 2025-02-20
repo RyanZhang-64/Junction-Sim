@@ -80,7 +80,7 @@ def mean_statistic(vph_rates, setup):
     return mean
 
 # the variance of the max_queue's weighted by the proportion of cars from that direction
-# used to compare ..... (COMPLETE DESCRIPTION)
+# used to compare ..... TODO: (COMPLETE DESCRIPTION)
 def fairness_statistic(vph_rates, setup):
     total_vph = sum(vph_rates)
     values = [(vph_rates[i] / total_vph) * max_queue(vph_rates, setup, i) for i in range(0, 4)]
