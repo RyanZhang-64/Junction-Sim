@@ -34,7 +34,7 @@ def max_queue(vph_rates, setup : Junction , direction):
     # , 3/4 arriving_per_cycle)      # NOTE: it is possible to accumulate a larger queue (=3/4 cars) before cars leave the junction (should probably include this) -- Consider how it impacts max_wait
 
     #TODO: implement for various different configurables.
-
+    return 0
 
 # Note: max_wait is heavily affected by
 def max_wait(vph_rates, setup, direction):
@@ -45,7 +45,7 @@ def max_wait(vph_rates, setup, direction):
             * CYCLE_LENGTH) # length a cycle takes
     # NOTE: This has a rounding error as you can't complete, say 0.3 cycles, can round up maybe
     # TODO: implement for various different configurables.
-
+    return 0
 
 def average_wait(vph_rates, setup, direction):
     # TODO: complete base implementation
@@ -53,7 +53,7 @@ def average_wait(vph_rates, setup, direction):
                           * (CYCLE_LENGTH / 60))
     return max_wait(vph_rates, setup, direction) / arriving_per_cycle # the total time to clear the vehicles divided by the total number of vehicles arriving
     # TODO: implement for various different configurables.
-
+    return 0
 
 # The average_wait time for any car at the junction
 # Used to compare overall junction setup effectivity
