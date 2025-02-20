@@ -53,7 +53,7 @@ def max_wait(vph_rates, setup, direction):
     # DONE: complete base implementation
     proportion_green = get_green_proportion(vph_rates, setup)
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
-                         * (DEFAULT_PROPORTION_GREEN * (CYCLE_LENGTH / 60)))
+                         * (proportion_green * (CYCLE_LENGTH / 60)))
     return ((max_queue(vph_rates, setup, direction) / leaving_per_cycle) # Number of Cycles to remove cars
             * CYCLE_LENGTH) # length a cycle takes
     # NOTE: This has a rounding error as you can't complete, say 0.3 cycles, can round up maybe
