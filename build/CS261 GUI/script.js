@@ -305,3 +305,14 @@ class JunctionSimulation {
 const simulation = new JunctionSimulation('junctionCanvas');
 simulation.updateTrafficLight('west', 0, 'green');  // Set first westbound lane to green
 simulation.setLeftTurnLane('west', 0, true);
+
+
+
+// Testing connecting front and back end stuff
+const comparebtn = document.getElementById("compare-btn");
+comparebtn.addEventListener("click", () => {
+    fetch("http://127.0.0.1:5000/python-test", {
+        method: "POST",
+    })
+    .catch(error => console.error("Error:", error));
+});
