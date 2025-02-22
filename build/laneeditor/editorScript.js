@@ -6,43 +6,64 @@ function getCurrentColumnCount() {
     return document.querySelectorAll('.column').length;
 }
 
-function createButtonsDiv(isFirstColumn) {
-    const buttonsDiv = document.createElement('div');
-    buttonsDiv.className = 'column-buttons';
+// Add this at the top with your other global variables
+let activeBusColumn = null;
+
+function handleImageTransition(column, newImageSrc, isBus = false) {
+    const imageContainer = column.querySelector('.lane-image-container');
     
-    let buttonHtml = '';
-    if (isFirstColumn) {
-        buttonHtml += '<button class="left-turn-button">Left Turn</button>';
+    // If this is a bus image request, handle existing bus lane first
+    if (isBus) {
+        // If there's an active bus in a different column, remove it first
+        if (activeBusColumn && activeBusColumn !== column) {
+            const existingBusContainer = activeBusColumn.querySelector('.lane-image-container');
+            if (existingBusContainer) {
+                existingBusContainer.classList.add('fade-out');
+                existingBusContainer.addEventListener('animationend', () => {
+                    existingBusContainer.remove();
+                }, { once: true });
+            }
+        }
+        // Update active bus column reference
+        activeBusColumn = (imageContainer && column === activeBusColumn) ? null : column;
     }
     
-    buttonHtml += `
-        <button class="button-label" onclick="spawnBusImage(this)">Bus</button>
-        <div class="arrow-buttons">
-            <button class="btn-arrow-up"><i class="fa-solid fa-up-long"></i></button>
-            <button class="btn-arrow-down"><i class="fa-solid fa-down-long"></i></button>
-        </div>
-    `;
-    
-    buttonsDiv.innerHTML = buttonHtml;
-    return buttonsDiv;
+    if (imageContainer) {
+        // Fade out existing image
+        imageContainer.classList.add('fade-out');
+        
+        // Wait for fade-out to complete before showing new image
+        imageContainer.addEventListener('animationend', () => {
+            imageContainer.remove();
+            if (!isBus || (isBus && activeBusColumn === column)) {
+                createNewImage(column, newImageSrc);
+            }
+        }, { once: true });
+    } else {
+        // No existing image, create new one immediately
+        createNewImage(column, newImageSrc);
+    }
 }
 
-// New function to spawn bus image
+function spawnLeftTurn(buttonElement) {
+    console.log("Spawning left turn");
+    const column = buttonElement.closest('.column');
+    handleImageTransition(column, 'leftarrow.png', false);
+}
+
 function spawnBusImage(buttonElement) {
     const column = buttonElement.closest('.column');
-    
-    // Check if image container already exists
-    let imageContainer = column.querySelector('.lane-image-container');
-    
-    if (!imageContainer) {
-        imageContainer = document.createElement('div');
-        imageContainer.className = 'lane-image-container';
-        const busImage = document.createElement('img');
-        busImage.src = 'leftarrow.png'; // Replace with your bus image path
-        busImage.className = 'lane-image';
-        imageContainer.appendChild(busImage);
-        column.appendChild(imageContainer);
-    }
+    handleImageTransition(column, 'BUS.png', true);
+}
+
+function createNewImage(column, imageSrc) {
+    const imageContainer = document.createElement('div');
+    imageContainer.className = 'lane-image-container';
+    const image = document.createElement('img');
+    image.src = imageSrc;
+    image.className = 'lane-image fade-in';
+    imageContainer.appendChild(image);
+    column.appendChild(imageContainer);
 }
 
 function puffinToggle() {
@@ -83,27 +104,6 @@ function decreaseColumns() {
     }
 }
 
-function createColumn(index) {
-    const column = document.createElement('div');
-    column.className = 'column col';
-    
-    const buttonsDiv = createButtonsDiv(index === 0);
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'column-content';
-    
-    column.appendChild(buttonsDiv);
-    column.appendChild(contentDiv);
-    return column;
-}
-
-
-function initializeColumns(count = 4) {
-    const container = document.getElementById('columnsContainer');
-    for (let i = 0; i < count; i++) {
-        container.appendChild(createColumn(i));
-    }
-}
-
 document.querySelectorAll('.page-item:not(.disabled)').forEach(item => {
     item.addEventListener('click', function(e) {
       e.preventDefault();
@@ -125,19 +125,45 @@ document.querySelectorAll('.page-item:not(.disabled)').forEach(item => {
 // Initialize first column with Left Turn button
 window.addEventListener('DOMContentLoaded', () => {
     initializeColumns(4);
-    const firstColumn = document.querySelector('.column');
-    if (firstColumn) {
-        const buttonsDiv = firstColumn.querySelector('.column-buttons');
-        if (buttonsDiv) {
-            buttonsDiv.innerHTML = `
-                <button class="left-turn-button">Left Turn</button>
-                <button class="button-label">Bus</button>
-                <div class="arrow-buttons">
-                    <button class="btn-arrow-up"><i class="fa-solid fa-up-long"></i></button>
-                    <button class="btn-arrow-down"><i class="fa-solid fa-down-long"></i></button>
-                </div>
-            `;
-        }
-    }
 });
 
+function createButtonsDiv(isFirstColumn) {
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.className = 'column-buttons';
+    
+    let buttonHtml = '';
+    if (isFirstColumn) {
+        buttonHtml += '<button class="left-turn-button" onclick="spawnLeftTurn(this)">Left Turn</button>';
+    }
+    
+    buttonHtml += `
+        <button class="button-label" onclick="spawnBusImage(this)">Bus</button>
+        <div class="arrow-buttons">
+            <button class="btn-arrow-up"><i class="fa-solid fa-up-long"></i></button>
+            <button class="btn-arrow-down"><i class="fa-solid fa-down-long"></i></button>
+        </div>
+    `;
+    
+    buttonsDiv.innerHTML = buttonHtml;
+    return buttonsDiv;
+}
+
+function createColumn(index) {
+    const column = document.createElement('div');
+    column.className = 'column col';
+    
+    const buttonsDiv = createButtonsDiv(index === 0);
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'column-content';
+    
+    column.appendChild(buttonsDiv);
+    column.appendChild(contentDiv);
+    return column;
+}
+
+function initializeColumns(count = 4) {
+    const container = document.getElementById('columnsContainer');
+    for (let i = 0; i < count; i++) {
+        container.appendChild(createColumn(i));
+    }
+}

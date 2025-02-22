@@ -14,8 +14,8 @@
                     <div class="row editor-row">
                         <div id="columnsContainer"></div>
                         <div class="control-lane">
-                            <button class="control-btn add-lane" onclick="increaseColumns()">+1 Lane</button>
-                            <button class="control-btn remove-lane" onclick="decreaseColumns()">-1 Lane</button>
+                            <button class="control-btn add-lane" onclick="increaseColumns()">Press to<br>Add<br>Lane</button>
+                            <button class="control-btn remove-lane" onclick="decreaseColumns()">Press to<br>Remove<br>Lane</button>
                         </div>
                     </div>
                     <div class="row border-top align-items-start">
@@ -23,38 +23,41 @@
                             Hover over lanes for options<br>Click to toggle
                         </div>
                         <div class="col-3">
-                            <div class="container mt-3">
-                                <nav aria-label="Priority navigation">
-                                    <div class="d-flex flex-sm-column flex-row align-items-center gap-sm-2 gap-3 w-100">
-                                        <div class="text-center mb-sm-2 mb-0">
-                                            <span class="priority-label text-muted fs-5 position-relative">Priority Unset</span>
+                            <div class="container d-flex justify-content-center align-items-center" style="height: 15vh;">
+                                <div class="d-flex flex-column" style="width: 80%; height: 80%;">
+                                    <nav aria-label="Priority navigation" class="h-100">
+                                        <div class="d-flex flex-column h-100">
+                                            <div class="text-center flex-grow-1 d-flex align-items-center justify-content-center">
+                                                <span class="priority-label">Priority Unset</span>
+                                            </div>
+                                            <div class="flex-grow-1 d-flex align-items-center">
+                                                <ul class="pagination justify-content-center w-100 mb-0">
+                                                    <li class="page-item disabled">
+                                                        <a class="page-link text-center" href="#" tabindex="-1" aria-disabled="true">1</a>
+                                                    </li>
+                                                    <li class="page-item">
+                                                        <a class="page-link text-center" href="#">2</a>
+                                                    </li>
+                                                    <li class="page-item">
+                                                        <a class="page-link text-center" href="#">3</a>
+                                                    </li>
+                                                    <li class="page-item">
+                                                        <a class="page-link text-center" href="#">4</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
-                                        <ul class="pagination mb-0 w-100 justify-content-between">
-                                            <li class="page-item disabled flex-fill">
-                                                <a class="page-link text-center py-3" href="#" tabindex="-1" aria-disabled="true">1</a>
-                                            </li>
-                                            <li class="page-item flex-fill">
-                                                <a class="page-link text-center py-3" href="#">2</a>
-                                            </li>
-                                            <li class="page-item flex-fill">
-                                                <a class="page-link text-center py-3" href="#">3</a>
-                                            </li>
-                                            <li class="page-item flex-fill">
-                                                <a class="page-link text-center py-3" href="#">4</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </nav>
+                                    </nav>
+                                </div>
                             </div>
                         </div>
                         <div class="col-3">
-                            <div class="container d-flex justify-content-center align-items-center" style="height: 15vh;">
-                                <div class="d-flex flex-column" style="width: 80%; height: 80%;">
-                                    <button class="btn btn-success rounded-top-4 mb-0 flex-grow-1 fs-5">Apply</button>
-                                    <button class="btn btn-danger rounded-bottom-4 flex-grow-1 fs-5">Cancel</button>
-                                
-                                </div>
-                               </div>                             
+                            <div class="container button-container">
+                                <div class="button-group">
+                                    <button class="btn btn-success rounded-top-4 mb-0 flex-grow-1 fs-5 action-button">Apply</button>
+                                    <button class="btn btn-danger rounded-bottom-4 flex-grow-1 fs-5 action-button">Cancel</button>
+                                </div>   
+                            </div>                          
                         </div>
                    </div>
                 </div>
