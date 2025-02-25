@@ -42,3 +42,22 @@ class InboundRoad:
     def set_priority_factor(self, num :int):
         self.priority_factor = num
 
+
+    # Lucy added
+
+    def increment_num_lanes(self):
+        if self.total_standard_lanes != 5:
+            self.total_standard_lanes += 1
+        else:
+            print("Cannot exceed 5 lanes")
+
+    def decrement_num_lanes(self):
+        if self.total_standard_lanes != 1:
+            self.total_standard_lanes -= 1
+        else:
+            print("Must have atleast one lane")
+
+    def get_num_lanes(self):
+        return self.total_standard_lanes
+
+
