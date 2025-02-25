@@ -1,19 +1,30 @@
-# connecting the front and back end
+from flask import Flask, render_template, send_from_directory, jsonify
 
-from flask import Flask, request, jsonify
-import Junction, leftTurn
+app = Flask(__name__, 
+            static_folder="CS261 Final GUI", 
+            template_folder="CS261 Final GUI")
 
-app = Flask(__name__)
+# Serve the main HTML page
+@app.route("/")
+def home():
+    return send_from_directory(app.template_folder, "index.html")
 
-@app.route('/python-test', methods=['POST'])
-def run_python():
-    """
-    data = request.json
-    result = data["number"] * 2  # Example function
-    return jsonify({"result": result})
-    """
-    print("test")
-    return jsonify({"message": "Python function executed"})
+# Serve static files (CSS, JS, images)
+@app.route("/<path:filename>")
+def static_files(filename):
+    return send_from_directory(app.static_folder, filename)
 
-if __name__ == '__main__':
+# Example API route (modify as needed)
+@app.route("/api/data")
+def get_data():
+    return jsonify({"message": "Hello from Flask!"})
+
+@app.route("/api/button-click")
+def button_click():
+    print("Compare button was clicked")
+    return jsonify({"message": "Button was clicked!"})  # JSON response
+
+
+
+if __name__ == "__main__":
     app.run(debug=True)
