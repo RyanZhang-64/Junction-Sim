@@ -1,6 +1,6 @@
 import statistics
 import numpy
-from build.Junction import Junction
+import Junction
 
 # NOTE: Assumed vph_rates is just the rates from North, South, West, East without the breakdown around the direction the cars are leaving to, may need to change this!
 
