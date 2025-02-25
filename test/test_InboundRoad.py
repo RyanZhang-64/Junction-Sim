@@ -1,5 +1,5 @@
 import pytest
-from inboundRoad import InboundRoad  
+from build.InboundRoad import InboundRoad  
 
 def test_InboundRoad():
     road = InboundRoad()
