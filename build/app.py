@@ -28,6 +28,9 @@ temp_west_lane = InboundRoad.InboundRoad()
 temp_south_lane = InboundRoad.InboundRoad()
 
 
+# Make an array of inbound roads
+# Set selected lane to an index
+
 
 # Serve the main HTML page
 @app.route("/")
@@ -122,10 +125,43 @@ def remove_lane():
         print("Error")
     return Response(status=204)
 
-
-# Set lane to bus lane
+# Bus lane toggle
+@app.route("/bus-toggle")
+def bus_toggle():
+    if selected_lane == "north":
+        temp_north_lane.toggle_bus_lane()
+        print("Has bus lane:" + str(temp_north_lane.has_bus_lane()))
+    elif selected_lane == "east":
+        temp_east_lane.toggle_bus_lane()
+        print("Has bus lane:" + str(temp_east_lane.has_bus_lane()))
+    elif selected_lane == "south":
+        temp_south_lane.toggle_bus_lane()
+        print("Has bus lane:" + str(temp_south_lane.has_bus_lane()))
+    elif selected_lane == "west":
+        temp_west_lane.toggle_bus_lane()
+        print("Has bus lane:" + str(temp_west_lane.has_bus_lane()))
+    else:
+        print("Error")
+    return Response(status=204)
 
 # Left turn lane
+@app.route("/left-toggle")
+def left_toggle():
+    if selected_lane == "north":
+        temp_north_lane.toggle_left_lane()
+        print("Has left lane:" + str(temp_north_lane.has_left_lane()))
+    elif selected_lane == "east":
+        temp_east_lane.toggle_left_lane()
+        print("Has left lane:" + str(temp_east_lane.has_left_lane()))
+    elif selected_lane == "south":
+        temp_south_lane.toggle_left_lane()
+        print("Has left lane:" + str(temp_south_lane.has_left_lane()))
+    elif selected_lane == "west":
+        temp_west_lane.toggle_left_lane()
+        print("Has left lane:" + str(temp_west_lane.has_left_lane()))
+    else:
+        print("Error")
+    return Response(status=204)
 
 # TODO set lane to bike lane
 

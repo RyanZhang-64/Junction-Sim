@@ -92,3 +92,7 @@ document.getElementById("removeLane").addEventListener("click", function() {
     .then(data => console.log("Success:", data))
     .catch(error => console.error("Error:", error));
 });
+
+// TO DO BUS LANE
+
+// TO DO LEFT LANE

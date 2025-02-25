@@ -60,4 +60,9 @@ class InboundRoad:
     def get_num_lanes(self):
         return self.total_standard_lanes
 
+    def toggle_bus_lane(self):
+        self.has_bus_lane = not self.has_bus_lane
+
+    def toggle_left_lane(self):
+        self.has_left_lane = not self.has_left_lane
 
