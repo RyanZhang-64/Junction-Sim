@@ -11,7 +11,7 @@ from Junction import Junction
 
 ## Constants  --  specific values not final
 CYCLE_LENGTH = 4 # (minutes)
-MAX_VEHICLE_MOVEMENT = 360 # vph rate at which cars can pass through the junction
+MAX_VEHICLE_MOVEMENT = 160 # vph rate at which cars can pass through the junction
 
 ## Green/Red time for the traffic lights -- implement priority etc. by changing this to a vector for each direction?
 #DEFAULT_PROPORTION_GREEN = 1 / 4.0
@@ -23,7 +23,7 @@ def get_efficiency_score(vph_rates, setup):
     FAIRNESS_EXTREME_BOUNDARY = 400
     WORST_CASE_EXTREME_BOUNDARY = 75
     ##TODO: include environmental factors!!!
-    total_efficiency = 100 - ((mean_statistic(vph_rates, setup)
+    total_efficiency = 100 - ((mean_statistic(vph_rates, setup) * 60
                         + numpy.exp(fairness_statistic(vph_rates, setup)-FAIRNESS_EXTREME_BOUNDARY))
                         + numpy.exp(worst_case_statistic(vph_rates, setup)-WORST_CASE_EXTREME_BOUNDARY))
     return total_efficiency
@@ -41,7 +41,7 @@ def get_green_proportion(setup, direction):
 
 def max_queue(vph_rates, setup, direction):
     # DONE: complete base implementation
-    proportion_green = 1/4
+    proportion_green = get_green_proportion(setup, direction)
     arriving_per_cycle = ((vph_rates[direction] / setup.get_road(direction).total_standard_lanes)
                           * (CYCLE_LENGTH / 60))
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
@@ -55,7 +55,7 @@ def max_queue(vph_rates, setup, direction):
 # Note: max_wait is heavily affected by max_queue
 def max_wait(vph_rates, setup, direction):
     # DONE: complete base implementation
-    proportion_green = 1/4
+    proportion_green = get_green_proportion(setup, direction)
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
                          * (proportion_green * (CYCLE_LENGTH / 60)))
     return ((max_queue(vph_rates, setup, direction) / leaving_per_cycle) # Number of Cycles to remove cars
@@ -80,9 +80,8 @@ def mean_statistic(vph_rates, setup):
     mean = 0
     total_vph = sum(vph_rates)
     for i in range(0, 4):
-        print(average_wait(vph_rates, setup, i))
         mean += (vph_rates[i] / total_vph) * average_wait(vph_rates, setup, i)
-    return mean * 60
+    return mean
 
 # the variance of the max_queue's weighted by the proportion of cars from that direction
 # used to compare ..... TODO: (COMPLETE DESCRIPTION)
