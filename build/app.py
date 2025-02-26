@@ -1,6 +1,7 @@
 from flask import Flask, render_template, send_from_directory, jsonify
 import Junction, InboundRoad
 from flask import Response
+import copy
 
 app = Flask(__name__, 
             static_folder="CS261 Final GUI", 
@@ -26,21 +27,15 @@ def home():
 # This creates a temporary model, and we will only set this model
 # once apply has been selected
 def reset_temp_model():
-    # This creates the temporary object for editing
-    """
-    global temp_junction_model, temp_lanes
-    temp_junction_model = Junction.Junction()
-    temp_lanes = [InboundRoad.InboundRoad()] * 4
-    """
     global temp_junction_model, temp_lanes, lanes, junction_model
-    temp_junction_model = junction_model
-    temp_lanes = lanes
+    temp_junction_model = copy.deepcopy(junction_model)
+    temp_lanes = copy.deepcopy(lanes)
 
 # Apply changes - will set temp model properties to true odel
 def apply_model_changes():
     global temp_junction_model, temp_lanes, lanes, junction_model
-    junction_model = temp_junction_model
-    lanes = temp_lanes
+    junction_model = copy.deepcopy(temp_junction_model)
+    lanes = copy.deepcopy(temp_lanes)
 
 @app.route("/edit-northbound")
 def edit_northbound():
