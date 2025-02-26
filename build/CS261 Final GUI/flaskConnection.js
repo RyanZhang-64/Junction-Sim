@@ -141,3 +141,79 @@ document.getElementById("puffinToggle").addEventListener("click", function() {
     .then(data => console.log("Success:", data))
     .catch(error => console.error("Error:", error));
 });
+
+// Priority buttons ----------------------------------------------------------------------
+
+document.getElementById("priority1").addEventListener("click", function() {
+    fetch("/priority-1", {
+        method: "GET", // Change to "POST" if needed
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json()) // Assuming the response is JSON
+    .then(data => console.log("Success:", data))
+    .catch(error => console.error("Error:", error));
+});
+
+document.getElementById("priority2").addEventListener("click", function() {
+    fetch("/priority-2", {
+        method: "GET", // Change to "POST" if needed
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json()) // Assuming the response is JSON
+    .then(data => console.log("Success:", data))
+    .catch(error => console.error("Error:", error));
+});
+
+document.getElementById("priority3").addEventListener("click", function() {
+    fetch("/priority-3", {
+        method: "GET", // Change to "POST" if needed
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json()) // Assuming the response is JSON
+    .then(data => console.log("Success:", data))
+    .catch(error => console.error("Error:", error));
+});
+
+document.getElementById("priority4").addEventListener("click", function() {
+    fetch("/priority-4", {
+        method: "GET", // Change to "POST" if needed
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json()) // Assuming the response is JSON
+    .then(data => console.log("Success:", data))
+    .catch(error => console.error("Error:", error));
+});
+
+// Changes --------------------------------------------------------------------------
+
+document.getElementById("applyChanges").addEventListener("click", function() {
+    fetch("/apply-changes", {
+        method: "GET", // Change to "POST" if needed
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json()) // Assuming the response is JSON
+    .then(data => console.log("Success:", data))
+    .catch(error => console.error("Error:", error));
+});
+
+document.getElementById("cancelChanges").addEventListener("click", function() {
+    fetch("/cancel-changes", {
+        method: "GET", // Change to "POST" if needed
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json()) // Assuming the response is JSON
+    .then(data => console.log("Success:", data))
+    .catch(error => console.error("Error:", error));
+});

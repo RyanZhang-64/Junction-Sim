@@ -40,7 +40,9 @@ class InboundRoad:
         self.has_left_lane = has_left
     
     # Returns what the priority factor is
-    def priority_factor(self):
+
+    # changed name here again
+    def get_priority_factor(self):
         return self.priority_factor
     
     # Allows for the priority factor to be changed

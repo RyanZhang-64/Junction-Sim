@@ -9,18 +9,12 @@ app = Flask(__name__,
 # Initialises the true model objects
 junction_model = Junction.Junction()
 lanes = [InboundRoad.InboundRoad()] * 4
-
 selected_lane = None
 
-
-# Reset temp model
-# This creates the temporary object for editing
+# Reset temp model. This creates the temporary object for editing
 temp_junction_model = Junction.Junction()
 temp_lanes = [InboundRoad.InboundRoad()] * 4
-# 0 = north
-# 1 = east
-# 2 = south
-# 3 = west
+# 0 = north, 1 = east. 2 = south, 3 = west
 
 # Serve the main HTML page
 @app.route("/")
@@ -33,9 +27,20 @@ def home():
 # once apply has been selected
 def reset_temp_model():
     # This creates the temporary object for editing
+    """
     global temp_junction_model, temp_lanes
     temp_junction_model = Junction.Junction()
     temp_lanes = [InboundRoad.InboundRoad()] * 4
+    """
+    global temp_junction_model, temp_lanes, lanes, junction_model
+    temp_junction_model = junction_model
+    temp_lanes = lanes
+
+# Apply changes - will set temp model properties to true odel
+def apply_model_changes():
+    global temp_junction_model, temp_lanes, lanes, junction_model
+    junction_model = temp_junction_model
+    lanes = temp_lanes
 
 @app.route("/edit-northbound")
 def edit_northbound():
@@ -112,6 +117,50 @@ def puffin_toggle():
     temp_lanes[selected_lane].toggle_puffin_crossing()
     print("Has puffin crossing: " + str(temp_lanes[selected_lane].has_puffin_crossing()))
     return Response(status=204)
+
+# Priority --------------------------------------------------------------------------------------------
+
+@app.route("/priority-1")
+def priority_1():
+    global temp_lanes, selected_lane
+    temp_lanes[selected_lane].set_priority_factor(1)
+    print("Lane now has priority: " + str(temp_lanes[selected_lane].get_priority_factor()))
+    return Response(status=204)
+
+@app.route("/priority-2")
+def priority_2():
+    global temp_lanes, selected_lane
+    temp_lanes[selected_lane].set_priority_factor(2)
+    print("Lane now has priority: " + str(temp_lanes[selected_lane].get_priority_factor()))
+    return Response(status=204)
+
+@app.route("/priority-3")
+def priority_3():
+    global temp_lanes, selected_lane
+    temp_lanes[selected_lane].set_priority_factor(3)
+    print("Lane now has priority: " + str(temp_lanes[selected_lane].get_priority_factor()))
+    return Response(status=204)
+
+@app.route("/priority-4")
+def priority_4():
+    global temp_lanes, selected_lane
+    temp_lanes[selected_lane].set_priority_factor(4)
+    print("Lane now has priority: " + str(temp_lanes[selected_lane].get_priority_factor()))
+    return Response(status=204)
+
+# Model changes ---------------------------------------------------------------------------
+@app.route("/apply-changes")
+def apply_changes():
+    apply_model_changes()
+    print("Changes applied")
+    return Response(status=204)
+
+@app.route("/cancel-changes")
+def cancel_changes():
+    reset_temp_model()
+    print("Changes discarded")
+    return Response(status=204)
+
 
 # Other -----------------------------------------------------------------------------------------------
 
