@@ -33,8 +33,7 @@ def home():
 # once apply has been selected
 def reset_temp_model():
     # This creates the temporary object for editing
-    global temp_junction_model
-    global temp_lanes
+    global temp_junction_model, temp_lanes
     temp_junction_model = Junction.Junction()
     temp_lanes = [InboundRoad.InboundRoad()] * 4
 
@@ -43,6 +42,7 @@ def edit_northbound():
     global selected_lane
     selected_lane = 0
     reset_temp_model()
+    print("North")
     return Response(status=204)
 
 @app.route("/edit-eastbound")
@@ -50,6 +50,7 @@ def edit_eastbound():
     global selected_lane
     selected_lane = 1
     reset_temp_model()
+    print("East")
     return Response(status=204)
 
 @app.route("/edit-southbound")
@@ -57,6 +58,7 @@ def edit_southbound():
     global selected_lane
     selected_lane = 2
     reset_temp_model()
+    print("South")
     return Response(status=204)
 
 @app.route("/edit-westbound")
@@ -64,6 +66,7 @@ def edit_westbound():
     global selected_lane
     selected_lane = 3
     reset_temp_model()
+    print("West")
     return Response(status=204)
 
 # Lane modification ----------------------------------------------------------------------------
@@ -71,14 +74,15 @@ def edit_westbound():
 # Add lane
 @app.route("/add-lane")
 def add_lane():
+    global temp_lanes, selected_lane
     temp_lanes[selected_lane].increment_num_lanes()
     print("Num lanes:" + str(temp_lanes[selected_lane].get_num_lanes()))
-
     return Response(status=204)
 
 # Remove lane
 @app.route("/remove-lane")
 def remove_lane():
+    global temp_lanes, selected_lane
     temp_lanes[selected_lane].decrement_num_lanes()
     print("Num lanes:" + str(temp_lanes[selected_lane].get_num_lanes()))
     return Response(status=204)
@@ -86,15 +90,17 @@ def remove_lane():
 # Bus lane toggle
 @app.route("/bus-toggle")
 def bus_toggle():
+    global temp_lanes, selected_lane
     temp_lanes[selected_lane].toggle_bus_lane()
-    print("Has bus lane:" + str(temp_lanes[selected_lane].has_bus_lane()))
+    print("Has bus lane:" + str(temp_lanes[selected_lane].bus_lane()))
     return Response(status=204)
 
 # Left turn lane
 @app.route("/left-toggle")
 def left_toggle():
+    global temp_lanes, selected_lane
     temp_lanes[selected_lane].toggle_left_lane()
-    print("Has left lane:" + str(temp_lanes[selected_lane].has_left_lane()))
+    print("Has left lane:" + str(temp_lanes[selected_lane].left_lane()))
     return Response(status=204)
 
 # TODO set lane to bike lane

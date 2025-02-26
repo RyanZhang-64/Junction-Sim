@@ -233,11 +233,11 @@ function createButtonsDiv(isFirstColumn) {
     
     let buttonHtml = '';
     if (isFirstColumn) {
-        buttonHtml += '<button class="left-turn-button" onclick="spawnLeftTurn(this)">Left Turn</button>';
+        buttonHtml += '<button id="leftToggle" class="left-turn-button" onclick="spawnLeftTurn(this)">Left Turn</button>';
     }
     
     buttonHtml += `
-        <button class="button-label" onclick="spawnBusImage(this)">Bus</button>
+        <button id="busToggle" class="button-label" onclick="spawnBusImage(this)">Bus</button>
         <div class="arrow-buttons">
             <button class="btn-arrow-up"><i class="fa-solid fa-up-long"></i></button>
             <button class="btn-arrow-down"><i class="fa-solid fa-down-long"></i></button>

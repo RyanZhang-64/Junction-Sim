@@ -16,7 +16,9 @@ class InboundRoad:
         self.total_standard_lanes = num
 
     # Returns the boolean if there is a bus lane or if there isn't
-    def has_bus_lane(self):
+
+    # changed name because property has same name
+    def bus_lane(self):
         return self.has_bus_lane
 
     # Changes the flag if there is a bus lane or if there isn't
@@ -25,7 +27,7 @@ class InboundRoad:
         self.has_bus_lane = has_bus
     
     # Returns if there is a bus lane or not (Boolean)
-    def has_left_lane(self):
+    def left_lane(self):
         return self.has_left_lane
     
     # Changes the flag if there is a left lane or not

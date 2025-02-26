@@ -94,5 +94,36 @@ document.getElementById("removeLane").addEventListener("click", function() {
 });
 
 // TO DO BUS LANE
+// document.getElementById("busToggle").addEventListener("click", function() {
+//     fetch("/bus-toggle", {
+//         method: "GET", // Change to "POST" if needed
+//         headers: {
+//             "Content-Type": "application/json"
+//         }
+//     })
+//     .then(response => response.json()) // Assuming the response is JSON
+//     .then(data => console.log("Success:", data))
+//     .catch(error => console.error("Error:", error));
+// });
 
-// TO DO LEFT LANE
+// Bus toggle
+// Uses JQuery because dynamic objects
+
+$(document).ready(function(){
+    $("#columnsContainer").on("click", ".col > .column-buttons > #busToggle", function(){
+        console.log("button clicked!");
+        $.get("/bus-toggle", function(data){
+            console.log(data);
+        })
+    })
+})
+
+// Left lane
+$(document).ready(function(){
+    $("#columnsContainer").on("click", ".col > .column-buttons > #leftToggle", function(){
+        console.log("button clicked!");
+        $.get("/left-toggle", function(data){
+            console.log(data);
+        })
+    })
+})
