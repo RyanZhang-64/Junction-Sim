@@ -103,7 +103,15 @@ def left_toggle():
     print("Has left lane:" + str(temp_lanes[selected_lane].left_lane()))
     return Response(status=204)
 
-# TODO set lane to bike lane
+# TODO bike lane toggle
+
+# Puffin toggle
+@app.route("/puffin-toggle")
+def puffin_toggle():
+    global temp_lanes, selected_lane
+    temp_lanes[selected_lane].toggle_puffin_crossing()
+    print("Has puffin crossing: " + str(temp_lanes[selected_lane].has_puffin_crossing()))
+    return Response(status=204)
 
 # Other -----------------------------------------------------------------------------------------------
 

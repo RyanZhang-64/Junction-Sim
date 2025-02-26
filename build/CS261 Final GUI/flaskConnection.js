@@ -127,3 +127,17 @@ $(document).ready(function(){
         })
     })
 })
+
+
+// Puffin toggle
+document.getElementById("puffinToggle").addEventListener("click", function() {
+    fetch("/puffin-toggle", {
+        method: "GET", // Change to "POST" if needed
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json()) // Assuming the response is JSON
+    .then(data => console.log("Success:", data))
+    .catch(error => console.error("Error:", error));
+});

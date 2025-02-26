@@ -5,6 +5,9 @@ class InboundRoad:
         self.has_left_lane = False
         self.priority_factor = 1
 
+        # Lucy added
+        self.puffin_crossing = False
+
     # Here we return the number of lanes that the road has 
     def total_standard_lanes(self):
         return self.total_standard_lanes
@@ -67,4 +70,10 @@ class InboundRoad:
 
     def toggle_left_lane(self):
         self.has_left_lane = not self.has_left_lane
+
+    def toggle_puffin_crossing(self):
+        self.puffin_crossing = not self.puffin_crossing
+    
+    def has_puffin_crossing(self):
+        return self.puffin_crossing
 
