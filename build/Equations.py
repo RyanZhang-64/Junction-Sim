@@ -11,7 +11,7 @@ from Junction import Junction
 
 ## Constants  --  specific values not final
 CYCLE_LENGTH = 4 # (minutes)
-MAX_VEHICLE_MOVEMENT = 160 # vph rate at which cars can pass through the junction
+MAX_VEHICLE_MOVEMENT = 1000 # vph rate at which cars can pass through the junction
 
 ## Green/Red time for the traffic lights -- implement priority etc. by changing this to a vector for each direction?
 #DEFAULT_PROPORTION_GREEN = 1 / 4.0
@@ -23,8 +23,8 @@ def get_efficiency_score(vph_rates, setup):
     FAIRNESS_EXTREME_BOUNDARY = 400
     WORST_CASE_EXTREME_BOUNDARY = 75
     ##TODO: include environmental factors!!!
-    total_efficiency = 100 - ((mean_statistic(vph_rates, setup) * 60
-                        + numpy.exp(fairness_statistic(vph_rates, setup)-FAIRNESS_EXTREME_BOUNDARY))
+    total_efficiency = 100 - (mean_statistic(vph_rates, setup) * 60
+                        + numpy.exp(fairness_statistic(vph_rates, setup)-FAIRNESS_EXTREME_BOUNDARY)
                         + numpy.exp(worst_case_statistic(vph_rates, setup)-WORST_CASE_EXTREME_BOUNDARY))
     total_efficiency = round(max(total_efficiency,0), 2)
     return total_efficiency
@@ -97,7 +97,7 @@ def worst_case_statistic(vph_rates,setup):
     return worst_wait
 
 
-lst = [175,160,1000,100]
+lst = [100,100,100,100]
 print(get_efficiency_score(lst,Junction()))
 
 
