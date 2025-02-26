@@ -46,8 +46,8 @@ def max_queue(vph_rates, setup, direction):
                           * (CYCLE_LENGTH / 60))
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
                          * (proportion_green * (CYCLE_LENGTH / 60)))
-    return max(0, arriving_per_cycle - leaving_per_cycle)  # max of 0 and cars accumulated after one full cycle
-    # , 3/4 arriving_per_cycle)      # NOTE: it is possible to accumulate a larger queue (=3/4 cars) before cars leave the junction (should probably include this) -- Consider how it impacts max_wait
+    return max(0, arriving_per_cycle - leaving_per_cycle, 3/4 * arriving_per_cycle) # max of 0 and cars accumulated after one full cycle
+       # NOTE: it is possible to accumulate a larger queue (=3/4 cars) before cars leave the junction
     # TODO: Merge with left turn structure?
     # TODO: implement environmental/pedestrian factors!!!
 
