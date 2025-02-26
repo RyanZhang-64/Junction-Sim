@@ -130,7 +130,7 @@ $(document).ready(function(){
 
 
 // Puffin toggle
-document.getElementById("puffinToggle").addEventListener("click", function() {
+document.getElementById("puffin").addEventListener("click", function() {
     fetch("/puffin-toggle", {
         method: "GET", // Change to "POST" if needed
         headers: {

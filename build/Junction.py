@@ -17,3 +17,18 @@ class Junction:
         return self.in_roads[index]
 
     # TODO: getters and setters where applicable
+
+    # 0 = north, 1 = east. 2 = south, 3 = west
+
+    def get_lane(self, direction):
+        if direction == "north":
+            return self.in_roads[0]
+        elif direction == "east":
+            return self.in_roads[1]
+        elif direction == "south":
+            return self.in_roads[2]
+        elif direction == "west":
+            return self.in_roads[3]
+
+
+    
