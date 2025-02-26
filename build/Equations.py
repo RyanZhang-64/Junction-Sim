@@ -1,6 +1,6 @@
 import statistics
 import numpy
-import Junction
+from Junction import Junction
 
 # NOTE: Assumed vph_rates is just the rates from North, South, West, East without the breakdown around the direction the cars are leaving to, may need to change this!
 
@@ -17,6 +17,7 @@ MAX_VEHICLE_MOVEMENT = 1600 # vph rate at which cars can pass through the juncti
 #DEFAULT_PROPORTION_GREEN = 1 / 4.0
 
 
+
 # An overall efficiency score for the junction to be used for comparison
 def get_efficiency_score(vph_rates, setup):
     FAIRNESS_EXTREME_BOUNDARY = 400
@@ -24,11 +25,13 @@ def get_efficiency_score(vph_rates, setup):
     ##TODO: include environmental factors!!!
     total_efficiency = ((mean_statistic(vph_rates, setup)
                         + numpy.exp(fairness_statistic(vph_rates, setup)-FAIRNESS_EXTREME_BOUNDARY))
-                        + numpy.exp(worst_case_statistic(vph_rates, setup-WORST_CASE_EXTREME_BOUNDARY)))
+                        + numpy.exp(worst_case_statistic(vph_rates, setup)-WORST_CASE_EXTREME_BOUNDARY))
     return total_efficiency
 
+
+
 # TODO: ask to bound it by 1 and 4 not 0 and 4
-def get_green_proportion(setup : Junction, direction):
+def get_green_proportion(setup, direction):
     total_priority = sum([x.priority_factor for x in setup.get_all_roads()])
     this_priority = setup.get_road(direction).priority_factor
     pedestrian_factor = 1
@@ -36,9 +39,9 @@ def get_green_proportion(setup : Junction, direction):
         pedestrian_factor = 4/5 # assumes pedestrians get ~1/5 of the cycle time CAN CHANGE
     return (this_priority / total_priority) * pedestrian_factor
 
-def max_queue(vph_rates, setup : Junction , direction):
+def max_queue(vph_rates, setup, direction):
     # DONE: complete base implementation
-    proportion_green = get_green_proportion(vph_rates, setup)
+    proportion_green = get_green_proportion(setup, direction)
     arriving_per_cycle = ((vph_rates[direction] / setup.get_road(direction).total_standard_lanes)
                           * (CYCLE_LENGTH / 60))
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
@@ -52,7 +55,7 @@ def max_queue(vph_rates, setup : Junction , direction):
 # Note: max_wait is heavily affected by max_queue
 def max_wait(vph_rates, setup, direction):
     # DONE: complete base implementation
-    proportion_green = get_green_proportion(vph_rates, setup)
+    proportion_green = get_green_proportion(setup, direction)
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
                          * (proportion_green * (CYCLE_LENGTH / 60)))
     return ((max_queue(vph_rates, setup, direction) / leaving_per_cycle) # Number of Cycles to remove cars
@@ -97,7 +100,7 @@ def worst_case_statistic(vph_rates,setup):
     return worst_wait
 
 
-
+get_efficiency_score([100,100,100,100], Junction())
 
 
 

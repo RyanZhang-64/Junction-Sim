@@ -1,4 +1,3 @@
-import Equations
 from InboundRoad import InboundRoad
 
 class Junction:
@@ -7,6 +6,7 @@ class Junction:
         self.puffin_crossings = False
 
     def efficiency_score(self, vph_rates):
+        import Equations
         return Equations.get_efficiency_score(vph_rates, self)
 
     def get_all_roads(self):
