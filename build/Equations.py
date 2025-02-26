@@ -26,6 +26,7 @@ def get_efficiency_score(vph_rates, setup):
     total_efficiency = 100 - ((mean_statistic(vph_rates, setup) * 60
                         + numpy.exp(fairness_statistic(vph_rates, setup)-FAIRNESS_EXTREME_BOUNDARY))
                         + numpy.exp(worst_case_statistic(vph_rates, setup)-WORST_CASE_EXTREME_BOUNDARY))
+    total_efficiency = round(max(total_efficiency,0), 2)
     return total_efficiency
 
 
@@ -96,7 +97,7 @@ def worst_case_statistic(vph_rates,setup):
     return worst_wait
 
 
-lst = [100,100,100,100]
+lst = [175,160,1000,100]
 print(get_efficiency_score(lst,Junction()))
 
 
