@@ -41,6 +41,23 @@ def save_current_model():
     if not full_num_saves():
         print(junction_model.efficiency_score([100, 100, 100, 100]))
         print("not full")
+
+        """
+        mean wait time
+        max wait time
+        max queue length
+        performance score
+
+        bus lane
+        left lane
+        bike lane
+        number lanes
+        priority
+        """
+
+
+
+
     else:
         print("Full save files")
     
