@@ -9,7 +9,7 @@ class InboundRoad:
         self.puffin_crossing = False
 
     # Here we return the number of lanes that the road has 
-    def total_standard_lanes(self):
+    def get_total_standard_lanes(self):
         return self.total_standard_lanes
     
     # Takes in the number of lanes and increments or decrements based on which button is pressed 
@@ -21,7 +21,7 @@ class InboundRoad:
     # Returns the boolean if there is a bus lane or if there isn't
 
     # changed name because property has same name
-    def bus_lane(self):
+    def is_bus_lane(self):
         return self.has_bus_lane
 
     # Changes the flag if there is a bus lane or if there isn't
@@ -30,7 +30,7 @@ class InboundRoad:
         self.has_bus_lane = has_bus
     
     # Returns if there is a bus lane or not (Boolean)
-    def left_lane(self):
+    def has_left_lane(self):
         return self.has_left_lane
     
     # Changes the flag if there is a left lane or not
