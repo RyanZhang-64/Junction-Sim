@@ -16,8 +16,6 @@
             <div class="row">
                 <div class="col-7 position-relative">
                     <canvas id="junctionCanvas"></canvas>
-                    <button type="button" class="btn btn-primary position-absolute top-0 end-0 m-2" id="decreaseBtn">-</button>
-                    <button type="button" class="btn btn-primary position-absolute top-0 end-0 me-5 m-2" id="increaseBtn">+</button>
                     <button id="editNorth" class="edit-arm-button" onclick="showEditor('north')">✏️ Edit Northbound</button>
                     <button id="editSouth" class="edit-arm-button" onclick="showEditor('south')">✏️ Edit Southbound</button>
                     <button id="editEast" class="edit-arm-button" onclick="showEditor('east')">✏️ Edit Eastbound</button>
@@ -94,10 +92,10 @@
                         </div>
                     </div>
                     <div class="row border-top align-items-start">
-                        <div class="col-6 text-center bottom-menu">
+                        <div class="col-5 text-center bottom-menu">
                             Hover over lanes for options<br>Click to toggle
                         </div>
-                        <div class="col-3">
+                        <div class="col-4">
                             <div class="container d-flex justify-content-center align-items-center" style="height: 15vh;">
                                 <div class="d-flex flex-column" style="width: 80%; height: 80%;">
                                     <nav aria-label="Priority navigation" class="h-100">
@@ -107,8 +105,8 @@
                                             </div>
                                             <div class="flex-grow-1 d-flex align-items-center">
                                                 <ul class="pagination justify-content-center w-100 mb-0">
-                                                    <li id="priority1" class="page-item disabled">
-                                                        <a class="page-link text-center" href="#" tabindex="-1" aria-disabled="true">1</a>
+                                                    <li id="priority1" class="page-item">
+                                                        <a class="page-link text-center" href="#">1</a>
                                                     </li>
                                                     <li id="priority2" class="page-item">
                                                         <a class="page-link text-center" href="#">2</a>
@@ -129,9 +127,9 @@
                         <div class="col-3">
                             <div class="container button-container">
                                 <div class="button-group">
-                                    <button id="applyChanges" class="btn btn-success rounded-top-4 mb-0 flex-grow-1 fs-5 action-button" 
+                                    <button id="applyChanges" class="btn btn-success action-button" 
                                             onclick="applyChanges()">Apply</button>
-                                    <button id="cancelChanges" class="btn btn-danger rounded-bottom-4 flex-grow-1 fs-5 action-button" 
+                                    <button id="cancelChanges" class="btn btn-danger action-button" 
                                             onclick="cancelChanges()">Cancel</button>
                                 </div>   
                             </div>                          

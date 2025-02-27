@@ -37,9 +37,14 @@ canvas {
 }
 
 #junctionCanvas {
-    width: 70vw;
-    height: 100vh;
+    width: 65vw;
+    height: 95vh;
     display: block;  /* removes any default spacing */
+    margin: 1vw 1vh;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--border-light);
+    background-color: #8dc945;
 }
 
 .edit-arm-button {
@@ -125,7 +130,7 @@ html, body {
     align-items: center;
     min-height: 15vh;
     justify-content: center;
-    font-size: 3vh;
+    font-size: 2.7vh;
     color: var(--primary-text);
 }
 
@@ -137,7 +142,7 @@ html, body {
     flex: 1;
     min-width: 0;
     position: relative;
-    background-color: white;
+    background-color: #888888;
 }
 
 /* Stripe pattern */
@@ -149,31 +154,14 @@ html, body {
     top: 0;
     background: repeating-linear-gradient(
         to bottom,
-        black 0px,
-        black 30px,
+        white 0px,
+        white 30px,
         transparent 30px,
         transparent 100px
     );
     z-index: 1;
 }
 
-/* Border before control lane with gap */
-.control-lane::before {
-    content: '';
-    position: absolute;
-    width: var(--stripe-width);
-    height: 100%;
-    top: 0;
-    margin-left: -1vw;
-    background: repeating-linear-gradient(
-        to bottom,
-        black 0px,
-        black 30px,
-        transparent 30px,
-        transparent 100px
-    );
-    z-index: 1;
-}
 
 .column:not(:last-child)::after {
     right: 0;
@@ -242,7 +230,6 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 2vw;
 }
 
 /* Puffin crossing */
@@ -266,16 +253,45 @@ html, body {
 }
 
 .button-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    height: 90%;
+    margin: 0 auto; /* Centers the group horizontally */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centers the group precisely */
+  }
+  
+  .action-button {
     width: 100%;
-    height: 40%;
-}
-
-.button-group > button {
-    width: 100%;
-    height: 100%;
-    padding: 0 4vw;
-}
-
+    height: 50%; /* Each button takes half the height of the container */
+    padding: 0;
+    margin: 0;
+    font-weight: bold;
+    font-size: min(3vh, 3vw); /* Font scales with viewport dimensions */
+    text-align: center;
+    white-space: nowrap;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+  }
+  
+  #applyChanges {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: -1px; /* Removes any potential gap from border */
+  }
+  
+  #cancelChanges {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
 
 .lane-image-container {
     position: relative;
@@ -315,23 +331,13 @@ html, body {
         opacity: 0;
     }
 }
-.action-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3vh;
-}
-
-.stat {
-    font-size: 2vw;
-}
 
 .stat-title {
     font-size: 3vw;
 }
 
 .infobar-title {
-    font-size: 4vw;
+    font-size: 3vw;
 }
 
 .infobar-label {
@@ -422,7 +428,6 @@ html, body {
     align-items: center;
     width: 90%;
     margin: 10px auto;
-    padding: 0 1vw;
     opacity: 0;  /* Start fully transparent */
     transition: opacity 0.3s ease;  /* Smooth transition for opacity */
 }
@@ -435,34 +440,6 @@ html, body {
 .column-buttons > button {
     padding: 3vh;
     font-size: 1.5vw;
-}
-
-/* Arrow buttons */
-.arrow-buttons {
-    display: flex;
-    width: 100%;
-    font-size: 1vw;
-}
-
-.btn-arrow-up, .btn-arrow-down {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    padding: 1vw;
-    color: var(--primary-text);
-    cursor: pointer;
-    border: none;
-}
-
-.btn-arrow-up {
-    background: var(--bg-light);
-    border-bottom-left-radius: 4px;
-    border-right: 1px solid var(--border-light);
-}
-
-.btn-arrow-down {
-    background: var(--bg-darker);
-    border-bottom-right-radius: 4px;
 }
 
 /* Info column */
