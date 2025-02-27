@@ -156,7 +156,15 @@ def edit_eastbound():
     selected_lane = "east"
     reset_temp_model()
     print("East")
-    return Response(status=204)
+    
+    # send JSON response of data 
+    mean_wait = 2
+    max_wait = 3
+    max_queue = 10
+    performance = 13
+    return jsonify({"mean_wait": mean_wait, 
+                    "max_wait": max_wait, "max_queue": max_queue, 
+                    "performance": performance})
 
 @app.route("/edit-southbound")
 def edit_southbound():
@@ -164,7 +172,15 @@ def edit_southbound():
     selected_lane = "south"
     reset_temp_model()
     print("South")
-    return Response(status=204)
+    
+    # send JSON response of data 
+    mean_wait = 2
+    max_wait = 3
+    max_queue = 10
+    performance = 13
+    return jsonify({"mean_wait": mean_wait, 
+                    "max_wait": max_wait, "max_queue": max_queue, 
+                    "performance": performance})
 
 @app.route("/edit-westbound")
 def edit_westbound():
@@ -172,7 +188,15 @@ def edit_westbound():
     selected_lane = "west"
     reset_temp_model()
     print("West")
-    return Response(status=204)
+    
+    # send JSON response of data 
+    mean_wait = 2
+    max_wait = 3
+    max_queue = 10
+    performance = 13
+    return jsonify({"mean_wait": mean_wait, 
+                    "max_wait": max_wait, "max_queue": max_queue, 
+                    "performance": performance})
 
 # Lane modification ----------------------------------------------------------------------------
 

@@ -18,15 +18,15 @@ fetch('/api/data')
 // Editing north, east, south and west lanes
 
 document.getElementById("editSouth").addEventListener("click", function() {
-    fetch("/edit-southbound", {
-        method: "GET", // Change to "POST" if needed
-        headers: {
-            "Content-Type": "application/json"
-        }
+    fetch("/edit-southbound")
+    .then(response => response.json())  // Convert response to JSON
+    .then(data => {
+        console.log("Mean Wait:", data.mean_wait);
+        console.log("Max Wait:", data.max_wait);
+        console.log("Max Queue:", data.max_queue);
+        console.log("Performance:", data.performance);
     })
-    .then(response => response.json()) // Assuming the response is JSON
-    .then(data => console.log("Success:", data))
-    .catch(error => console.error("Error:", error));
+    .catch(error => console.error("Error fetching data:", error));
 });
 
 document.getElementById("editNorth").addEventListener("click", function() {
@@ -42,27 +42,27 @@ document.getElementById("editNorth").addEventListener("click", function() {
 });
 
 document.getElementById("editEast").addEventListener("click", function() {
-    fetch("/edit-eastbound", {
-        method: "GET", // Change to "POST" if needed
-        headers: {
-            "Content-Type": "application/json"
-        }
+    fetch("/edit-eastbound")
+    .then(response => response.json())  // Convert response to JSON
+    .then(data => {
+        console.log("Mean Wait:", data.mean_wait);
+        console.log("Max Wait:", data.max_wait);
+        console.log("Max Queue:", data.max_queue);
+        console.log("Performance:", data.performance);
     })
-    .then(response => response.json()) // Assuming the response is JSON
-    .then(data => console.log("Success:", data))
-    .catch(error => console.error("Error:", error));
+    .catch(error => console.error("Error fetching data:", error));
 });
 
 document.getElementById("editWest").addEventListener("click", function() {
-    fetch("/edit-westbound", {
-        method: "GET", // Change to "POST" if needed
-        headers: {
-            "Content-Type": "application/json"
-        }
+    fetch("/edit-westbound")
+    .then(response => response.json())  // Convert response to JSON
+    .then(data => {
+        console.log("Mean Wait:", data.mean_wait);
+        console.log("Max Wait:", data.max_wait);
+        console.log("Max Queue:", data.max_queue);
+        console.log("Performance:", data.performance);
     })
-    .then(response => response.json()) // Assuming the response is JSON
-    .then(data => console.log("Success:", data))
-    .catch(error => console.error("Error:", error));
+    .catch(error => console.error("Error fetching data:", error));
 });
 
 // Adding and removing lanes
