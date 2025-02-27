@@ -38,8 +38,6 @@ def full_num_saves():
         print("File not found.")
         return False
 
-
-
 # Saves info about current junction to file
 def save_current_model():
     global junction_model
@@ -69,8 +67,40 @@ def save_current_model():
                 file.write(f"{puffin_crossings[i]}\n")
     else:
         print("Full save files")
-    
-    
+
+def check_line_not_occupied(self, line_num):
+    try:
+        with open(filename, "r") as file:
+            lines = file.readlines()
+
+        if len(lines) < line_num:
+            return False  # Line 120 does not exist
+        return bool(lines[line_num - 1].strip())  
+        # True if line 120 has content, False if empty
+    except FileNotFoundError:
+        print("File not found.")
+        return False
+
+# Get junction
+# Given a save file (1-5) returns a junction object
+def get_saved_junction(self, save_file):
+    global filename
+    if save_file == 1:
+        # There is no save
+        if check_line_not_occupied(1):
+            print("h")
+        # There is save
+        else:
+            print("h")
+        
+    # 1, 25, 49, 83, 97 start of each save file
+
+        # check that this save file does not exist
+
+    else:
+        print("Invalid save file")
+        return None
+
 
 # -------------------------------------------------------
 

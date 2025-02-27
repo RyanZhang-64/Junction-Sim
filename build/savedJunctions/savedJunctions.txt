@@ -1,18 +1,6 @@
 False
 False
 bike lane
-4
-1
-False
-False
-False
-bike lane
-5
-1
-False
-False
-False
-bike lane
 1
 1
 False
@@ -25,91 +13,7 @@ False
 False
 False
 bike lane
-4
 1
-False
-False
-False
-bike lane
-5
-1
-False
-False
-False
-bike lane
-1
-1
-False
-False
-False
-bike lane
-1
-1
-False
-False
-False
-bike lane
-4
-1
-False
-False
-False
-bike lane
-5
-1
-False
-False
-False
-bike lane
-2
-1
-False
-False
-False
-bike lane
-1
-1
-False
-False
-False
-bike lane
-4
-1
-False
-False
-False
-bike lane
-5
-1
-False
-False
-False
-bike lane
-2
-1
-False
-False
-False
-bike lane
-1
-1
-False
-False
-False
-bike lane
-4
-1
-False
-False
-False
-bike lane
-5
-1
-False
-False
-False
-bike lane
-2
 1
 False
 False
