@@ -13,22 +13,13 @@ class JunctionSimulation {
         this.junctionSize = Math.min(rect.width, rect.height) * junctionFactor;
         
         // Lane configurations
-        this.westboundLanes = 2;
-        this.eastboundLanes = 2;
-        this.northboundLanes = 2;
-        this.southboundLanes = 2;
+        this.westboundLanes = 1;
+        this.eastboundLanes = 1;
+        this.northboundLanes = 1;
+        this.southboundLanes = 1;
     
         // Direction state
         this.currentDirection = null;
-    
-        // Traffic light states
-        this.trafficLights = {
-            west: Array(this.westboundLanes).fill('red'),
-            east: Array(this.eastboundLanes).fill('red'),
-            north: Array(this.northboundLanes).fill('red'),
-            south: Array(this.southboundLanes).fill('red')
-        };
-
         this.busLanes = {
             north: [],
             south: [],
@@ -53,6 +44,7 @@ class JunctionSimulation {
         };
 
         // Add alongside other state objects
+        // In your JunctionSimulation constructor
         this.priorities = {
             north: 0,  // 0 means no priority
             south: 0,
@@ -74,14 +66,13 @@ class JunctionSimulation {
         };
     
         // Setup event handlers
-        this.setupEventListeners();
         this.setupHoverDetection();  // Removed duplicate call
         this.setupNavigationListeners();
         
         // Initial draw
         this.draw();
     }
-
+    
     drawZebraCrossing(x, y, width, height, direction) {
         if (!this.puffinCrossings[direction]) return;
     
@@ -145,22 +136,6 @@ class JunctionSimulation {
     
         // Restore context state
         this.ctx.restore();
-    }
-
-    setupEventListeners() {
-        document.getElementById('increaseBtn').addEventListener('click', () => {
-            if (this.westboundLanes < 5) {
-                this.westboundLanes++;
-                this.draw();
-            }
-        });
-    
-        document.getElementById('decreaseBtn').addEventListener('click', () => {
-            if (this.westboundLanes > 1) {
-                this.westboundLanes--;
-                this.draw();
-            }
-        });
     }
 
     setupHoverDetection() {
@@ -349,7 +324,7 @@ class JunctionSimulation {
         const centerY = (this.canvas.height / this.dpr) / 2;
 
         // Draw junction box background
-        this.ctx.fillStyle = '#ffffff';  // White background
+        this.ctx.fillStyle = '#888888';  // White background
         this.ctx.fillRect(
             centerX - this.junctionSize/2,
             centerY - this.junctionSize/2,
@@ -361,7 +336,7 @@ class JunctionSimulation {
         this.drawRoads(centerX, centerY);
 
         // Draw junction box border
-        this.ctx.strokeStyle = '#000';
+        this.ctx.strokeStyle = '#ffffff';
         this.ctx.strokeRect(
             centerX - this.junctionSize/2,
             centerY - this.junctionSize/2,
@@ -381,12 +356,6 @@ class JunctionSimulation {
         this.drawAllCrossings(centerX, centerY);  // Remove the if condition
         this.drawBusLanes(centerX, centerY); 
         this.drawPriorityBars(centerX, centerY);
-    
-        // Finally draw traffic lights and arrows
-        this.drawTrafficLights(centerX, centerY, 'west', this.westboundLanes);
-        this.drawTrafficLights(centerX, centerY, 'east', this.eastboundLanes);
-        this.drawTrafficLights(centerX, centerY, 'north', this.northboundLanes);
-        this.drawTrafficLights(centerX, centerY, 'south', this.southboundLanes);
     
         this.drawLaneArrows(centerX, centerY, 'west', this.westboundLanes);
         this.drawLaneArrows(centerX, centerY, 'east', this.eastboundLanes);
@@ -461,12 +430,12 @@ class JunctionSimulation {
             
             const lanes = this[`${direction}boundLanes`];
             const laneWidth = this.calculateLaneWidth(lanes);
-            const totalWidth = lanes * laneWidth;
-            const barHeight = laneWidth * 0.3;  // Height of priority bar
+            const totalWidth = lanes * laneWidth - 10;
+            const barHeight = this.dpr*100;  // Height of priority bar
             
             this.ctx.save();
             this.ctx.fillStyle = '#4a90e2';  // Priority bar color
-            this.ctx.font = `${barHeight * 0.6}px Arial`;
+            this.ctx.font = `${totalWidth*0.004}vw Arial`;
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
             
@@ -564,16 +533,6 @@ class JunctionSimulation {
         });
     }
 
-    drawLaneNumber(x, y, number) {
-        // Scale font size relative to junction size
-        const fontSize = Math.max(14, this.junctionSize * 0.03);
-        this.ctx.font = `${fontSize}px Arial`;
-        this.ctx.fillStyle = '#000';
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(number.toString(), x, y);
-    }
-
     setLeftTurnLane(direction, laneIndex, enabled) {
         if (enabled) {
             if (!this.leftTurnLanes[direction].includes(laneIndex)) {
@@ -583,55 +542,6 @@ class JunctionSimulation {
             this.leftTurnLanes[direction] = this.leftTurnLanes[direction].filter(i => i !== laneIndex);
         }
         this.draw();
-    }
-
-    drawTrafficLights(x, y, direction, lanes) {
-        const laneWidth = this.calculateLaneWidth(lanes);
-        const stripWidth = laneWidth;  // Fixed width
-        const stripLength = 10;
-        
-        const centers = this.getLaneCenters(x, y, lanes, direction === 'north' || direction === 'south');
-        
-        centers.forEach((center, index) => {
-            const lightColor = this.trafficLights[direction][index];
-            this.ctx.fillStyle = lightColor;
-            
-            // Position strips based on direction
-            switch(direction) {
-                case 'west':
-                    this.ctx.fillRect(
-                        x - this.junctionSize/2 - stripLength,
-                        center.y - stripWidth/2,
-                        stripLength,
-                        stripWidth
-                    );
-                    break;
-                case 'east':
-                    this.ctx.fillRect(
-                        x + this.junctionSize/2,
-                        center.y - stripWidth/2,
-                        stripLength,
-                        stripWidth
-                    );
-                    break;
-                case 'north':
-                    this.ctx.fillRect(
-                        center.x - stripWidth/2,
-                        y - this.junctionSize/2 - stripLength,
-                        stripWidth,
-                        stripLength
-                    );
-                    break;
-                case 'south':
-                    this.ctx.fillRect(
-                        center.x - stripWidth/2,
-                        y + this.junctionSize/2,
-                        stripWidth,
-                        stripLength
-                    );
-                    break;
-            }
-        });
     }
 
     getLaneCenters(startX, startY, lanes, vertical = false) {
@@ -659,25 +569,29 @@ class JunctionSimulation {
         return totalLanes - laneIndex;
     }
 
-    updateTrafficLight(direction, laneIndex, color) {
-        if (this.trafficLights[direction] && 
-            laneIndex < this.trafficLights[direction].length) {
-            this.trafficLights[direction][laneIndex] = color;
-            this.draw();
-        }
-    }
-
     drawRoadSegment(x1, y1, x2, y2, lanes, vertical = false) {
         const offset = this.junctionSize / 2;
         const laneWidth = this.calculateLaneWidth(lanes);
-        const midX = (x1 + x2) / 2;
-        const midY = (y1 + y2) / 2;
-
-        // Draw road boundaries
-        this.ctx.lineWidth = 2;
+        const roadWidth = this.junctionSize;
+        
+        this.ctx.save();
+        
+        // Draw road surface (gray asphalt)
+        this.ctx.fillStyle = '#888888'; // Medium gray for asphalt
         this.ctx.beginPath();
-        this.ctx.strokeStyle = '#000';
-
+        
+        if (vertical) {
+            this.ctx.rect(x1 - offset, y1, roadWidth, y2 - y1);
+        } else {
+            this.ctx.rect(x1, y1 - offset, x2 - x1, roadWidth);
+        }
+        this.ctx.fill();
+        
+        // Draw road boundaries (solid black lines)
+        this.ctx.lineWidth = 10;
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = '#ffffff';
+    
         if (vertical) {
             this.ctx.moveTo(x1 - offset, y1);
             this.ctx.lineTo(x2 - offset, y2);
@@ -690,9 +604,13 @@ class JunctionSimulation {
             this.ctx.lineTo(x2, y2 + offset);
         }
         this.ctx.stroke();
-
-        // Draw lane dividers
-        this.ctx.setLineDash([5, 5]);
+    
+        // Draw lane dividers (white dashed lines)
+        this.ctx.strokeStyle = '#FFFFFF'; // White for lane dividers
+        this.ctx.lineWidth = 1.5;
+        // UK motorway style has longer dashes than default
+        this.ctx.setLineDash([10, 15]); // Adjusted for scale - longer dash, longer gap
+        
         for (let i = 1; i < lanes; i++) {
             this.ctx.beginPath();
             if (vertical) {
@@ -706,14 +624,9 @@ class JunctionSimulation {
             }
             this.ctx.stroke();
         }
+        
         this.ctx.setLineDash([]);
-
-        // Draw lane numbers with black text
-        const centers = this.getLaneCenters(midX, midY, lanes, vertical);
-        this.ctx.fillStyle = '#000';  // Ensure text is black
-        centers.forEach((center, index) => {
-            this.drawLaneNumber(center.x, center.y, this.calculateLaneNumber(index, lanes));
-        });
+        this.ctx.restore();
     }
 
     drawBusLanes(centerX, centerY) {
@@ -825,10 +738,22 @@ class JunctionSimulation {
         // Get the current configuration from the editor
         const newConfig = this.getEditorConfiguration();
         
+        // Debug logging
+        console.log(`Applying changes for ${this.currentDirection} direction:`);
+        console.log(`- Priority: ${newConfig.priority}`);
+        console.log(`- Puffin: ${newConfig.puffinActive}`);
+        console.log(`- Lanes: ${newConfig.lanes}`);
+        console.log(`- Left turn lanes: ${JSON.stringify(newConfig.leftTurnLanes)}`);
+        console.log(`- Bus lanes: ${JSON.stringify(newConfig.busLanes)}`);
+        
         // Update the appropriate direction's configuration
         this.puffinCrossings[this.currentDirection] = newConfig.puffinActive;
         this.busLanes[this.currentDirection] = newConfig.busLanes;
+        
+        // Add debug for priority before and after
+        console.log(`Priority before: ${this.priorities[this.currentDirection]}`);
         this.priorities[this.currentDirection] = newConfig.priority;
+        console.log(`Priority after: ${this.priorities[this.currentDirection]}`);
     
         switch(this.currentDirection) {
             case 'north':
@@ -874,11 +799,36 @@ class JunctionSimulation {
         // Simply return whatever the editor's getEditorConfiguration returns
         return window.getEditorConfiguration();
     }
+
 }
+
+(function extendJunctionSimulation() {
+    // Add priority methods to JunctionSimulation prototype
+    JunctionSimulation.prototype.setPriority = function(direction, priority) {
+        if (this.priorities && typeof priority === 'number' && priority >= 0 && priority <= 4) {
+            this.priorities[direction] = priority;
+            this.draw();
+        }
+    };
+    
+    JunctionSimulation.prototype.getPriority = function(direction) {
+        return this.priorities[direction] || 0;
+    };
+    
+    // Enhance the applyChanges method to include priority
+    const originalApplyChanges = JunctionSimulation.prototype.applyChanges;
+    JunctionSimulation.prototype.applyChanges = function() {
+        // Get the current configuration from the editor
+        const newConfig = this.getEditorConfiguration();
+        
+        // Set priority for current direction
+        this.setPriority(this.currentDirection, newConfig.priority);
+        
+        // Call original method to handle the rest
+        originalApplyChanges.call(this);
+    };
+})();
 
 
 
 const simulation = new JunctionSimulation('junctionCanvas');
-simulation.updateTrafficLight('west', 0, 'green');  // Set first westbound lane to green
-simulation.setLeftTurnLane('west', 0, true);
-    

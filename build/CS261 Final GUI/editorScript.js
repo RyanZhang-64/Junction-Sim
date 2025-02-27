@@ -11,29 +11,101 @@ let activeBusColumn = null;
 
 // Add state management
 let currentConfig = {
-    lanes: 2,
+    lanes: 1,
     leftTurnLanes: [],
     busLanes: [],
     priority: 1
 };
 
-// Expose initialization function for the main script
+function rebuildPriorityPagination(priorityValue) {
+    console.log("REBUILDING");
+    // Get the container that holds the pagination
+    const paginationContainer = document.querySelector('.pagination');
+    if (!paginationContainer) return;
+    
+    // Clear existing pagination
+    paginationContainer.innerHTML = '';
+    
+    // Create new pagination items
+    for (let i = 1; i <= 4; i++) {
+        const listItem = document.createElement('li');
+        listItem.id = `priority${i}`;
+        listItem.className = 'page-item';
+        
+        // Mark the item active if it matches the current priority
+        if (i === priorityValue) {
+            listItem.classList.add('active');
+        }
+        
+        const link = document.createElement('a');
+        link.className = 'page-link text-center';
+        link.href = '#';
+        link.textContent = i;
+        
+        // Add click handler
+        // In the pagination click handler:
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            console.log(`Priority clicked: ${i}`);
+            
+            // Update priority label
+            const priorityLabel = document.querySelector('.priority-label');
+            priorityLabel.innerHTML = `Priority Set <i class="fas fa-star"></i>`;
+            priorityLabel.classList.remove('text-muted');
+            priorityLabel.classList.add('active');
+            
+            // Update current config
+            currentConfig.priority = i;
+            console.log(`Updated currentConfig.priority to: ${currentConfig.priority}`);
+            
+            // Update active state
+            document.querySelectorAll('.page-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            listItem.classList.add('active');
+        });
+        
+        listItem.appendChild(link);
+        paginationContainer.appendChild(listItem);
+    }
+    
+    // Update the priority label based on priorityValue
+    const priorityLabel = document.querySelector('.priority-label');
+    if (priorityValue === 0) {
+        priorityLabel.textContent = 'Priority Unset';
+        priorityLabel.classList.remove('active');
+        priorityLabel.classList.add('text-muted');
+    } else {
+        priorityLabel.innerHTML = `Priority Set <i class="fas fa-star"></i>`;
+        priorityLabel.classList.remove('text-muted');
+        priorityLabel.classList.add('active');
+    }
+}
+
 window.initializeEditorUI = function(config) {
     const puffin = document.getElementById('puffin');
-    if (config.puffinActive) {
-        puffinOn = true;
-        puffin.classList.replace('inactive', 'active');
-        puffin.innerHTML = "Puffin Active";
+    if (puffin) {  // Make sure element exists before accessing properties
+        if (config.puffinActive) {
+            puffinOn = true;
+            puffin.classList.replace('inactive', 'active');
+            puffin.innerHTML = "Puffin Active";
+        } else {
+            puffinOn = false;
+            puffin.classList.replace('active', 'inactive');
+            puffin.innerHTML = "Puffin Inactive";
+        }
     } else {
-        puffinOn = false;
-        puffin.classList.replace('active', 'inactive');
-        puffin.innerHTML = "Puffin Inactive";
+        // Handle case where puffin element doesn't exist
+        console.warn("Puffin element not found in DOM");
+        puffinOn = config.puffinActive || false;
     }
+    
     currentConfig = {
-        lanes: config.lanes || 2,
+        lanes: config.lanes || 1,
         leftTurnLanes: config.leftTurnLanes || [],
         busLanes: config.busLanes || [],
-        priority: config.priority || 1
+        priority: config.priority !== undefined ? config.priority : 0
     };
 
     // Clear existing columns
@@ -59,10 +131,8 @@ window.initializeEditorUI = function(config) {
         }
     });
 
-    // Set priority
-    const priorityItems = document.querySelectorAll('.page-item');
-    priorityItems.forEach(item => item.classList.remove('active'));
-    priorityItems[currentConfig.priority - 1]?.classList.add('active');
+    // Create the priority pagination dynamically
+    rebuildPriorityPagination(currentConfig.priority);
 
     // Set puffin state
     if (puffinOn !== config.puffinActive) {
@@ -85,15 +155,13 @@ window.getEditorConfiguration = function() {
         }
     });
 
-    const activePriority = document.querySelector('.page-item.active');
-    const priority = activePriority ? 
-        parseInt(activePriority.querySelector('.page-link').textContent) : 1;
+    console.log(`getEditorConfiguration - currentConfig.priority: ${currentConfig.priority}`);
 
     return {
         lanes: columns.length,
         leftTurnLanes,
         busLanes,
-        priority,
+        priority: currentConfig.priority,
         puffinActive: puffinOn
     };
 };
@@ -199,31 +267,10 @@ function decreaseColumns() {
     }
 }
 
-document.querySelectorAll('.page-item:not(.disabled)').forEach(item => {
-    item.addEventListener('click', function(e) {
-        e.preventDefault();
-        // Remove active class from all items
-        document.querySelectorAll('.page-item').forEach(el => {
-            el.classList.remove('active');
-        });
-        // Add active class to clicked item
-        this.classList.add('active');
-        
-        // Update the label
-        const priorityLabel = document.querySelector('.priority-label');
-        priorityLabel.innerHTML = `Priority Set <i class="fas fa-star"></i>`;
-        priorityLabel.classList.remove('text-muted');
-        priorityLabel.classList.add('active');
-
-        // Get priority from clicked item and update config directly
-        const newPriority = parseInt(this.querySelector('.page-link').textContent);
-        currentConfig.priority = newPriority;
-    });
-});
 // Initialize first column with Left Turn button
 window.addEventListener('DOMContentLoaded', () => {
     if (!document.getElementById('columnsContainer').children.length) {
-        initializeColumns(4);
+        initializeColumns(1);
     }
 });
 
@@ -238,10 +285,6 @@ function createButtonsDiv(isFirstColumn) {
     
     buttonHtml += `
         <button id="busToggle" class="button-label" onclick="spawnBusImage(this)">Bus</button>
-        <div class="arrow-buttons">
-            <button class="btn-arrow-up"><i class="fa-solid fa-up-long"></i></button>
-            <button class="btn-arrow-down"><i class="fa-solid fa-down-long"></i></button>
-        </div>
     `;
     
     buttonsDiv.innerHTML = buttonHtml;
