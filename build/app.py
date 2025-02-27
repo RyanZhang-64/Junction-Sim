@@ -28,36 +28,45 @@ def full_num_saves():
     try:
         with open(filename, "r") as file:
             lines = file.readlines()
-            if len(lines) >= 120 and lines[119].strip():
-                print("Line 120 contains content.")
-            else:
-                print("Line 120 is empty or does not exist.")
+
+        if len(lines) < 120:
+            return False  # Line 120 does not exist
+        return bool(lines[119].strip())  
+        # True if line 120 has content, False if empty
+    
     except FileNotFoundError:
         print("File not found.")
+        return False
+
+
 
 # Saves info about current junction to file
 def save_current_model():
     global junction_model
     if not full_num_saves():
-        print(junction_model.efficiency_score([100, 100, 100, 100]))
-        print("not full")
+        print("file is not full")
+        # temp_vph_rates = [100, 100, 100, 100]
+        #mean_wait = junction_model.efficiency_score(temp_vph_rates)
 
-        """
-        mean wait time
-        max wait time
-        max queue length
-        performance score
+        roads = junction_model.get_all_roads()
 
-        bus lane
-        left lane
-        bike lane
-        number lanes
-        priority
-        """
+        bus_lanes = [i.is_bus_lane() for i in roads]
+        left_lanes = [i.is_left_lane() for i in roads]
+        #TODO add bike lane later
+        bike_lanes = ["bike lane" for i in roads]
+        num_lanes = [i.get_total_standard_lanes() for i in roads]
+        priorities = [i.get_priority_factor() for i in roads]
+        puffin_crossings = [i.has_puffin_crossing() for i in roads]
 
-
-
-
+        # writing data to file
+        with open(filename, "a") as file:
+            for i in range(0, 4):
+                file.write(f"{bus_lanes[i]}\n")
+                file.write(f"{left_lanes[i]}\n")
+                file.write(f"{bike_lanes[i]}\n")
+                file.write(f"{num_lanes[i]}\n")
+                file.write(f"{priorities[i]}\n")
+                file.write(f"{puffin_crossings[i]}\n")
     else:
         print("Full save files")
     
@@ -151,7 +160,7 @@ def remove_lane():
 def bus_toggle():
     global temp_junction_model, selected_lane
     temp_junction_model.get_lane(selected_lane).toggle_bus_lane()
-    print("Has bus lane:" + str(temp_junction_model.get_lane(selected_lane).bus_lane()))
+    print("Has bus lane:" + str(temp_junction_model.get_lane(selected_lane).is_bus_lane()))
     return Response(status=204)
 
 # Left turn lane
@@ -159,7 +168,7 @@ def bus_toggle():
 def left_toggle():
     global temp_junction_model, selected_lane
     temp_junction_model.get_lane(selected_lane).toggle_left_lane()
-    print("Has left lane:" + str(temp_junction_model.get_lane(selected_lane).left_lane()))
+    print("Has left lane:" + str(temp_junction_model.get_lane(selected_lane).is_left_lane()))
     return Response(status=204)
 
 # TODO bike lane toggle
