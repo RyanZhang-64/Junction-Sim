@@ -45,6 +45,9 @@ document.getElementById("editEast").addEventListener("click", function() {
     fetch("/edit-eastbound")
     .then(response => response.json())  // Convert response to JSON
     .then(data => {
+        document.getElementById("meanWaitEditor").textContent = data.mean_wait
+
+
         console.log("Mean Wait:", data.mean_wait);
         console.log("Max Wait:", data.max_wait);
         console.log("Max Queue:", data.max_queue);
