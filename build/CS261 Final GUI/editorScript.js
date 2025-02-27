@@ -327,3 +327,5 @@ function puffinToggle() {
     // Notify the main view of puffin state change
     window.updatePuffinState?.(puffinOn);
 }
+
+

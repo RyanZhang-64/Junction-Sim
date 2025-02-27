@@ -140,7 +140,15 @@ def edit_northbound():
     selected_lane = "north"
     reset_temp_model()
     print("North")
-    return Response(status=204)
+
+    # send JSON response of data 
+    mean_wait = 2
+    max_wait = 3
+    max_queue = 10
+    performance = 13
+    return jsonify({"mean_wait": mean_wait, 
+                    "max_wait": max_wait, "max_queue": max_queue, 
+                    "performance": performance})
 
 @app.route("/edit-eastbound")
 def edit_eastbound():
