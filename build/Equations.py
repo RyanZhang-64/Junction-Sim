@@ -41,8 +41,9 @@ def get_green_proportion(setup, direction):
 
 def max_queue(vph_rates, setup, direction):
     # DONE: complete base implementation
+    road = setup.get_road(direction)
     proportion_green = get_green_proportion(setup, direction)
-    arriving_per_cycle = ((vph_rates[direction] / setup.get_road(direction).total_standard_lanes)
+    arriving_per_cycle = ((vph_rates[direction] / road.total_standard_lanes)
                           * (CYCLE_LENGTH / 60))
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
                          * (proportion_green * (CYCLE_LENGTH / 60)))
@@ -52,7 +53,6 @@ def max_queue(vph_rates, setup, direction):
 
 # Note: max_wait is heavily affected by max_queue
 def max_wait(vph_rates, setup, direction):
-    # DONE: complete base implementation
     proportion_green = get_green_proportion(setup, direction)
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
                          * (proportion_green * (CYCLE_LENGTH / 60)))
@@ -63,10 +63,10 @@ def max_wait(vph_rates, setup, direction):
 
 
 def average_wait(vph_rates, setup, direction):
-    arriving_per_cycle = ((vph_rates[direction] / setup.get_road(direction).total_standard_lanes)
+    road = setup.get_road(direction)
+    arriving_per_cycle = ((vph_rates[direction] / road.total_standard_lanes)
                           * (CYCLE_LENGTH / 60))
     return max_wait(vph_rates, setup, direction) / arriving_per_cycle # the total time to clear the vehicles divided by the total number of vehicles arriving
-
 
 
 # The average_wait time for any car at the junction
@@ -99,8 +99,10 @@ def null_Junction():
     from Junction import Junction
     return Junction()
 
-#lst = [100,100,100,100]
-#print(get_efficiency_score(lst,null_Junction()))
+
+if __name__ == "__main__":
+    lst = [100,100,100,100]
+    print(get_efficiency_score(lst,null_Junction()))
 
 
 
