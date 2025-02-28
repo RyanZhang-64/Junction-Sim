@@ -10,7 +10,7 @@ import numpy
 
 ## Constants  --  specific values not final
 CYCLE_LENGTH = 4 # (minutes)
-MAX_VEHICLE_MOVEMENT = 1800 # vph rate at which cars can pass through the junction
+MAX_VEHICLE_MOVEMENT = 180 # vph rate at which cars can pass through the junction
 
 ## Green/Red time for the traffic lights -- implement priority etc. by changing this to a vector for each direction?
 #DEFAULT_PROPORTION_GREEN = 1 / 4.0
@@ -22,11 +22,12 @@ def get_efficiency_score(vph_rates, setup):
     FAIRNESS_EXTREME_BOUNDARY = 400
     WORST_CASE_EXTREME_BOUNDARY = 75
     ##TODO: include environmental factors!!!
-    total_efficiency = 100 - (mean_statistic(vph_rates, setup) * 60
+    total_efficiency = (mean_statistic(vph_rates, setup) * 60
                         + numpy.exp(fairness_statistic(vph_rates, setup)-FAIRNESS_EXTREME_BOUNDARY)
                         + numpy.exp(worst_case_statistic(vph_rates, setup)-WORST_CASE_EXTREME_BOUNDARY))
-    total_efficiency = round(max(total_efficiency,0), 2)
-    return total_efficiency
+    total_efficiency = 99/(1+numpy.exp(-(1/10)*(total_efficiency-75))) + 1 ## Sigmoid
+    total_efficiency = 100 - total_efficiency
+    return round(total_efficiency,2)
 
 
 
@@ -113,8 +114,11 @@ def environmental_score(has_bike_lane, has_bus_lane, has_puffin_crossing):
 
 
 if __name__ == "__main__":
-    lst = [100,100,100,100]
-    print(get_efficiency_score(lst,null_Junction()))
+    lst = [300,480,500,900]
+    junction = null_Junction()
+    junction.get_road(3).set_total_standard_lanes(5)
+    junction.get_road(1).set_total_standard_lanes(2)
+    print(get_efficiency_score(lst,junction))
 
 
 
