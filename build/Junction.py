@@ -42,6 +42,7 @@ class Junction:
     def get_average_wait(self, vph_rates):
         return round(self.get_max_wait(vph_rates)/Equations.MAX_VEHICLE_MOVEMENT *60,2)
 
+
 if __name__ == "__main__":
     lst = [100,100,100,100]
     print("avg", Junction().get_average_wait(lst))
