@@ -1,4 +1,5 @@
 from InboundRoad import InboundRoad
+import Equations
 
 class Junction:
     def __init__(self):
@@ -6,7 +7,6 @@ class Junction:
         self.puffin_crossings = False
 
     def efficiency_score(self, vph_rates):
-        import Equations
         return Equations.get_efficiency_score(vph_rates, self)
 
     def get_all_roads(self):
@@ -29,6 +29,26 @@ class Junction:
             return self.in_roads[2]
         elif direction == "west":
             return self.in_roads[3]
+
+
+    # Junction Metrics
+
+    def get_max_wait(self, vph_rates):
+        return round(Equations.worst_case_statistic(vph_rates, self) * 60,2)
+
+    def get_max_queue(self, vph_rates):
+        return max([Equations.max_queue(vph_rates,self, direction = x) for x in range(0,4)])
+
+    def get_average_wait(self, vph_rates):
+        return round(self.get_max_wait(vph_rates)/Equations.MAX_VEHICLE_MOVEMENT *60,2)
+
+
+lst = [100,100,100,100]
+print("avg", Junction().get_average_wait(lst))
+print("max Q", Junction().get_max_queue(lst))
+print("max W", Junction().get_max_wait(lst))
+
+
 
 
     

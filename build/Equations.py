@@ -1,6 +1,5 @@
 import statistics
 import numpy
-from Junction import Junction
 
 # NOTE: Assumed vph_rates is just the rates from North, South, West, East without the breakdown around the direction the cars are leaving to, may need to change this!
 
@@ -11,7 +10,7 @@ from Junction import Junction
 
 ## Constants  --  specific values not final
 CYCLE_LENGTH = 4 # (minutes)
-MAX_VEHICLE_MOVEMENT = 1000 # vph rate at which cars can pass through the junction
+MAX_VEHICLE_MOVEMENT = 1800 # vph rate at which cars can pass through the junction
 
 ## Green/Red time for the traffic lights -- implement priority etc. by changing this to a vector for each direction?
 #DEFAULT_PROPORTION_GREEN = 1 / 4.0
@@ -96,9 +95,12 @@ def worst_case_statistic(vph_rates,setup):
         worst_wait = max(worst_wait, max_wait_in_direction)
     return worst_wait
 
+def null_Junction():
+    from Junction import Junction
+    return Junction()
 
-lst = [100,100,100,100]
-print(get_efficiency_score(lst,Junction()))
+#lst = [100,100,100,100]
+#print(get_efficiency_score(lst,null_Junction()))
 
 
 
