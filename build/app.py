@@ -153,13 +153,22 @@ def get_saved_junction(self, save_file):
 
 # Initialises the true model objects
 junction_model = Junction.Junction()
-#lanes = [InboundRoad.InboundRoad()] * 4
 selected_lane = None
-
-# Reset temp model. This creates the temporary object for editing
 temp_junction_model = Junction.Junction()
-#temp_lanes = [InboundRoad.InboundRoad()] * 4
-# 0 = north, 1 = east. 2 = south, 3 = west
+
+temp_vph_rates = [500, 500, 500, 500]
+
+def print_junction_model():
+    global junction_model
+    i = 0
+    for dir in junction_model.get_all_roads():
+        print(i)
+        print("Has bus lane: " + str(dir.is_bus_lane()))
+        print("Num lanes: " + str(dir.get_total_standard_lanes()))
+        i += 1
+
+
+# ----------------------------------------------------------
 
 # Serve the main HTML page
 @app.route("/")
@@ -174,13 +183,15 @@ def get_metrics():
     # Using the current junction model, get relevant metrics for whole model
 
     # TODO set vph_rates
-    temp_vph_rates = [100, 100, 100, 100]
+    global temp_vph_rates
 
 
     mean_wait = junction_model.get_average_wait(temp_vph_rates)
     max_wait = junction_model.get_max_wait(temp_vph_rates)
     max_queue = junction_model.get_max_queue(temp_vph_rates)
     performance = junction_model.efficiency_score(temp_vph_rates)
+
+    print("METRICS")
     
     return jsonify({"mean_wait": mean_wait, 
                     "max_wait": max_wait, "max_queue": max_queue, 
@@ -208,13 +219,46 @@ def edit_northbound():
     print("North")
 
     # send JSON response of data 
-    mean_wait = 2
-    max_wait = 3
-    max_queue = 10
-    performance = 13
+    global junction_model
+    direction = 0
+    # direction as number 0-3
+    # TODO set vph_rates
+    global temp_vph_rates
+
+    junction_arm = junction_model.get_lane("north")
+
+    mean_wait = junction_arm.get_average_wait(temp_vph_rates, junction_model, direction)
+    max_wait = junction_arm.get_max_wait(temp_vph_rates, junction_model, direction)
+    max_queue = junction_arm.get_max_queue(temp_vph_rates, junction_model, direction)
+
+    # TODO - use this function when it exists
+    performance = 150
+    
     return jsonify({"mean_wait": mean_wait, 
                     "max_wait": max_wait, "max_queue": max_queue, 
                     "performance": performance})
+
+# get metrics per lane
+"""
+def get_metrics_lane(direction):
+    global junction_model
+    # direction as number 0-3
+    # TODO set vph_rates
+    temp_vph_rates = [100, 100, 100, 100]
+
+    junction_arm = junction_model.get_lane(direction)
+
+    mean_wait = junction_arm.get_average_wait(temp_vph_rates, junction_model, direction)
+    max_wait = junction_arm.get_max_wait(temp_vph_rates, junction_model, direction)
+    max_queue = junction_arm.get_max_queue(temp_vph_rates, junction_model, direction)
+
+    # TODO - use this function when it exists
+    performance = 150
+    
+    return jsonify({"mean_wait": mean_wait, 
+                    "max_wait": max_wait, "max_queue": max_queue, 
+                    "performance": performance})
+"""
 
 @app.route("/edit-eastbound")
 def edit_eastbound():
@@ -224,10 +268,21 @@ def edit_eastbound():
     print("East")
     
     # send JSON response of data 
-    mean_wait = 2
-    max_wait = 3
-    max_queue = 10
-    performance = 13
+    global junction_model
+    direction = 1
+    # direction as number 0-3
+    # TODO set vph_rates
+    global temp_vph_rates
+
+    junction_arm = junction_model.get_lane("east")
+
+    mean_wait = junction_arm.get_average_wait(temp_vph_rates, junction_model, direction)
+    max_wait = junction_arm.get_max_wait(temp_vph_rates, junction_model, direction)
+    max_queue = junction_arm.get_max_queue(temp_vph_rates, junction_model, direction)
+
+    # TODO - use this function when it exists
+    performance = 150
+    
     return jsonify({"mean_wait": mean_wait, 
                     "max_wait": max_wait, "max_queue": max_queue, 
                     "performance": performance})
@@ -240,10 +295,21 @@ def edit_southbound():
     print("South")
     
     # send JSON response of data 
-    mean_wait = 2
-    max_wait = 3
-    max_queue = 10
-    performance = 13
+    global junction_model
+    direction = 2
+    # direction as number 0-3
+    # TODO set vph_rates
+    global temp_vph_rates
+
+    junction_arm = junction_model.get_lane("south")
+
+    mean_wait = junction_arm.get_average_wait(temp_vph_rates, junction_model, direction)
+    max_wait = junction_arm.get_max_wait(temp_vph_rates, junction_model, direction)
+    max_queue = junction_arm.get_max_queue(temp_vph_rates, junction_model, direction)
+
+    # TODO - use this function when it exists
+    performance = 150
+    
     return jsonify({"mean_wait": mean_wait, 
                     "max_wait": max_wait, "max_queue": max_queue, 
                     "performance": performance})
@@ -256,10 +322,21 @@ def edit_westbound():
     print("West")
     
     # send JSON response of data 
-    mean_wait = 2
-    max_wait = 3
-    max_queue = 10
-    performance = 13
+    global junction_model
+    direction = 3
+    # direction as number 0-3
+    # TODO set vph_rates
+    global temp_vph_rates
+
+    junction_arm = junction_model.get_lane("west")
+
+    mean_wait = junction_arm.get_average_wait(temp_vph_rates, junction_model, direction)
+    max_wait = junction_arm.get_max_wait(temp_vph_rates, junction_model, direction)
+    max_queue = junction_arm.get_max_queue(temp_vph_rates, junction_model, direction)
+
+    # TODO - use this function when it exists
+    performance = 150
+    
     return jsonify({"mean_wait": mean_wait, 
                     "max_wait": max_wait, "max_queue": max_queue, 
                     "performance": performance})
@@ -342,18 +419,62 @@ def priority_4():
 # Model changes ---------------------------------------------------------------------------
 @app.route("/apply-changes")
 def apply_changes():
+    #print_junction_model()
     apply_model_changes()
+    print_junction_model()
     print("Changes applied")
 
 
     # save_current_model()
-    return Response(status=204)
+    #return Response(status=204)
+    global junction_model
+
+    # Using the current junction model, get relevant metrics for whole model
+
+    # TODO set vph_rates
+    global temp_vph_rates
+
+
+    mean_wait = junction_model.get_average_wait(temp_vph_rates)
+    max_wait = junction_model.get_max_wait(temp_vph_rates)
+    max_queue = junction_model.get_max_queue(temp_vph_rates)
+    performance = junction_model.efficiency_score(temp_vph_rates)
+
+    print(mean_wait)
+    print(max_wait)
+    print(max_queue)
+    print(performance)
+
+    print("METRICS")
+    
+    return jsonify({"mean_wait": mean_wait, 
+                    "max_wait": max_wait, "max_queue": max_queue, 
+                    "performance": performance})
 
 @app.route("/cancel-changes")
 def cancel_changes():
     reset_temp_model()
     print("Changes discarded")
-    return Response(status=204)
+    #return Response(status=204)
+
+    global junction_model
+
+    # Using the current junction model, get relevant metrics for whole model
+
+    # TODO set vph_rates
+    global temp_vph_rates
+
+
+    mean_wait = junction_model.get_average_wait(temp_vph_rates)
+    max_wait = junction_model.get_max_wait(temp_vph_rates)
+    max_queue = junction_model.get_max_queue(temp_vph_rates)
+    performance = junction_model.efficiency_score(temp_vph_rates)
+
+    print("METRICS")
+    
+    return jsonify({"mean_wait": mean_wait, 
+                    "max_wait": max_wait, "max_queue": max_queue, 
+                    "performance": performance})
 
 
 # Other -----------------------------------------------------------------------------------------------

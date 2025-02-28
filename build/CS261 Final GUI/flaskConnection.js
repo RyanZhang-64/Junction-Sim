@@ -253,6 +253,8 @@ document.getElementById("priority4").addEventListener("click", function() {
 
 // Changes --------------------------------------------------------------------------
 
+
+
 document.getElementById("applyChanges").addEventListener("click", function() {
     fetch("/apply-changes", {
         method: "GET", // Change to "POST" if needed
@@ -261,16 +263,12 @@ document.getElementById("applyChanges").addEventListener("click", function() {
         }
     })
     .then(response => response.json()) // Assuming the response is JSON
-    .then(data => console.log("Success:", data))
-    .catch(error => console.error("Error:", error));
-
-    fetch("/metrics")
-    .then(response => response.json())  // Convert response to JSON
     .then(data => {
         update_metrics(data.mean_wait, data.max_wait, data.max_queue, data.performance);
-        
+        console.log("Success:", data)
+
     })
-    .catch(error => console.error("Error fetching data:", error));
+    .catch(error => console.error("Error:", error));
 });
 
 document.getElementById("cancelChanges").addEventListener("click", function() {
@@ -281,14 +279,11 @@ document.getElementById("cancelChanges").addEventListener("click", function() {
         }
     })
     .then(response => response.json()) // Assuming the response is JSON
-    .then(data => console.log("Success:", data))
-    .catch(error => console.error("Error:", error));
-
-    fetch("/metrics")
-    .then(response => response.json())  // Convert response to JSON
     .then(data => {
+
+
         update_metrics(data.mean_wait, data.max_wait, data.max_queue, data.performance);
-        
+        console.log("Success:", data)
     })
-    .catch(error => console.error("Error fetching data:", error));
+    .catch(error => console.error("Error:", error));
 });
