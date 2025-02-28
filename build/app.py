@@ -177,11 +177,11 @@ def get_metrics():
     temp_vph_rates = [100, 100, 100, 100]
 
 
-
     mean_wait = 2
     max_wait = 3
     max_queue = 10
     performance = junction_model.efficiency_score(temp_vph_rates)
+    
     return jsonify({"mean_wait": mean_wait, 
                     "max_wait": max_wait, "max_queue": max_queue, 
                     "performance": performance})
