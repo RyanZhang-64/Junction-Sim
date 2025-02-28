@@ -39,10 +39,10 @@ def get_green_proportion(setup, direction):
         pedestrian_factor = 4/5 # assumes pedestrians get ~1/5 of the cycle time CAN CHANGE
     return (this_priority / total_priority) * pedestrian_factor
 
-def max_queue(vph_rates, setup, direction):
+def max_queue(vph_rates, setup, direction, isInboundRoadSetup = False):
     # DONE: complete base implementation
-    proportion_green = get_green_proportion(setup, direction)
-    arriving_per_cycle = ((vph_rates[direction] / setup.get_road(direction).total_standard_lanes)
+    road, proportion_green = get_road_dependent_values(setup, direction, isInboundRoadSetup)
+    arriving_per_cycle = ((vph_rates[direction] / road.total_standard_lanes)
                           * (CYCLE_LENGTH / 60))
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
                          * (proportion_green * (CYCLE_LENGTH / 60)))
@@ -51,23 +51,31 @@ def max_queue(vph_rates, setup, direction):
 
 
 # Note: max_wait is heavily affected by max_queue
-def max_wait(vph_rates, setup, direction):
-    # DONE: complete base implementation
-    proportion_green = get_green_proportion(setup, direction)
+def max_wait(vph_rates, setup, direction, isInboundRoadSetup = False):
+    road, proportion_green = get_road_dependent_values(setup, direction, isInboundRoadSetup)
     leaving_per_cycle = (MAX_VEHICLE_MOVEMENT
                          * (proportion_green * (CYCLE_LENGTH / 60)))
-    return ((max_queue(vph_rates, setup, direction) / leaving_per_cycle) # Number of Cycles to remove cars
+    return ((max_queue(vph_rates, setup, direction, isInboundRoadSetup) / leaving_per_cycle) # Number of Cycles to remove cars
             * CYCLE_LENGTH) # length a cycle takes
     # NOTE: This has a rounding error as you can't complete, say 0.3 cycles, can round up maybe
 
 
 
-def average_wait(vph_rates, setup, direction):
-    arriving_per_cycle = ((vph_rates[direction] / setup.get_road(direction).total_standard_lanes)
+def average_wait(vph_rates, setup, direction, isInboundRoadSetup = False):
+    road, _ = get_road_dependent_values(setup, direction, isInboundRoadSetup)
+
+    arriving_per_cycle = ((vph_rates[direction] / road.total_standard_lanes)
                           * (CYCLE_LENGTH / 60))
-    return max_wait(vph_rates, setup, direction) / arriving_per_cycle # the total time to clear the vehicles divided by the total number of vehicles arriving
+    return max_wait(vph_rates, setup, direction, isInboundRoadSetup) / arriving_per_cycle # the total time to clear the vehicles divided by the total number of vehicles arriving
 
-
+def get_road_dependent_values(setup, direction, isInboundRoadSetup):
+    if isInboundRoadSetup:
+        road = setup
+        green_proportion = 1/4
+    else:
+        road = setup.get_road(direction)
+        green_proportion = get_green_proportion(setup, direction)
+    return road, green_proportion
 
 # The average_wait time for any car at the junction
 # Used to compare overall junction setup effectivity
@@ -99,8 +107,9 @@ def null_Junction():
     from Junction import Junction
     return Junction()
 
-#lst = [100,100,100,100]
-#print(get_efficiency_score(lst,null_Junction()))
+if __name__ == "__main__":
+    lst = [100,100,100,100]
+    print(get_efficiency_score(lst,null_Junction()))
 
 
 

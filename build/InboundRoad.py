@@ -1,3 +1,7 @@
+from build import Equations
+
+import Equations
+
 class InboundRoad:
     def __init__(self):
         self.total_standard_lanes = 1
@@ -79,3 +83,18 @@ class InboundRoad:
     def has_puffin_crossing(self):
         return self.puffin_crossing
 
+
+    def get_max_wait(self, vph_rates):
+        return round(Equations.max_wait(vph_rates, self, -1, isInboundRoadSetup=True)*60, 2)
+
+    def get_max_queue(self, vph_rates):
+        return Equations.max_queue(vph_rates, self, -1, isInboundRoadSetup=True)
+
+    def get_average_wait(self, vph_rates):
+        return round(Equations.average_wait(vph_rates, self, -1, isInboundRoadSetup=True)*60, 2)
+
+if __name__ == "__main__":
+    lst = [100,100,100,100]
+    print("avg", InboundRoad().get_average_wait(lst))
+    print("max Q", InboundRoad().get_max_queue(lst))
+    print("max W", InboundRoad().get_max_wait(lst))
