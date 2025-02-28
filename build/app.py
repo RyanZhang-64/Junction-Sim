@@ -167,6 +167,25 @@ def home():
     reset_temp_model()
     return send_from_directory(app.template_folder, "index.html")
 
+@app.route("/metrics")
+def get_metrics():
+    global junction_model
+
+    # Using the current junction model, get relevant metrics for whole model
+
+    # TODO set vph_rates
+    temp_vph_rates = [100, 100, 100, 100]
+
+
+
+    mean_wait = 2
+    max_wait = 3
+    max_queue = 10
+    performance = junction_model.efficiency_score(temp_vph_rates)
+    return jsonify({"mean_wait": mean_wait, 
+                    "max_wait": max_wait, "max_queue": max_queue, 
+                    "performance": performance})
+
 # Changes user selection for which lane will be modified
 # This creates a temporary model, and we will only set this model
 # once apply has been selected

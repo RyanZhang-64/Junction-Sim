@@ -17,14 +17,41 @@ fetch('/api/data')
 
 // Editing north, east, south and west lanes
 
+function format_editor_metrics(mean_wait, max_wait, max_queue, performance) {
+    // Mean wait
+    if (mean_wait < 60) {
+        mean_wait_mins = 0
+        mean_wait_secs = mean_wait
+    } else {
+        mean_wait_mins = Math.floor(mean_wait / 60)
+        mean_wait_secs = mean_wait - (60 * mean_wait_mins)
+    }
+    document.getElementById("meanWaitEditor").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
+
+    // Max wait
+    if (max_wait < 60) {
+        max_wait_mins = 0
+        max_wait_secs = max_wait
+    } else {
+        max_wait_mins = Math.floor(max_wait / 60)
+        max_wait_secs = max_wait - (60 * max_wait_mins)
+    }
+    document.getElementById("maxWaitEditor").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
+
+    // Max queue
+    document.getElementById("maxQueueEditor").textContent =  max_queue;
+
+    // Performance
+    document.getElementById("performanceEditor").textContent =  performance;
+
+    // TODO change top 41% of scores
+}
+
 document.getElementById("editSouth").addEventListener("click", function() {
     fetch("/edit-southbound")
     .then(response => response.json())  // Convert response to JSON
     .then(data => {
-        console.log("Mean Wait:", data.mean_wait);
-        console.log("Max Wait:", data.max_wait);
-        console.log("Max Queue:", data.max_queue);
-        console.log("Performance:", data.performance);
+        format_editor_metrics(data.mean_wait, data.max_wait, data.max_queue, data.performance);
     })
     .catch(error => console.error("Error fetching data:", error));
 });
@@ -33,10 +60,7 @@ document.getElementById("editNorth").addEventListener("click", function() {
     fetch("/edit-northbound")
     .then(response => response.json())  // Convert response to JSON
     .then(data => {
-        console.log("Mean Wait:", data.mean_wait);
-        console.log("Max Wait:", data.max_wait);
-        console.log("Max Queue:", data.max_queue);
-        console.log("Performance:", data.performance);
+        format_editor_metrics(data.mean_wait, data.max_wait, data.max_queue, data.performance);
     })
     .catch(error => console.error("Error fetching data:", error));
 });
@@ -45,13 +69,7 @@ document.getElementById("editEast").addEventListener("click", function() {
     fetch("/edit-eastbound")
     .then(response => response.json())  // Convert response to JSON
     .then(data => {
-        document.getElementById("meanWaitEditor").textContent = data.mean_wait
-
-
-        console.log("Mean Wait:", data.mean_wait);
-        console.log("Max Wait:", data.max_wait);
-        console.log("Max Queue:", data.max_queue);
-        console.log("Performance:", data.performance);
+        format_editor_metrics(data.mean_wait, data.max_wait, data.max_queue, data.performance);
     })
     .catch(error => console.error("Error fetching data:", error));
 });
@@ -60,10 +78,45 @@ document.getElementById("editWest").addEventListener("click", function() {
     fetch("/edit-westbound")
     .then(response => response.json())  // Convert response to JSON
     .then(data => {
-        console.log("Mean Wait:", data.mean_wait);
-        console.log("Max Wait:", data.max_wait);
-        console.log("Max Queue:", data.max_queue);
-        console.log("Performance:", data.performance);
+        format_editor_metrics(data.mean_wait, data.max_wait, data.max_queue, data.performance);
+    })
+    .catch(error => console.error("Error fetching data:", error));
+});
+
+
+// Metrics for whole junction
+document.addEventListener("DOMContentLoaded", function() {
+    fetch("/metrics")
+    .then(response => response.json())  // Convert response to JSON
+    .then(data => {
+
+        // Mean wait
+        if (data.mean_wait < 60) {
+            mean_wait_mins = 0
+            mean_wait_secs = data.mean_wait
+        } else {
+            mean_wait_mins = Math.floor(data.mean_wait / 60)
+            mean_wait_secs = data.mean_wait - (60 * mean_wait_mins)
+        }
+        document.getElementById("meanWaitOverall").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
+
+        // Max wait
+        if (data.max_wait < 60) {
+            max_wait_mins = 0
+            max_wait_secs = data.max_wait
+        } else {
+            max_wait_mins = Math.floor(data.max_wait / 60)
+            max_wait_secs = data.max_wait - (60 * max_wait_mins)
+        }
+        document.getElementById("maxWaitOverall").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
+
+        // Max queue
+        document.getElementById("maxQueueOverall").textContent =  data.max_queue;
+
+        // Performance
+        document.getElementById("performanceOverall").textContent =  data.performance;
+
+        // TODO change top 41% of scores
     })
     .catch(error => console.error("Error fetching data:", error));
 });
