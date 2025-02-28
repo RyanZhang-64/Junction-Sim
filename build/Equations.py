@@ -99,6 +99,18 @@ def null_Junction():
     from Junction import Junction
     return Junction()
 
+def environmental_score(has_bike_lane, has_bus_lane, has_puffin_crossing):
+    env_score = 100
+    if has_bike_lane:
+        env_score *= 0.5
+    if has_bus_lane:
+        env_score *= 0.6
+    if has_puffin_crossing:
+        env_score *= 0.9
+    
+    return env_score
+    
+
 
 if __name__ == "__main__":
     lst = [100,100,100,100]
