@@ -177,9 +177,9 @@ def get_metrics():
     temp_vph_rates = [100, 100, 100, 100]
 
 
-    mean_wait = 2
-    max_wait = 3
-    max_queue = 10
+    mean_wait = junction_model.get_average_wait(temp_vph_rates)
+    max_wait = junction_model.get_max_wait(temp_vph_rates)
+    max_queue = junction_model.get_max_queue(temp_vph_rates)
     performance = junction_model.efficiency_score(temp_vph_rates)
     
     return jsonify({"mean_wait": mean_wait, 
@@ -346,7 +346,7 @@ def apply_changes():
     print("Changes applied")
 
 
-    save_current_model()
+    # save_current_model()
     return Response(status=204)
 
 @app.route("/cancel-changes")
