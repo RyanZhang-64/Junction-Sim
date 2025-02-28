@@ -25,7 +25,7 @@ def get_efficiency_score(vph_rates, setup):
     total_efficiency = (mean_statistic(vph_rates, setup) * 60
                         + numpy.exp(fairness_statistic(vph_rates, setup)-FAIRNESS_EXTREME_BOUNDARY)
                         + numpy.exp(worst_case_statistic(vph_rates, setup)-WORST_CASE_EXTREME_BOUNDARY))
-    total_efficiency = 99/(1+numpy.exp(-(1/10)*(total_efficiency-75))) + 1 ## Sigmoid
+    total_efficiency = 99/(1+numpy.exp(-(1/5)*(total_efficiency-75))) + 1 ## Sigmoid
     total_efficiency = 100 - total_efficiency
     return round(total_efficiency,2)
 
@@ -114,10 +114,10 @@ def environmental_score(has_bike_lane, has_bus_lane, has_puffin_crossing):
 
 
 if __name__ == "__main__":
-    lst = [300,480,500,900]
+    lst = [300,540,1000,250]
     junction = null_Junction()
-    junction.get_road(3).set_total_standard_lanes(5)
-    junction.get_road(1).set_total_standard_lanes(2)
+    junction.get_road(0).set_total_standard_lanes(5)
+    junction.get_road(2).set_total_standard_lanes(5)
     print(get_efficiency_score(lst,junction))
 
 
