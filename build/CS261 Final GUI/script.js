@@ -13,22 +13,13 @@ class JunctionSimulation {
         this.junctionSize = Math.min(rect.width, rect.height) * junctionFactor;
         
         // Lane configurations
-        this.westboundLanes = 2;
-        this.eastboundLanes = 2;
-        this.northboundLanes = 2;
-        this.southboundLanes = 2;
+        this.westboundLanes = 1;
+        this.eastboundLanes = 1;
+        this.northboundLanes = 1;
+        this.southboundLanes = 1;
     
         // Direction state
         this.currentDirection = null;
-    
-        // Traffic light states
-        this.trafficLights = {
-            west: Array(this.westboundLanes).fill('red'),
-            east: Array(this.eastboundLanes).fill('red'),
-            north: Array(this.northboundLanes).fill('red'),
-            south: Array(this.southboundLanes).fill('red')
-        };
-
         this.busLanes = {
             north: [],
             south: [],
@@ -53,6 +44,7 @@ class JunctionSimulation {
         };
 
         // Add alongside other state objects
+        // In your JunctionSimulation constructor
         this.priorities = {
             north: 0,  // 0 means no priority
             south: 0,
@@ -63,9 +55,6 @@ class JunctionSimulation {
         // Image resources
         this.busImage = new Image();
         this.busImage.src = 'BUS.png';
-
-        this.leftArrow = new Image();
-        this.leftArrow.src = 'leftarrow.png';
         
         this.zebraCrossing = new Image();
         this.zebraCrossing.src = 'zebra.png';
@@ -74,14 +63,13 @@ class JunctionSimulation {
         };
     
         // Setup event handlers
-        this.setupEventListeners();
-        this.setupHoverDetection();  // Removed duplicate call
+        this.setupFixedButtonPositions();  // Removed duplicate call
         this.setupNavigationListeners();
         
         // Initial draw
         this.draw();
     }
-
+    
     drawZebraCrossing(x, y, width, height, direction) {
         if (!this.puffinCrossings[direction]) return;
     
@@ -147,182 +135,78 @@ class JunctionSimulation {
         this.ctx.restore();
     }
 
-    setupEventListeners() {
-        document.getElementById('increaseBtn').addEventListener('click', () => {
-            if (this.westboundLanes < 5) {
-                this.westboundLanes++;
-                this.draw();
-            }
-        });
-    
-        document.getElementById('decreaseBtn').addEventListener('click', () => {
-            if (this.westboundLanes > 1) {
-                this.westboundLanes--;
-                this.draw();
-            }
-        });
-    }
-
-    setupHoverDetection() {
+    setupFixedButtonPositions() {
         const buttons = {
-            north: document.getElementById('editNorth'),
-            south: document.getElementById('editSouth'),
-            east: document.getElementById('editEast'),
-            west: document.getElementById('editWest')
+            'north': document.getElementById('editNorth'),
+            'south': document.getElementById('editSouth'),
+            'east': document.getElementById('editEast'),
+            'west': document.getElementById('editWest')
         };
         
-        const hoverStates = {
-            north: false,
-            south: false,
-            east: false,
-            west: false
-        };
-    
-        const junctionFactor = 0.4;
-    
-        this.canvas.addEventListener('mousemove', (e) => {
-            const rect = this.canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        // Get canvas dimensions
+        const rect = this.canvas.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // Calculate junction dimensions
+        const junctionSize = Math.min(rect.width, rect.height) * junctionFactor;
+        const halfJunction = junctionSize / 2;
+        
+        // Calculate responsive button size (proportional to junction)
+        const buttonSize = Math.max(32, Math.round(junctionSize * 0.12));
+        const fontSize = Math.max(14, Math.round(buttonSize * 0.5)); 
+        
+        // Calculate responsive padding from edge
+        const edgePadding = Math.max(10, Math.round(rect.width * 0.01));
+        
+        // Apply responsive styling to all buttons
+        Object.values(buttons).forEach(button => {
+            button.innerHTML = "✏️";
+            button.style.position = "absolute";
+            button.style.opacity = "1";
+            button.style.width = `${buttonSize}px`;
+            button.style.height = `${buttonSize}px`;
+            button.style.display = "flex";
+            button.style.alignItems = "center";
+            button.style.justifyContent = "center";
+            button.style.fontSize = `${fontSize}px`;
             
-            // Calculate dimensions consistently with main drawing
-            const canvasMin = Math.min(rect.width, rect.height);
-            const halfJunction = (canvasMin * junctionFactor) / 2;
-            const roadWidth = halfJunction;
-            
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-    
-            ['north', 'south', 'east', 'west'].forEach(direction => {
-                const button = buttons[direction];
-                const buttonRect = button.getBoundingClientRect();
-                
-                // Define hover zones based on direction
-                let inArmArea = false;
-                let buttonX = 0;
-                let buttonY = 0;
-                
-                switch(direction) {
-                    case 'north':
-                        inArmArea = 
-                            x >= centerX - roadWidth && 
-                            x <= centerX + roadWidth &&
-                            y <= centerY - halfJunction;
-                        buttonX = rect.left + centerX + roadWidth + (halfJunction * 0.1);
-                        buttonY = rect.top + (centerY - halfJunction) / 2;
-                        break;
-                    case 'south':
-                        inArmArea = 
-                            x >= centerX - roadWidth && 
-                            x <= centerX + roadWidth &&
-                            y >= centerY + halfJunction;
-                        buttonX = rect.left + centerX + roadWidth + (halfJunction * 0.1);
-                        buttonY = rect.top + centerY + halfJunction + (halfJunction * 0.5);
-                        break;
-                    case 'east':
-                        inArmArea = 
-                            x >= centerX + halfJunction &&
-                            y >= centerY - roadWidth && 
-                            y <= centerY + roadWidth;
-                        buttonX = rect.left + centerX + halfJunction + (halfJunction * 0.5);
-                        buttonY = rect.top + centerY + roadWidth + (halfJunction * 0.1);
-                        break;
-                    case 'west':
-                        inArmArea = 
-                            x <= centerX - halfJunction &&
-                            y >= centerY - roadWidth && 
-                            y <= centerY + roadWidth;
-                        buttonX = rect.left + centerX - halfJunction - (halfJunction * 0.5);
-                        buttonY = rect.top + centerY - roadWidth - (halfJunction * 0.1);
-                        break;
-                }
-    
-                // Check if mouse is on the button
-                const inButtonArea = 
-                    e.clientX >= buttonRect.left && 
-                    e.clientX <= buttonRect.right &&
-                    e.clientY >= buttonRect.top && 
-                    e.clientY <= buttonRect.bottom;
-    
-                // Create corridor check based on direction
-                const padding = halfJunction * 0.1; // Scale padding with junction size
-                let inCorridor = false;
-                
-                switch(direction) {
-                    case 'north':
-                        inCorridor = 
-                            e.clientX >= buttonRect.left - padding &&
-                            e.clientX <= buttonRect.right &&
-                            e.clientY >= buttonRect.top - padding &&
-                            e.clientY <= rect.top + centerY;
-                        break;
-                    case 'south':
-                        inCorridor = 
-                            e.clientX >= buttonRect.left - padding &&
-                            e.clientX <= buttonRect.right &&
-                            e.clientY >= rect.top + centerY &&
-                            e.clientY <= buttonRect.bottom + padding;
-                        break;
-                    case 'east':
-                        inCorridor = 
-                            e.clientX >= rect.left + centerX &&
-                            e.clientX <= buttonRect.right + padding &&
-                            e.clientY >= buttonRect.top - padding &&
-                            e.clientY <= buttonRect.bottom;
-                        break;
-                    case 'west':
-                        inCorridor = 
-                            e.clientX >= buttonRect.left - padding &&
-                            e.clientX <= rect.left + centerX &&
-                            e.clientY >= buttonRect.top - padding &&
-                            e.clientY <= buttonRect.bottom;
-                        break;
-                }
-    
-                if (inArmArea || inButtonArea || inCorridor) {
-                    button.style.left = `${buttonX}px`;
-                    button.style.top = `${buttonY}px`;
-                    button.classList.add('visible');
-                    hoverStates[direction] = true;
-                } else {
-                    hoverStates[direction] = false;
-                    setTimeout(() => {
-                        if (!hoverStates[direction]) {
-                            button.classList.remove('visible');
-                        }
-                    }, 100);
-                }
-            });
+            // These properties ensure expansion from center
+            button.style.transform = "translate(-50%, -50%)";
         });
-    
-        // Button hover handlers
-        Object.entries(buttons).forEach(([direction, button]) => {
-            button.addEventListener('mouseenter', () => {
-                hoverStates[direction] = true;
-                button.classList.add('visible');
-            });
-    
-            button.addEventListener('mouseleave', () => {
-                hoverStates[direction] = false;
-                setTimeout(() => {
-                    if (!hoverStates[direction]) {
-                        button.classList.remove('visible');
-                    }
-                }, 100);
-            });
-        });
-    
-        this.canvas.addEventListener('mouseleave', () => {
-            Object.entries(hoverStates).forEach(([direction]) => {
-                hoverStates[direction] = false;
-                setTimeout(() => {
-                    if (!hoverStates[direction]) {
-                        buttons[direction].classList.remove('visible');
-                    }
-                }, 100);
-            });
-        });
+        
+        // Position buttons with transform-friendly coordinates
+        // When using transform: translate(-50%, -50%), we position based on the CENTER of the button
+        
+        // Add fixed adjustment values to fine-tune positions
+        const topAdjust = 25;        // Move top buttons inward
+        const rightAdjust = 10;      // Move right buttons inward
+        const bottomAdjust = 0;      // Move bottom buttons inward (positive moves up)
+        const leftAdjust = 35;        // Move left buttons inward (positive moves right)
+        
+        // Additional corner adjustments for North and East buttons
+        const northRightOffset = 40; // Push North button more to the right
+        const eastDownOffset = 30;   // Push East button more down
+        
+        // NORTH arm: top edge of canvas, aligned with right side of north road
+        buttons['north'].style.left = `${centerX + halfJunction * 0.7 + northRightOffset}px`; // Added rightward shift
+        buttons['north'].style.top = `${edgePadding + topAdjust}px`;
+        
+        // SOUTH arm: bottom edge of canvas, aligned with left side of south road
+        buttons['south'].style.left = `${centerX - halfJunction * 0.65}px`;
+        buttons['south'].style.top = `${rect.height - edgePadding + bottomAdjust}px`;
+        buttons['south'].style.bottom = 'auto'; // Clear bottom property
+        
+        // EAST arm: right edge of canvas, aligned with bottom of east road
+        buttons['east'].style.left = `${rect.width - edgePadding + rightAdjust}px`;
+        buttons['east'].style.right = 'auto'; // Clear right property
+        buttons['east'].style.top = `${centerY + halfJunction * 0.7 + eastDownOffset}px`; // Added downward shift
+        
+        // WEST arm: left edge of canvas, aligned with top of west road
+        buttons['west'].style.left = `${edgePadding + leftAdjust}px`;
+        buttons['west'].style.top = `${centerY - halfJunction * 0.7}px`;
     }
+    
     
     setupHighDPICanvas(width, height) {
         // Set the canvas size in memory (scaled up)
@@ -349,7 +233,7 @@ class JunctionSimulation {
         const centerY = (this.canvas.height / this.dpr) / 2;
 
         // Draw junction box background
-        this.ctx.fillStyle = '#ffffff';  // White background
+        this.ctx.fillStyle = '#888888';  // White background
         this.ctx.fillRect(
             centerX - this.junctionSize/2,
             centerY - this.junctionSize/2,
@@ -361,7 +245,7 @@ class JunctionSimulation {
         this.drawRoads(centerX, centerY);
 
         // Draw junction box border
-        this.ctx.strokeStyle = '#000';
+        this.ctx.strokeStyle = '#ffffff';
         this.ctx.strokeRect(
             centerX - this.junctionSize/2,
             centerY - this.junctionSize/2,
@@ -381,12 +265,6 @@ class JunctionSimulation {
         this.drawAllCrossings(centerX, centerY);  // Remove the if condition
         this.drawBusLanes(centerX, centerY); 
         this.drawPriorityBars(centerX, centerY);
-    
-        // Finally draw traffic lights and arrows
-        this.drawTrafficLights(centerX, centerY, 'west', this.westboundLanes);
-        this.drawTrafficLights(centerX, centerY, 'east', this.eastboundLanes);
-        this.drawTrafficLights(centerX, centerY, 'north', this.northboundLanes);
-        this.drawTrafficLights(centerX, centerY, 'south', this.southboundLanes);
     
         this.drawLaneArrows(centerX, centerY, 'west', this.westboundLanes);
         this.drawLaneArrows(centerX, centerY, 'east', this.eastboundLanes);
@@ -458,15 +336,17 @@ class JunctionSimulation {
         
         directions.forEach(direction => {
             if (this.priorities[direction] === 0) return;  // Skip if no priority
+
+            const rect = this.canvas.getBoundingClientRect();
             
             const lanes = this[`${direction}boundLanes`];
             const laneWidth = this.calculateLaneWidth(lanes);
-            const totalWidth = lanes * laneWidth;
-            const barHeight = laneWidth * 0.3;  // Height of priority bar
+            const totalWidth = lanes * laneWidth - 10;
+            const barHeight = rect.height*0.1;  // Height of priority bar
             
             this.ctx.save();
             this.ctx.fillStyle = '#4a90e2';  // Priority bar color
-            this.ctx.font = `${barHeight * 0.6}px Arial`;
+            this.ctx.font = `${totalWidth*0.007}vw Arial`;
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
             
@@ -549,29 +429,16 @@ class JunctionSimulation {
                     rotation = 0;
                     break;
             }
-
+    
             this.ctx.save();
             this.ctx.translate(arrowX, arrowY);
             this.ctx.rotate(rotation);
-            this.ctx.drawImage(
-                this.leftArrow,
-                -arrowSize/2,
-                -arrowSize/2,
-                arrowSize,
-                arrowSize
-            );
+            this.ctx.font = `${arrowSize}px FontAwesome`;
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText('\uf0a4', 0, 0); // FontAwesome icon for left turn
             this.ctx.restore();
         });
-    }
-
-    drawLaneNumber(x, y, number) {
-        // Scale font size relative to junction size
-        const fontSize = Math.max(14, this.junctionSize * 0.03);
-        this.ctx.font = `${fontSize}px Arial`;
-        this.ctx.fillStyle = '#000';
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(number.toString(), x, y);
     }
 
     setLeftTurnLane(direction, laneIndex, enabled) {
@@ -583,55 +450,6 @@ class JunctionSimulation {
             this.leftTurnLanes[direction] = this.leftTurnLanes[direction].filter(i => i !== laneIndex);
         }
         this.draw();
-    }
-
-    drawTrafficLights(x, y, direction, lanes) {
-        const laneWidth = this.calculateLaneWidth(lanes);
-        const stripWidth = laneWidth;  // Fixed width
-        const stripLength = 10;
-        
-        const centers = this.getLaneCenters(x, y, lanes, direction === 'north' || direction === 'south');
-        
-        centers.forEach((center, index) => {
-            const lightColor = this.trafficLights[direction][index];
-            this.ctx.fillStyle = lightColor;
-            
-            // Position strips based on direction
-            switch(direction) {
-                case 'west':
-                    this.ctx.fillRect(
-                        x - this.junctionSize/2 - stripLength,
-                        center.y - stripWidth/2,
-                        stripLength,
-                        stripWidth
-                    );
-                    break;
-                case 'east':
-                    this.ctx.fillRect(
-                        x + this.junctionSize/2,
-                        center.y - stripWidth/2,
-                        stripLength,
-                        stripWidth
-                    );
-                    break;
-                case 'north':
-                    this.ctx.fillRect(
-                        center.x - stripWidth/2,
-                        y - this.junctionSize/2 - stripLength,
-                        stripWidth,
-                        stripLength
-                    );
-                    break;
-                case 'south':
-                    this.ctx.fillRect(
-                        center.x - stripWidth/2,
-                        y + this.junctionSize/2,
-                        stripWidth,
-                        stripLength
-                    );
-                    break;
-            }
-        });
     }
 
     getLaneCenters(startX, startY, lanes, vertical = false) {
@@ -659,25 +477,29 @@ class JunctionSimulation {
         return totalLanes - laneIndex;
     }
 
-    updateTrafficLight(direction, laneIndex, color) {
-        if (this.trafficLights[direction] && 
-            laneIndex < this.trafficLights[direction].length) {
-            this.trafficLights[direction][laneIndex] = color;
-            this.draw();
-        }
-    }
-
     drawRoadSegment(x1, y1, x2, y2, lanes, vertical = false) {
         const offset = this.junctionSize / 2;
         const laneWidth = this.calculateLaneWidth(lanes);
-        const midX = (x1 + x2) / 2;
-        const midY = (y1 + y2) / 2;
-
-        // Draw road boundaries
-        this.ctx.lineWidth = 2;
+        const roadWidth = this.junctionSize;
+        
+        this.ctx.save();
+        
+        // Draw road surface (gray asphalt)
+        this.ctx.fillStyle = '#888888'; // Medium gray for asphalt
         this.ctx.beginPath();
-        this.ctx.strokeStyle = '#000';
-
+        
+        if (vertical) {
+            this.ctx.rect(x1 - offset, y1, roadWidth, y2 - y1);
+        } else {
+            this.ctx.rect(x1, y1 - offset, x2 - x1, roadWidth);
+        }
+        this.ctx.fill();
+        
+        // Draw road boundaries (solid black lines)
+        this.ctx.lineWidth = 10;
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = '#ffffff';
+    
         if (vertical) {
             this.ctx.moveTo(x1 - offset, y1);
             this.ctx.lineTo(x2 - offset, y2);
@@ -690,9 +512,13 @@ class JunctionSimulation {
             this.ctx.lineTo(x2, y2 + offset);
         }
         this.ctx.stroke();
-
-        // Draw lane dividers
-        this.ctx.setLineDash([5, 5]);
+    
+        // Draw lane dividers (white dashed lines)
+        this.ctx.strokeStyle = '#FFFFFF'; // White for lane dividers
+        this.ctx.lineWidth = 1.5;
+        // UK motorway style has longer dashes than default
+        this.ctx.setLineDash([10, 15]); // Adjusted for scale - longer dash, longer gap
+        
         for (let i = 1; i < lanes; i++) {
             this.ctx.beginPath();
             if (vertical) {
@@ -706,14 +532,9 @@ class JunctionSimulation {
             }
             this.ctx.stroke();
         }
+        
         this.ctx.setLineDash([]);
-
-        // Draw lane numbers with black text
-        const centers = this.getLaneCenters(midX, midY, lanes, vertical);
-        this.ctx.fillStyle = '#000';  // Ensure text is black
-        centers.forEach((center, index) => {
-            this.drawLaneNumber(center.x, center.y, this.calculateLaneNumber(index, lanes));
-        });
+        this.ctx.restore();
     }
 
     drawBusLanes(centerX, centerY) {
@@ -811,6 +632,12 @@ class JunctionSimulation {
             busLanes: this.busLanes[direction],
             priority: this.priorities[direction]
         });
+
+        const directionLabel = document.getElementById('directionLabel');
+        if (directionLabel) {
+            // Capitalize first letter of direction
+            directionLabel.textContent = direction.charAt(0).toUpperCase() + direction.slice(1);
+        }
     }
 
     hideEditor() {
@@ -825,10 +652,22 @@ class JunctionSimulation {
         // Get the current configuration from the editor
         const newConfig = this.getEditorConfiguration();
         
+        // Debug logging
+        console.log(`Applying changes for ${this.currentDirection} direction:`);
+        console.log(`- Priority: ${newConfig.priority}`);
+        console.log(`- Puffin: ${newConfig.puffinActive}`);
+        console.log(`- Lanes: ${newConfig.lanes}`);
+        console.log(`- Left turn lanes: ${JSON.stringify(newConfig.leftTurnLanes)}`);
+        console.log(`- Bus lanes: ${JSON.stringify(newConfig.busLanes)}`);
+        
         // Update the appropriate direction's configuration
         this.puffinCrossings[this.currentDirection] = newConfig.puffinActive;
         this.busLanes[this.currentDirection] = newConfig.busLanes;
+        
+        // Add debug for priority before and after
+        console.log(`Priority before: ${this.priorities[this.currentDirection]}`);
         this.priorities[this.currentDirection] = newConfig.priority;
+        console.log(`Priority after: ${this.priorities[this.currentDirection]}`);
     
         switch(this.currentDirection) {
             case 'north':
@@ -874,11 +713,36 @@ class JunctionSimulation {
         // Simply return whatever the editor's getEditorConfiguration returns
         return window.getEditorConfiguration();
     }
+
 }
+
+(function extendJunctionSimulation() {
+    // Add priority methods to JunctionSimulation prototype
+    JunctionSimulation.prototype.setPriority = function(direction, priority) {
+        if (this.priorities && typeof priority === 'number' && priority >= 0 && priority <= 4) {
+            this.priorities[direction] = priority;
+            this.draw();
+        }
+    };
+    
+    JunctionSimulation.prototype.getPriority = function(direction) {
+        return this.priorities[direction] || 0;
+    };
+    
+    // Enhance the applyChanges method to include priority
+    const originalApplyChanges = JunctionSimulation.prototype.applyChanges;
+    JunctionSimulation.prototype.applyChanges = function() {
+        // Get the current configuration from the editor
+        const newConfig = this.getEditorConfiguration();
+        
+        // Set priority for current direction
+        this.setPriority(this.currentDirection, newConfig.priority);
+        
+        // Call original method to handle the rest
+        originalApplyChanges.call(this);
+    };
+})();
 
 
 
 const simulation = new JunctionSimulation('junctionCanvas');
-simulation.updateTrafficLight('west', 0, 'green');  // Set first westbound lane to green
-simulation.setLeftTurnLane('west', 0, true);
-    

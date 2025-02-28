@@ -1,244 +1,535 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Junction Simulator for traffic flow optimization">
+    <title>Junction Simulator - CS261</title>
+    
+    <!-- External CSS Libraries -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
-    <script src="https://kit.fontawesome.com/80112adc65.js" crossorigin="anonymous"></script>
+    
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="style.css">
-    <title>CS261</title>
+    
+    <!-- External JavaScript Libraries -->
+    <!-- Font Awesome with defer to improve page load performance -->
+    <script src="https://kit.fontawesome.com/80112adc65.js" crossorigin="anonymous" defer></script>
+    
+    <!-- jQuery with integrity for security -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" 
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"></script>
 </head>
 <body>
-    <!-- Main View -->
-    <div id="main-view" class="view-container">
-        <div class="container-fluid">
-            <!-- Your existing main view content -->
-            <div class="row">
-                <div class="col-7 position-relative">
-                    <canvas id="junctionCanvas"></canvas>
-                    <button type="button" class="btn btn-primary position-absolute top-0 end-0 m-2" id="decreaseBtn">-</button>
-                    <button type="button" class="btn btn-primary position-absolute top-0 end-0 me-5 m-2" id="increaseBtn">+</button>
-                    <button id="editNorth" class="edit-arm-button" onclick="showEditor('north')">✏️ Edit Northbound</button>
-                    <button id="editSouth" class="edit-arm-button" onclick="showEditor('south')">✏️ Edit Southbound</button>
-                    <button id="editEast" class="edit-arm-button" onclick="showEditor('east')">✏️ Edit Eastbound</button>
-                    <button id="editWest" class="edit-arm-button" onclick="showEditor('west')">✏️ Edit Westbound</button>
-                </div>
-                <div class="col-5">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column justify-content-between p-5">
-                            <h1 class="text-center infobar-title">Junction Metrics</h5>
-                            
-                            <!-- Wait Times -->
-                            <div class="my-2">
-                                <div class="d-flex align-items-center fs-4">
-                                    <span class="stat-title"><i class="fa-solid fa-clock me-3 stat-title"></i> Wait Times</span><br>
-                                </div>
-                                <div class="px-4">
-                                    <div class="d-flex justify-content-between">
-                                        <div class="text-secondary stat">Mean:</div>
-                                        <div class="font-weight-bold stat">xxm:xxs</div>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <div class="text-secondary stat">Maximum:</div>
-                                        <div class="font-weight-bold stat">xxm:xxs</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Queue Length -->
-                            <div class="my-2">
-                                <div class="d-flex align-items-center fs-4">
-                                    <span class="stat-title"><i class="fa-solid fa-car me-3"></i> Queue Length</span><br>
-                                </div>
-                                <div class="px-4 fs-4">
-                                    <div class="d-flex justify-content-between">
-                                        <div class="text-secondary stat">Maximum:</div>
-                                        <div class="stat">xx cars</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Performance Score -->
-                            <div class="my-2">
-                                <div class="d-flex align-items-center fs-4">
-                                    <span class="stat-title"><i class="fa-solid fa-trophy me-3"></i> Performance Score</span>
-                                </div>
-                                <div class="text-center">
-                                    <div class="performance-score text-primary font-weight-bold stat">47.83</div>
-                                    <div class="performance-rank text-secondary stat">Top 41% of recorded scores</div>
-                                </div>
-                            </div>
-                            
-                            <button id="compareButton" class="btn btn-light text-primary w-100 stat">
-                                Compare with other scores
+    <!-- Main Application Container -->
+    <main>
+        <!-- Main View - Primary Junction Display -->
+        <section id="main-view" class="view-container">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- Junction Canvas Section -->
+                    <div class="col-7 position-relative">
+                        <canvas id="junctionCanvas" aria-label="Junction visualization canvas"></canvas>
+                        
+                        <!-- Direction Edit Buttons -->
+                        <div class="direction-buttons">
+                            <button id="editNorth" class="edit-arm-button" 
+                                    aria-label="Edit Northbound traffic configuration"
+                                    onclick="showEditor('north')">
+                                <i class="fas fa-edit"></i> Edit Northbound
                             </button>
+                            <button id="editSouth" class="edit-arm-button" 
+                                    aria-label="Edit Southbound traffic configuration"
+                                    onclick="showEditor('south')">
+                                <i class="fas fa-edit"></i> Edit Southbound
+                            </button>
+                            <button id="editEast" class="edit-arm-button" 
+                                    aria-label="Edit Eastbound traffic configuration"
+                                    onclick="showEditor('east')">
+                                <i class="fas fa-edit"></i> Edit Eastbound
+                            </button>
+                            <button id="editWest" class="edit-arm-button" 
+                                    aria-label="Edit Westbound traffic configuration"
+                                    onclick="showEditor('west')">
+                                <i class="fas fa-edit"></i> Edit Westbound
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Metrics Display -->
+                    <div class="col-5">
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column justify-content-between p-5">
+                                <h1 class="text-center infobar-title">Junction Metrics</h1>
+                                
+                                <!-- Wait Times Metrics -->
+                                <section class="metrics-section my-2">
+                                    <div class="d-flex align-items-center fs-4">
+                                        <span class="stat-title">
+                                            <i class="fa-solid fa-clock me-3 stat-title"></i> Wait Times
+                                        </span>
+                                        <button class="info-button ms-2" 
+                                                aria-label="Wait Times Information"
+                                                data-toggle="tooltip" 
+                                                data-placement="top" 
+                                                title="Average and maximum time vehicles spend waiting at the junction">
+                                            <i class="fa-solid fa-circle-info text-secondary"></i>
+                                        </button>
+                                    </div>
+                                    <div class="px-4">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="text-secondary stat">Mean:</div>
+                                            <div class="font-weight-bold stat" id="mean-wait-time">xxm:xxs</div>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="text-secondary stat">Maximum:</div>
+                                            <div class="font-weight-bold stat" id="max-wait-time">xxm:xxs</div>
+                                        </div>
+                                    </div>
+                                </section>
+                                
+                                <!-- Queue Length Metrics -->
+                                <section class="metrics-section my-2">
+                                    <div class="d-flex align-items-center fs-4">
+                                        <span class="stat-title">
+                                            <i class="fa-solid fa-car me-3"></i> Queue Length
+                                        </span>
+                                        <button class="info-button ms-2" 
+                                                aria-label="Queue Length Information"
+                                                data-toggle="tooltip" 
+                                                data-placement="top" 
+                                                title="Maximum number of vehicles waiting in queue">
+                                            <i class="fa-solid fa-circle-info text-secondary"></i>
+                                        </button>
+                                    </div>
+                                    <div class="px-4 fs-4">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="text-secondary stat">Maximum:</div>
+                                            <div class="stat" id="max-queue-length">xx cars</div>
+                                        </div>
+                                    </div>
+                                </section>
+                                
+                                <!-- Performance Score Metrics -->
+                                <section class="metrics-section my-2">
+                                    <div class="d-flex align-items-center fs-4">
+                                        <span class="stat-title">
+                                            <i class="fa-solid fa-trophy me-3"></i> Performance Score
+                                        </span>
+                                        <button class="info-button ms-2" 
+                                                aria-label="Performance Score Information"
+                                                data-toggle="tooltip" 
+                                                data-placement="top" 
+                                                title="Overall junction performance rating based on flow metrics">
+                                            <i class="fa-solid fa-circle-info text-secondary"></i>
+                                        </button>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="performance-score text-primary font-weight-bold stat" id="performance-score">47.83</div>
+                                        <div class="performance-rank text-secondary stat" id="performance-rank">Top 41% of recorded scores</div>
+                                    </div>
+                                </section>
+
+                                <!-- Environmental -->
+                                <section class="metrics-section my-2">
+                                    <div class="d-flex align-items-center fs-4">
+                                        <span class="stat-title">
+                                            <i class="fa-solid fa-leaf me-3"></i> Environmental Score
+                                        </span>
+                                        <button class="info-button ms-2" 
+                                                aria-label="Performance Score Information"
+                                                data-toggle="tooltip" 
+                                                data-placement="top" 
+                                                title="Overall junction performance rating based on flow metrics">
+                                            <i class="fa-solid fa-circle-info text-secondary"></i>
+                                        </button>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="performance-score text-primary font-weight-bold stat" id="editor-performance-score">47.83</div>
+                                        <div class="performance-rank text-secondary stat" id="editor-performance-rank">Top 41% of recorded scores</div>
+                                    </div>
+                                </section>
+                                
+                                <!-- Compare Button -->
+                                <button id="compareButton" 
+                                        class="btn btn-light text-primary w-100 stat"
+                                        aria-label="Compare with other junction configurations">
+                                    Compare with other scores
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Editor View -->
-    <div id="editor-view" class="view-container">
-        <div class="container-fluid p-0">
-            <!-- Your existing editor view content -->
-            <div class="row">
-                <div class="col-7">
-                    <button class="puffin-crossing inactive" id="puffin" onclick="puffinToggle()">Puffin Inactive</button>
-                    <div class="row editor-row">
-                        <div id="columnsContainer"></div>
-                        <div class="control-lane">
-                            <button class="control-btn add-lane" onclick="increaseColumns()">Press to<br>Add<br>Lane</button>
-                            <button class="control-btn remove-lane" onclick="decreaseColumns()">Press to<br>Remove<br>Lane</button>
+        <!-- Editor View - Lane Configuration Interface -->
+        <section id="editor-view" class="view-container">
+            <div class="container-fluid p-0">
+                <div class="row">
+                    <!-- Lane Editor Section -->
+                    <div class="col-7">
+                        <!-- Puffin Crossing Toggle -->
+                        <button id="puffinToggle" 
+                                class="puffin-crossing inactive"
+                                aria-label="Toggle puffin crossing"
+                                aria-pressed="false">
+                            Puffin Inactive
+                        </button>
+                        
+                        <!-- Lanes Configuration Area -->
+                        <div class="row editor-row">
+                            <div id="columnsContainer" class="lanes-container"></div>
+                            <div class="control-lane">
+                                <button id="addLane" 
+                                        class="control-btn add-lane"
+                                        aria-label="Add a new lane"
+                                        title="Add a new lane to the current direction">
+                                    Press to add lane
+                                </button>
+                                <button id="removeLane" 
+                                        class="control-btn remove-lane"
+                                        aria-label="Remove a lane"
+                                        title="Remove the last lane from the current direction">
+                                    Press to<br>Remove<br>Lane
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row border-top align-items-start">
-                        <div class="col-6 text-center bottom-menu">
-                            Hover over lanes for options<br>Click to toggle
-                        </div>
-                        <div class="col-3">
-                            <div class="container d-flex justify-content-center align-items-center" style="height: 15vh;">
-                                <div class="d-flex flex-column" style="width: 80%; height: 80%;">
-                                    <nav aria-label="Priority navigation" class="h-100">
-                                        <div class="d-flex flex-column h-100">
-                                            <div class="text-center flex-grow-1 d-flex align-items-center justify-content-center">
-                                                <span class="priority-label">Priority Unset</span>
-                                            </div>
-                                            <div class="flex-grow-1 d-flex align-items-center">
-                                                <ul class="pagination justify-content-center w-100 mb-0">
-                                                    <li class="page-item disabled">
-                                                        <a class="page-link text-center" href="#" tabindex="-1" aria-disabled="true">1</a>
-                                                    </li>
-                                                    <li class="page-item">
-                                                        <a class="page-link text-center" href="#">2</a>
-                                                    </li>
-                                                    <li class="page-item">
-                                                        <a class="page-link text-center" href="#">3</a>
-                                                    </li>
-                                                    <li class="page-item">
-                                                        <a class="page-link text-center" href="#">4</a>
-                                                    </li>
-                                                </ul>
+                        
+                        <!-- Editor Controls Section -->
+                        <div class="row border-top align-items-start">
+                            <!-- Instructions -->
+                            <div class="col-3 text-center bottom-menu">
+                                <p class="editor-instructions">
+                                    Hover over lanes for options<br>Click to toggle
+                                </p>
+                            </div>
+                            
+                            <!-- Traffic Volume Input -->
+                            <div class="col-3">
+                                <div class="container d-flex justify-content-center align-items-center traffic-volume-container">
+                                    <div class="form-group w-100">
+                                        <label for="trafficVolumeInput" id="trafficVolumeLabel" class="traffic-volume-label">
+                                            <span id="directionLabel">Direction</span>bound VPH
+                                        </label>
+                                        <div class="input-group">
+                                            <input 
+                                                type="number" 
+                                                class="form-control" 
+                                                id="trafficVolumeInput" 
+                                                min="0" 
+                                                max="400" 
+                                                step="10" 
+                                                value="100"
+                                                aria-labelledby="trafficVolumeLabel"
+                                            >
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">veh/hr</span>
                                             </div>
                                         </div>
-                                    </nav>
+                                        <small class="form-text text-muted">Range: 0-400 vehicles per hour</small>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-3">
-                            <div class="container button-container">
-                                <div class="button-group">
-                                    <button class="btn btn-success rounded-top-4 mb-0 flex-grow-1 fs-5 action-button" 
-                                            onclick="applyChanges()">Apply</button>
-                                    <button class="btn btn-danger rounded-bottom-4 flex-grow-1 fs-5 action-button" 
-                                            onclick="cancelChanges()">Cancel</button>
-                                </div>   
-                            </div>                          
+                            
+                            <!-- Priority Selection -->
+                            <div class="col-3">
+                                <div class="container d-flex justify-content-center align-items-center priority-container">
+                                    <div class="d-flex flex-column priority-wrapper">
+                                        <nav aria-label="Priority navigation" class="h-100">
+                                            <div class="d-flex flex-column h-100">
+                                                <div class="text-center flex-grow-1 d-flex align-items-center justify-content-center">
+                                                    <span class="priority-label">Priority Unset</span>
+                                                </div>
+                                                <div class="flex-grow-1 d-flex align-items-center">
+                                                    <ul class="pagination justify-content-center w-100 mb-0" id="priorityPagination">
+                                                        <!-- Priority buttons will be generated dynamically -->
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="col-3">
+                                <div class="container button-container">
+                                    <div class="button-group">
+                                        <button id="applyChanges" 
+                                                class="btn btn-success action-button"
+                                                aria-label="Apply lane configuration changes">
+                                            Apply
+                                        </button>
+                                        <button id="cancelChanges" 
+                                                class="btn btn-danger action-button"
+                                                aria-label="Cancel lane configuration changes">
+                                            Cancel
+                                        </button>
+                                    </div>   
+                                </div>                          
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-5 info-column">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column justify-content-between p-5">
-                            <h1 class="text-center infobar-title">Junction Metrics</h5>
-                            
-                            <!-- Wait Times -->
-                            <div class="my-2">
-                                <div class="d-flex align-items-center fs-4">
-                                    <span class="stat-title"><i class="fa-solid fa-clock me-3 stat-title"></i> Wait Times</span><br>
-                                </div>
-                                <div class="px-4">
-                                    <div class="d-flex justify-content-between">
-                                        <div class="text-secondary stat">Mean:</div>
-                                        <div class="font-weight-bold stat">xxm:xxs</div>
+                    
+                    <!-- Metrics Display (Editor View) -->
+                    <div class="col-5 info-column">
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column justify-content-between p-5">
+                                <h1 class="text-center infobar-title">Junction Metrics</h1>
+                                
+                                <!-- Wait Times -->
+                                <section class="metrics-section my-2">
+                                    <div class="d-flex align-items-center fs-4">
+                                        <span class="stat-title">
+                                            <i class="fa-solid fa-clock me-3 stat-title"></i> Wait Times
+                                        </span>
+                                        <button class="info-button ms-2" 
+                                                aria-label="Wait Times Information"
+                                                data-toggle="tooltip" 
+                                                data-placement="top" 
+                                                title="Average and maximum time vehicles spend waiting at the junction">
+                                            <i class="fa-solid fa-circle-info text-secondary"></i>
+                                        </button>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <div class="text-secondary stat">Maximum:</div>
-                                        <div class="font-weight-bold stat">xxm:xxs</div>
+                                    <div class="px-4">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="text-secondary stat">Mean:</div>
+                                            <div class="font-weight-bold stat" id="editor-mean-wait-time">xxm:xxs</div>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="text-secondary stat">Maximum:</div>
+                                            <div class="font-weight-bold stat" id="editor-max-wait-time">xxm:xxs</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Queue Length -->
-                            <div class="my-2">
-                                <div class="d-flex align-items-center fs-4">
-                                    <span class="stat-title"><i class="fa-solid fa-car me-3"></i> Queue Length</span><br>
-                                </div>
-                                <div class="px-4 fs-4">
-                                    <div class="d-flex justify-content-between">
-                                        <div class="text-secondary stat">Maximum:</div>
-                                        <div class="stat">xx cars</div>
+                                </section>
+                                
+                                <!-- Queue Length -->
+                                <section class="metrics-section my-2">
+                                    <div class="d-flex align-items-center fs-4">
+                                        <span class="stat-title">
+                                            <i class="fa-solid fa-car me-3"></i> Queue Length
+                                        </span>
+                                        <button class="info-button ms-2" 
+                                                aria-label="Queue Length Information"
+                                                data-toggle="tooltip" 
+                                                data-placement="top" 
+                                                title="Maximum number of vehicles waiting in queue">
+                                            <i class="fa-solid fa-circle-info text-secondary"></i>
+                                        </button>
                                     </div>
-                                </div>
+                                    <div class="px-4 fs-4">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="text-secondary stat">Maximum:</div>
+                                            <div class="stat" id="editor-max-queue-length">xx cars</div>
+                                        </div>
+                                    </div>
+                                </section>
+                                
+                                <!-- Performance Score -->
+                                <section class="metrics-section my-2">
+                                    <div class="d-flex align-items-center fs-4">
+                                        <span class="stat-title">
+                                            <i class="fa-solid fa-trophy me-3"></i> Performance Score
+                                        </span>
+                                        <button class="info-button ms-2" 
+                                                aria-label="Performance Score Information"
+                                                data-toggle="tooltip" 
+                                                data-placement="top" 
+                                                title="Overall junction performance rating based on flow metrics">
+                                            <i class="fa-solid fa-circle-info text-secondary"></i>
+                                        </button>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="performance-score text-primary font-weight-bold stat" id="editor-performance-score">47.83</div>
+                                        <div class="performance-rank text-secondary stat" id="editor-performance-rank">Top 41% of recorded scores</div>
+                                    </div>
+                                </section>
+                                
+                                <!-- Environmental -->
+                                <section class="metrics-section my-2">
+                                    <div class="d-flex align-items-center fs-4">
+                                        <span class="stat-title">
+                                            <i class="fa-solid fa-leaf me-3"></i> Environmental Score
+                                        </span>
+                                        <button class="info-button ms-2" 
+                                                aria-label="Performance Score Information"
+                                                data-toggle="tooltip" 
+                                                data-placement="top" 
+                                                title="Overall junction performance rating based on flow metrics">
+                                            <i class="fa-solid fa-circle-info text-secondary"></i>
+                                        </button>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="performance-score text-primary font-weight-bold stat" id="editor-performance-score">47.83</div>
+                                        <div class="performance-rank text-secondary stat" id="editor-performance-rank">Top 41% of recorded scores</div>
+                                    </div>
+                                </section>
+                                
+                                <!-- Compare Button -->
+                                <button id="editorCompareButton" 
+                                        class="btn btn-light text-primary w-100 stat"
+                                        aria-label="Compare with other junction configurations">
+                                    Compare with other scores
+                                </button>
                             </div>
-                            
-                            <!-- Performance Score -->
-                            <div class="my-2">
-                                <div class="d-flex align-items-center fs-4">
-                                    <span class="stat-title"><i class="fa-solid fa-trophy me-3"></i> Performance Score</span>
-                                </div>
-                                <div class="text-center">
-                                    <div class="performance-score text-primary font-weight-bold stat">47.83</div>
-                                    <div class="performance-rank text-secondary stat">Top 41% of recorded scores</div>
-                                </div>
-                            </div>
-                            
-                            <button class="btn btn-light text-primary w-100 stat">
-                                Compare with other scores
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <!-- Your existing script imports -->
+    <!-- Application Scripts -->
+    <!-- Core functionality script -->
+    <script src="script.js" defer></script>
+    
+    <!-- Editor functionality script -->
+    <script src="editorScript.js" defer></script>
+    
+    <!-- Server communication script -->
+    <script src="flaskConnection.js" defer></script>
+    
+    <!-- View Control Script -->
     <script>
+        /**
+         * View Control Module - Handles switching between main view and editor view
+         */
         let currentDirection = null;
 
+        /**
+         * Shows the editor view for configuring a specific direction (arm) of the junction
+         * 
+         * @param {string} direction - The direction to edit ('north', 'south', 'east', or 'west')
+         */
         function showEditor(direction) {
+            // Store current direction being edited
             currentDirection = direction;
+            
+            // Hide main view and show editor
             document.getElementById('main-view').style.opacity = '0';
             document.getElementById('main-view').style.pointerEvents = 'none';
             document.getElementById('editor-view').style.opacity = '1';
             document.getElementById('editor-view').style.pointerEvents = 'auto';
             
-            // Initialize editor for specific direction
+            // Initialize editor with configuration for selected direction
             initializeEditor(direction);
         }
 
+        /**
+         * Hides the editor view and returns to the main junction view
+         */
         function hideEditor() {
+            // Hide editor and show main view
             document.getElementById('editor-view').style.opacity = '0';
             document.getElementById('editor-view').style.pointerEvents = 'none';
             document.getElementById('main-view').style.opacity = '1';
             document.getElementById('main-view').style.pointerEvents = 'auto';
+            
+            // Clear current direction
             currentDirection = null;
         }
 
+        /**
+         * Applies the changes made in the editor to the main junction model
+         */
         function applyChanges() {
-            // Save the changes for currentDirection
+            // Save editor changes for the current direction
             saveEditorChanges(currentDirection);
+            
+            // Return to main view
             hideEditor();
         }
 
+        /**
+         * Cancels changes made in the editor without applying them
+         */
         function cancelChanges() {
-            // Discard changes
+            // Discard changes and return to main view
             hideEditor();
         }
 
+        /**
+         * Initializes the editor with configuration for a specific direction
+         * Implementation provided in editorScript.js
+         * 
+         * @param {string} direction - The direction to configure
+         */
         function initializeEditor(direction) {
             // Load existing configuration for the direction
-            // This function should be implemented in your editorScript.js
+            // This function should be implemented in editorScript.js
+            if (typeof window.initializeEditorUI === 'function') {
+                // Get configuration for the direction and initialize editor
+                const config = getDirectionConfig(direction);
+                window.initializeEditorUI(config);
+            } else {
+                console.error('Editor initialization function not found!');
+            }
         }
 
-        function saveEditorChanges(direction) {
-            // Save the current editor state
-            // This function should be implemented in your editorScript.js
+        /**
+         * Retrieves the configuration for a specific direction
+         * This would be implemented in script.js to access the junction model
+         * 
+         * @param {string} direction - The direction to get configuration for
+         * @return {Object} The configuration object for the specified direction
+         */
+        function getDirectionConfig(direction) {
+            // This is a placeholder - actual implementation would come from script.js
+            // Retrieve configuration from junction model
+            if (typeof window.getDirectionConfig === 'function') {
+                return window.getDirectionConfig(direction);
+            }
+            
+            // Default empty configuration if not available
+            return {
+                lanes: 1,
+                leftTurnLanes: [],
+                busLanes: [],
+                priority: 0,
+                puffinActive: false
+            };
         }
+
+        /**
+         * Saves the editor changes to the junction model for a specific direction
+         * 
+         * @param {string} direction - The direction to save configuration for
+         */
+        function saveEditorChanges(direction) {
+            // Get the current editor configuration
+            if (typeof window.getEditorConfiguration === 'function') {
+                const config = window.getEditorConfiguration();
+                
+                // Save it to the junction model
+                if (typeof window.updateDirectionConfig === 'function') {
+                    window.updateDirectionConfig(direction, config);
+                } else {
+                    console.error('Function to update direction configuration not found!');
+                }
+            } else {
+                console.error('Function to get editor configuration not found!');
+            }
+        }
+
+        // Set up event listeners after DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attach event listeners to buttons
+            document.getElementById('applyChanges').addEventListener('click', applyChanges);
+            document.getElementById('cancelChanges').addEventListener('click', cancelChanges);
+            document.getElementById('puffinToggle').addEventListener('click', function() {
+                if (typeof window.puffinToggle === 'function') {
+                    window.puffinToggle();
+                }
+            });
+            
+            // Initialize tooltips if Bootstrap's tooltip is available
+            if (typeof $().tooltip === 'function') {
+                $('[data-toggle="tooltip"]').tooltip();
+            }
+        });
     </script>
-    <script src="script.js"></script>
-    <script src="editorScript.js"></script>
-    <script src="flaskConnection.js"></script>
 </body>
 </html>
