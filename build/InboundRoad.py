@@ -1,4 +1,5 @@
 import Equations
+import math
 
 class InboundRoad:
     def __init__(self):
@@ -9,6 +10,38 @@ class InboundRoad:
 
         # Lucy added
         self.puffin_crossing = False
+
+        # Storing metrics
+        self.mean_wait_secs = 0
+        self.mean_wait_mins = 0
+        self.max_wait_mins = 0
+        self.max_wait_secs = 0
+        self.max_queue = 0
+        self.performance = 0
+
+    # Updates the junction arms metrics
+    def update_junction_arm_metrics(self, vph_rates, junction, road_direction):
+        mean_wait = self.get_average_wait(vph_rates, junction, road_direction)
+        max_wait = self.get_max_queue(vph_rates, junction, road_direction)
+
+        if mean_wait < 60:
+            self.mean_wait_mins = 0
+            self.mean_wait_secs = mean_wait
+        else:
+            self.mean_wait_mins = math.floor(mean_wait / 60)
+            self.mean_wait_secs = math.ceil(mean_wait - (60 * self.mean_wait_mins))
+
+        if max_wait < 60:
+            self.max_wait_mins = 0
+            self.max_wait_secs = max_wait
+        else:
+            self.max_wait_mins = math.floor(max_wait / 60)
+            self.max_wait_secs = math.ceil(max_wait - (60 * self.max_wait_mins))  
+
+        self.max_queue = self.get_max_queue(vph_rates, junction, road_direction)
+
+        # TODO change this
+        self.performance = 15000000000000
 
     # Here we return the number of lanes that the road has 
     def get_total_standard_lanes(self):
@@ -82,12 +115,14 @@ class InboundRoad:
         return self.puffin_crossing
 
     def get_max_wait(self, vph_rates, junction, road_direction):
+        print(round(Equations.max_wait(vph_rates, junction, road_direction)*60, 2))
         return round(Equations.max_wait(vph_rates, junction, road_direction)*60, 2)
 
     def get_max_queue(self, vph_rates, junction, road_direction):
-        return Equations.max_queue(vph_rates, junction, road_direction)
+        return math.ceil(Equations.max_queue(vph_rates, junction, road_direction))
 
     def get_average_wait(self, vph_rates, junction, road_direction):
+        print(round(Equations.average_wait(vph_rates, junction, road_direction)*60, 2))
         return round(Equations.average_wait(vph_rates, junction, road_direction)*60, 2)
 
 if __name__ == "__main__":
