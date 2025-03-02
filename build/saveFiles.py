@@ -90,7 +90,44 @@ def create_model_from_save(save_number):
     else:
         print("there is data here")
         # TODO
-        return None
+
+        with open(file_path, "r") as file:
+            lines = [line.strip() for line in file]  # Stores lines as a list
+
+        # Lines 1 - 6 are junction metrics
+        return_junction = Junction.Junction()
+        return_junction.mean_wait_mins = int(lines[0])
+        return_junction.mean_wait_secs = int(lines[1])
+        return_junction.max_wait_mins = int(lines[2])
+        return_junction.max_wait_secs = int(lines[3])
+        return_junction.max_queue = int(lines[4])
+        return_junction.performance = float(lines[5])
+
+        direction_ranges = [(0, 6, 16), (1, 17, 27), (2, 28, 38), (3, 39, 49)]
+        roads = return_junction.get_all_roads()
+
+        for (direction, start, end) in direction_ranges:
+            road = roads[direction]
+
+            # Metrics
+            road.mean_wait_mins = int(lines[start])
+            road.mean_wait_secs = int(lines[start + 1])
+            road.max_wait_mins = int(lines[start + 2])
+            road.max_wait_secs = int(lines[start + 3])
+            road.max_queue = int(lines[start + 4])
+            road.performance = float(lines[start + 5])
+
+            # Config
+            road.priority_factor = int(lines[start + 6])
+            road.total_standard_lanes = int(lines[start + 7])
+
+            road.has_bus_lane = lines[start + 8].lower() == "true"
+            road.has_left_lane = lines[start + 9].lower() == "true"
+            road.puffin_crossing = lines[start + 10].lower() == "true"
+
+        save_junction_to_file(return_junction)
+
+        return return_junction
 
 
 

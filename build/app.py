@@ -1,5 +1,5 @@
 from flask import Flask, render_template, send_from_directory, jsonify
-import Junction, InboundRoad
+import Junction, InboundRoad, saveFiles
 from flask import Response
 import copy, os, math
 
@@ -295,6 +295,10 @@ def apply_changes():
     max_wait_secs = junction_model.max_wait_secs
     max_queue = junction_model.max_queue
     performance = junction_model.performance
+
+    # TODO save to file
+    saveFiles.save_junction_to_file(junction_model)
+    saveFiles.create_model_from_save(1)
     
     return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
                     "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,

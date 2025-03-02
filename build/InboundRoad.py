@@ -7,8 +7,6 @@ class InboundRoad:
         self.has_bus_lane = False
         self.has_left_lane = False
         self.priority_factor = 1
-
-        # Lucy added
         self.puffin_crossing = False
 
         # Storing metrics
