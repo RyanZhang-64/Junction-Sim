@@ -233,7 +233,8 @@ document.getElementById("applyChanges").addEventListener("click", function() {
     })
     .then(response => response.json()) // Assuming the response is JSON
     .then(data => {
-        update_metrics(data.mean_wait, data.max_wait, data.max_queue, data.performance);
+        update_metrics(data.mean_wait_mins, data.mean_wait_secs,
+            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance);
         console.log("Success:", data)
 
     })
@@ -251,7 +252,8 @@ document.getElementById("cancelChanges").addEventListener("click", function() {
     .then(data => {
 
 
-        update_metrics(data.mean_wait, data.max_wait, data.max_queue, data.performance);
+        update_metrics(data.mean_wait_mins, data.mean_wait_secs,
+            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance);
         console.log("Success:", data)
     })
     .catch(error => console.error("Error:", error));

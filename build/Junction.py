@@ -55,8 +55,6 @@ class Junction:
         mean_wait = self.get_average_wait(vph_rates)
         max_wait = self.get_max_queue(vph_rates)
 
-        print(mean_wait)
-
         if mean_wait < 60:
             self.mean_wait_mins = 0
             self.mean_wait_secs = mean_wait
