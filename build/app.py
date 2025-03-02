@@ -1,8 +1,7 @@
 from flask import Flask, render_template, send_from_directory, jsonify
 import Junction, InboundRoad
 from flask import Response
-import copy
-import os, math
+import copy, os, math
 
 app = Flask(__name__, 
             static_folder="CS261 Final GUI", 

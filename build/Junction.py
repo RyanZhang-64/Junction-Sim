@@ -15,6 +15,12 @@ class Junction:
         self.max_queue = 0
         self.performance = 0
 
+    # Returns the metrics as an array
+    def get_metrics_as_array(self):
+        return [self.mean_wait_mins, self.mean_wait_secs, 
+                self.max_wait_mins, self.max_wait_secs,
+                self.max_queue, self.performance]
+
     def efficiency_score(self, vph_rates):
         return Equations.get_efficiency_score(vph_rates, self)
 

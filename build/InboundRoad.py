@@ -18,6 +18,15 @@ class InboundRoad:
         self.max_wait_secs = 0
         self.max_queue = 0
         self.performance = 0
+    
+    def get_metrics_as_array(self):
+        return [self.mean_wait_mins, self.mean_wait_secs, 
+                self.max_wait_mins, self.max_wait_secs,
+                self.max_queue, self.performance]
+    
+    def get_configuration_as_array(self):
+        return [self.priority_factor, self.total_standard_lanes, self.has_bus_lane,
+                self.has_left_lane, self.puffin_crossing]
 
     # Updates the junction arms metrics
     def update_junction_arm_metrics(self, vph_rates, junction, road_direction):
