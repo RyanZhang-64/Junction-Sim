@@ -1,3 +1,5 @@
+import numpy
+
 import Equations
 import math
 
@@ -143,12 +145,25 @@ class InboundRoad:
         #print(Equations.environmental_score(self.has_bike_lane, self.has_bus_lane, self.has_puffin_crossing))
         return Equations.environmental_score(self.has_bike_lane, self.has_bus_lane, self.has_puffin_crossing)
 
+    def get_arm_efficiency_score(self, vph_rates, junction, road_direction):
+        FAIRNESS_EXTREME_BOUNDARY = 400
+        WORST_CASE_EXTREME_BOUNDARY = 75
+        ##TODO: include environmental factors!!!
+        total_efficiency = (self.get_average_wait(vph_rates,junction, road_direction)
+                            + (self.get_max_queue(vph_rates, junction, road_direction) * 1/FAIRNESS_EXTREME_BOUNDARY)
+                            + (self.get_max_queue(vph_rates, junction, road_direction) * 1/FAIRNESS_EXTREME_BOUNDARY))
+        total_efficiency = 99 / (1 + numpy.exp(-(1 / 5) * (total_efficiency - 75))) + 1  ## Sigmoid
+        total_efficiency = 100 - total_efficiency
+        return round(total_efficiency, 2)
+
+
 
 
 if __name__ == "__main__":
     from Junction import Junction
     junction = Junction()
-    lst = [100,100,100,100]
+    lst = [500,500,500,500]
+    print("total", InboundRoad().get_arm_efficiency_score(lst, junction, 1))
     print("avg", InboundRoad().get_average_wait(lst,junction,1))
     print("max Q", InboundRoad().get_max_queue(lst,junction,1))
     print("max W", InboundRoad().get_max_wait(lst,junction,1))
