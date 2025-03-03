@@ -16,7 +16,7 @@
     align-items: center;
     min-height: 15vh;
     justify-content: center;
-    font-size: clamp(16px, 2.7vh, 24px);
+    font-size: min(2vw, 2vh);
     color: var(--primary-text);
 }
 
@@ -83,11 +83,10 @@
     font-size: clamp(16px, 2vw, 24px);
     flex: 1;
     display: flex;
-    white-space: pre;
     justify-content: center;
     align-items: center;
-    padding-right: 3vw;
-    padding-left: 3vw;
+    padding-right: 2vw;
+    padding-left: 2vw;
     color: var(--primary-text);
     cursor: pointer;
     border: none;

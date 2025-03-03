@@ -20,19 +20,11 @@ class JunctionSimulation {
     
         // Direction state
         this.currentDirection = null;
-        this.busLanes = {
-            north: [],
-            south: [],
-            east: [],
-            west: []
-        };
-    
-        // Lane configurations
-        this.leftTurnLanes = {
-            west: [],
-            east: [],
-            north: [],
-            south: []
+        this.laneAttributes = {
+            north: null,
+            south: null,
+            east: null,
+            west: null
         };
     
         // Puffin crossing states
@@ -51,23 +43,25 @@ class JunctionSimulation {
             east: 0,
             west: 0
         };
-            
-        // Image resources
-        this.busImage = new Image();
-        this.busImage.src = 'BUS.png';
         
         this.zebraCrossing = new Image();
         this.zebraCrossing.src = 'zebra.png';
         this.zebraCrossing.onload = () => {
             this.draw();
         };
+        this.arrowImage = new Image();
+        this.arrowImage.src = 'arrow.png';
     
         // Setup event handlers
         this.setupFixedButtonPositions();  // Removed duplicate call
         this.setupNavigationListeners();
         
         // Initial draw
-        this.draw();
+        // Add this to your initialization code, after creating the JunctionSimulation instance
+        document.fonts.ready.then(() => {
+            console.log("All fonts are loaded and ready to use!");
+            this.draw(); // Redraw after fonts are loaded
+        });
     }
     
     drawZebraCrossing(x, y, width, height, direction) {
@@ -226,6 +220,8 @@ class JunctionSimulation {
     }
 
     draw() {
+        console.log("Starting draw() with laneAttributes:", 
+                JSON.stringify(this.laneAttributes));
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width / this.dpr, this.canvas.height / this.dpr);
         
@@ -255,6 +251,8 @@ class JunctionSimulation {
     }
 
     drawRoads(centerX, centerY) {
+        console.log("Starting drawRoads() with laneAttributes:", 
+                JSON.stringify(this.laneAttributes));
         // Draw the base roads first
         this.drawBaseRoad('west', centerX, centerY);
         this.drawBaseRoad('east', centerX, centerY);
@@ -262,19 +260,20 @@ class JunctionSimulation {
         this.drawBaseRoad('south', centerX, centerY);
     
         // Then draw all zebra crossings
-        this.drawAllCrossings(centerX, centerY);  // Remove the if condition
+        this.drawAllCrossings(centerX, centerY);
         this.drawBusLanes(centerX, centerY); 
+        console.log("About to call drawBikeLanes...");
+        console.log("After calling drawBikeLanes...");
+        this.drawBikeLanes(centerX, centerY);  
         this.drawPriorityBars(centerX, centerY);
     
-        this.drawLaneArrows(centerX, centerY, 'west', this.westboundLanes);
-        this.drawLaneArrows(centerX, centerY, 'east', this.eastboundLanes);
-        this.drawLaneArrows(centerX, centerY, 'north', this.northboundLanes);
-        this.drawLaneArrows(centerX, centerY, 'south', this.southboundLanes);
+        this.drawLaneArrows(centerX, centerY);
     }
 
     drawBaseRoad(direction, centerX, centerY) {
         const vertical = direction === 'north' || direction === 'south';
         const lanes = this[`${direction}boundLanes`];
+        console.log("Lanes: ", lanes);
         const laneWidth = this.calculateLaneWidth(lanes);
         
         if (vertical) {
@@ -393,63 +392,94 @@ class JunctionSimulation {
         });
     }
 
-    drawLaneArrows(x, y, direction, lanes) {
-        const laneWidth = this.calculateLaneWidth(lanes);
-        // Scale arrow size relative to lane width
-        const arrowSize = laneWidth * 0.6;
+    drawLaneArrows(centerX, centerY) {
+        const directions = ['north', 'south', 'east', 'west'];
         
-        this.leftTurnLanes[direction].forEach(laneIndex => {
-            if (laneIndex >= lanes) return;
+        directions.forEach(direction => {
+            // Only proceed if this direction has a left-turn attribute
+            if (this.laneAttributes[direction] !== 'left-turn') return;
             
-            const center = this.getLaneCenters(x, y, lanes, direction === 'north' || direction === 'south')[laneIndex];
-            let arrowX, arrowY, rotation;
+            const lanes = this[`${direction}boundLanes`];
             
-            // Position arrows relative to junction size
-            const arrowOffset = this.junctionSize * 0.25;  // Place arrows 1/4 of the way from junction
-            
-            switch(direction) {
-                case 'west':
-                    arrowX = x - this.junctionSize/2 - arrowOffset;
-                    arrowY = center.y;
-                    rotation = Math.PI/2;
-                    break;
-                case 'east':
-                    arrowX = x + this.junctionSize/2 + arrowOffset;
-                    arrowY = center.y;
-                    rotation = -Math.PI/2;
-                    break;
-                case 'north':
-                    arrowX = center.x;
-                    arrowY = y - this.junctionSize/2 - arrowOffset;
-                    rotation = Math.PI;
-                    break;
-                case 'south':
-                    arrowX = center.x;
-                    arrowY = y + this.junctionSize/2 + arrowOffset;
-                    rotation = 0;
-                    break;
+            // Only draw if there are lanes
+            if (lanes > 0) {
+                const laneWidth = this.calculateLaneWidth(lanes);
+                // Scale arrow size relative to lane width
+                const arrowSize = laneWidth * 0.6;
+                
+                // Always draw the arrow in the leftmost lane (index 0)
+                const laneIndex = 0;
+                
+                const center = this.getLaneCenters(centerX, centerY, lanes, direction === 'north' || direction === 'south')[laneIndex];
+                let arrowX, arrowY, rotation;
+                
+                // Position arrows relative to junction size
+                const arrowOffset = this.junctionSize * 0.25;  // Place arrows 1/4 of the way from junction
+                
+                switch(direction) {
+                    case 'west':
+                        arrowX = centerX - this.junctionSize/2 - arrowOffset;
+                        arrowY = center.y;
+                        rotation = Math.PI/2;
+                        break;
+                    case 'east':
+                        arrowX = centerX + this.junctionSize/2 + arrowOffset;
+                        arrowY = center.y;
+                        rotation = -Math.PI/2;
+                        break;
+                    case 'north':
+                        arrowX = center.x;
+                        arrowY = centerY - this.junctionSize/2 - arrowOffset;
+                        rotation = Math.PI;
+                        break;
+                    case 'south':
+                        arrowX = center.x;
+                        arrowY = centerY + this.junctionSize/2 + arrowOffset;
+                        rotation = 0;
+                        break;
+                }
+        
+                this.ctx.save();
+                this.ctx.translate(arrowX, arrowY);
+                this.ctx.rotate(rotation);
+                
+                // Draw the arrow image
+                // Calculate dimensions based on arrowSize
+                const arrowWidth = arrowSize;
+                const arrowHeight = arrowSize;
+                
+                // Draw image centered at the position
+                this.ctx.drawImage(
+                    this.arrowImage,
+                    -arrowWidth / 2,  // Center horizontally
+                    -arrowHeight / 2, // Center vertically
+                    arrowWidth,
+                    arrowHeight
+                );
+                
+                this.ctx.restore();
             }
-    
-            this.ctx.save();
-            this.ctx.translate(arrowX, arrowY);
-            this.ctx.rotate(rotation);
-            this.ctx.font = `${arrowSize}px FontAwesome`;
-            this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle';
-            this.ctx.fillText('\uf0a4', 0, 0); // FontAwesome icon for left turn
-            this.ctx.restore();
         });
     }
 
-    setLeftTurnLane(direction, laneIndex, enabled) {
-        if (enabled) {
-            if (!this.leftTurnLanes[direction].includes(laneIndex)) {
-                this.leftTurnLanes[direction].push(laneIndex);
-            }
-        } else {
-            this.leftTurnLanes[direction] = this.leftTurnLanes[direction].filter(i => i !== laneIndex);
+    /**
+     * Sets the attribute for the leftmost lane of a specific direction
+     * @param {string} direction - The direction ('north', 'south', 'east', 'west')
+     * @param {string|null} attributeType - The attribute type ('left-turn', 'bus', 'bike', or null)
+     */
+    setLaneAttribute(direction, attributeType) {
+        if (!['north', 'south', 'east', 'west'].includes(direction)) {
+            console.warn(`Invalid direction: ${direction}`);
+            return;
         }
-        this.draw();
+        
+        if (attributeType !== null && !['left-turn', 'bus', 'bike'].includes(attributeType)) {
+            console.warn(`Invalid attribute type: ${attributeType}`);
+            return;
+        }
+        
+        this.laneAttributes[direction] = attributeType;
+        this.draw(); // Redraw the junction with updated attributes
     }
 
     getLaneCenters(startX, startY, lanes, vertical = false) {
@@ -541,16 +571,18 @@ class JunctionSimulation {
         const directions = ['north', 'south', 'east', 'west'];
         
         directions.forEach(direction => {
+            // Only proceed if this direction has a bus attribute
+            if (this.laneAttributes[direction] !== 'bus') return;
+            
             const lanes = this[`${direction}boundLanes`];
-            const laneWidth = this.calculateLaneWidth(lanes);
-            const busWidth = laneWidth * 0.6;
             
-            // Calculate height maintaining aspect ratio
-            const aspectRatio = this.busImage.naturalHeight / this.busImage.naturalWidth;
-            const busHeight = busWidth * aspectRatio;
-            
-            this.busLanes[direction].forEach(laneIndex => {
-                if (laneIndex >= lanes) return;
+            // Only draw if there are lanes
+            if (lanes > 0) {
+                const laneWidth = this.calculateLaneWidth(lanes);
+                const busSize = laneWidth * 0.4;
+                
+                // Always draw in the leftmost lane (index 0)
+                const laneIndex = 0;
                 
                 const center = this.getLaneCenters(centerX, centerY, lanes, direction === 'north' || direction === 'south')[laneIndex];
                 let busX, busY, rotation;
@@ -583,16 +615,110 @@ class JunctionSimulation {
                 this.ctx.save();
                 this.ctx.translate(busX, busY);
                 this.ctx.rotate(rotation);
-                this.ctx.drawImage(
-                    this.busImage,
-                    -busWidth/2,   // center horizontally
-                    -busHeight/2,  // center vertically
-                    busWidth,
-                    busHeight
-                );
+                this.ctx.font = `${busSize}px FontAwesome`;
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillStyle = 'white';
+                this.ctx.fillText('BUS', 0, 0); // FontAwesome icon for bus
                 this.ctx.restore();
-            });
+            }
         });
+    }
+
+    drawBikeLanes(centerX, centerY) {
+        console.log("Starting drawBikeLanes() with laneAttributes:", 
+                JSON.stringify(this.laneAttributes));
+    
+        const directions = ['north', 'south', 'east', 'west'];
+        
+        directions.forEach(direction => {
+            console.log(`Checking if ${direction} has bike attribute:`, 
+                        this.laneAttributes[direction] === 'bike');
+            
+            // Only proceed if this direction has a bike attribute
+            if (this.laneAttributes[direction] !== 'bike') return;
+            
+            console.log(`${direction} has bike attribute, rendering...`);
+            
+            const lanes = this[`${direction}boundLanes`];
+            
+            // Only draw if there are lanes
+            if (lanes > 0) {
+                const laneWidth = this.calculateLaneWidth(lanes);
+                const bikeSize = laneWidth * 0.6;
+                
+                // Always draw in the leftmost lane (index 0)
+                const laneIndex = 0;
+                
+                const center = this.getLaneCenters(centerX, centerY, lanes, direction === 'north' || direction === 'south')[laneIndex];
+                let bikeX, bikeY, rotation;
+                
+                const bikeOffset = this.junctionSize * 0.35;
+                
+                switch(direction) {
+                    case 'west':
+                        bikeX = centerX - this.junctionSize/2 - bikeOffset;
+                        bikeY = center.y;
+                        rotation = Math.PI/2;
+                        break;
+                    case 'east':
+                        bikeX = centerX + this.junctionSize/2 + bikeOffset;
+                        bikeY = center.y;
+                        rotation = -Math.PI/2;
+                        break;
+                    case 'north':
+                        bikeX = center.x;
+                        bikeY = centerY - this.junctionSize/2 - bikeOffset;
+                        rotation = Math.PI;
+                        break;
+                    case 'south':
+                        bikeX = center.x;
+                        bikeY = centerY + this.junctionSize/2 + bikeOffset;
+                        rotation = 0;
+                        break;
+                }
+    
+                this.ctx.save();
+                this.ctx.translate(bikeX, bikeY);
+                this.ctx.rotate(rotation);
+                this.ctx.font = `${bikeSize}px Arial`;
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillStyle = 'white';
+                this.ctx.fillText('Bike', 0, 0); // FontAwesome icon for bicycle
+                this.ctx.restore();
+            }
+        });
+    }
+
+    // Class method for debouncing
+    debounce(func, delay) {
+        let timeoutId;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(function() {
+                func.apply(context, args);
+            }, delay);
+        };
+    }
+    
+    // The actual resize handler
+    handleResize() {
+        const rect = this.canvas.getBoundingClientRect();
+        this.dpr = window.devicePixelRatio || 1;
+        this.setupHighDPICanvas(rect.width, rect.height);
+        
+        // Junction dimensions
+        this.junctionSize = Math.min(rect.width, rect.height) * junctionFactor;
+
+        this.setupFixedButtonPositions();  // Removed duplicate call
+        this.setupNavigationListeners();
+        
+        // Initial draw
+        this.draw();
+        console.log("Resized");
     }
 
     setupNavigationListeners() {
@@ -609,6 +735,11 @@ class JunctionSimulation {
         
         applyButton.addEventListener('click', () => this.applyChanges());
         cancelButton.addEventListener('click', () => this.cancelChanges());
+        this.handleResize = this.handleResize.bind(this);
+        this.debouncedResize = this.debounce(this.handleResize, 250);
+        
+        // Set up event listener
+        window.addEventListener('resize', this.debouncedResize);
     
         // Add puffin state handler
         window.updatePuffinState = (isActive) => {
@@ -627,12 +758,11 @@ class JunctionSimulation {
         // Initialize editor with current lane configuration
         window.initializeEditorUI?.({
             lanes: this[`${direction}boundLanes`],
-            leftTurnLanes: this.leftTurnLanes[direction],
+            leftLaneAttribute: this.laneAttributes[direction],  // Pass the current lane attribute
             puffinActive: this.puffinCrossings[direction],
-            busLanes: this.busLanes[direction],
             priority: this.priorities[direction]
         });
-
+    
         const directionLabel = document.getElementById('directionLabel');
         if (directionLabel) {
             // Capitalize first letter of direction
@@ -657,13 +787,12 @@ class JunctionSimulation {
         console.log(`- Priority: ${newConfig.priority}`);
         console.log(`- Puffin: ${newConfig.puffinActive}`);
         console.log(`- Lanes: ${newConfig.lanes}`);
-        console.log(`- Left turn lanes: ${JSON.stringify(newConfig.leftTurnLanes)}`);
-        console.log(`- Bus lanes: ${JSON.stringify(newConfig.busLanes)}`);
+        console.log(`- Lane attribute: ${newConfig.leftLaneAttribute}`);
         
         // Update the appropriate direction's configuration
         this.puffinCrossings[this.currentDirection] = newConfig.puffinActive;
-        this.busLanes[this.currentDirection] = newConfig.busLanes;
-        
+        this.laneAttributes[this.currentDirection] = newConfig.leftLaneAttribute;
+        // ...rest of method...
         // Add debug for priority before and after
         console.log(`Priority before: ${this.priorities[this.currentDirection]}`);
         this.priorities[this.currentDirection] = newConfig.priority;
@@ -672,19 +801,15 @@ class JunctionSimulation {
         switch(this.currentDirection) {
             case 'north':
                 this.northboundLanes = newConfig.lanes;
-                this.leftTurnLanes.north = newConfig.leftTurnLanes;
                 break;
             case 'south':
                 this.southboundLanes = newConfig.lanes;
-                this.leftTurnLanes.south = newConfig.leftTurnLanes;
                 break;
             case 'east':
                 this.eastboundLanes = newConfig.lanes;
-                this.leftTurnLanes.east = newConfig.leftTurnLanes;
                 break;
             case 'west':
                 this.westboundLanes = newConfig.lanes;
-                this.leftTurnLanes.west = newConfig.leftTurnLanes;
                 break;
         }
     
@@ -729,17 +854,45 @@ class JunctionSimulation {
         return this.priorities[direction] || 0;
     };
     
-    // Enhance the applyChanges method to include priority
-    const originalApplyChanges = JunctionSimulation.prototype.applyChanges;
+    // Completely replace the applyChanges method
     JunctionSimulation.prototype.applyChanges = function() {
         // Get the current configuration from the editor
         const newConfig = this.getEditorConfiguration();
         
-        // Set priority for current direction
-        this.setPriority(this.currentDirection, newConfig.priority);
+        // Debug logging
+        console.log(`Applying changes for ${this.currentDirection} direction:`);
+        console.log(`- Priority: ${newConfig.priority}`);
+        console.log(`- Puffin: ${newConfig.puffinActive}`);
+        console.log(`- Lanes: ${newConfig.lanes}`);
+        console.log(`- Lane attribute: ${newConfig.leftLaneAttribute}`);
         
-        // Call original method to handle the rest
-        originalApplyChanges.call(this);
+        // Update the appropriate direction's configuration
+        this.puffinCrossings[this.currentDirection] = newConfig.puffinActive;
+        this.laneAttributes[this.currentDirection] = newConfig.leftLaneAttribute;
+        this.priorities[this.currentDirection] = newConfig.priority;
+
+        console.log("After setting in applyChanges, laneAttributes is:", 
+            JSON.stringify(this.laneAttributes));
+        
+        // Update lane count
+        switch(this.currentDirection) {
+            case 'north':
+                this.northboundLanes = newConfig.lanes;
+                break;
+            case 'south':
+                this.southboundLanes = newConfig.lanes;
+                break;
+            case 'east':
+                this.eastboundLanes = newConfig.lanes;
+                break;
+            case 'west':
+                this.westboundLanes = newConfig.lanes;
+                break;
+        }
+        
+        // Redraw the junction with new configuration
+        this.draw();
+        this.hideEditor();
     };
 })();
 

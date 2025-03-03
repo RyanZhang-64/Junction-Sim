@@ -12,15 +12,13 @@ const LANE_LIMITS = {
 // State variables
 let editorState = {
     puffinActive: false,
-    activeBusColumn: null,
+    leftLaneAttribute: null, // Can be 'bus', 'bike', 'left-turn', or null
     currentConfig: {
         lanes: 1,
-        leftTurnLanes: [],
-        busLanes: [],
+        leftLaneAttribute: null,
         priority: 0
     }
 };
-
 /**
  * Gets the current number of lanes in the editor
  * @returns {number} Current column count
@@ -113,30 +111,31 @@ function updatePriorityLabel(priorityValue) {
  * Initialize the editor UI with a given configuration
  * @param {Object} config - Configuration object for the editor
  * @param {number} config.lanes - Number of lanes
- * @param {Array} config.leftTurnLanes - Indices of lanes with left turn
- * @param {Array} config.busLanes - Indices of lanes with bus priority
+ * @param {string|null} config.leftLaneAttribute - Attribute of leftmost lane ('bus', 'bike', 'left-turn', or null)
  * @param {number} config.priority - Priority setting (0-4)
  * @param {boolean} config.puffinActive - Whether puffin crossing is active
  */
 window.initializeEditorUI = function(config) {
-    // Set up puffin crossing toggle
-    const puffinToggle = document.getElementById('puffinToggle');
-    if (puffinToggle) {
-        // Update puffin state based on config
-        editorState.puffinActive = config.puffinActive || false;
-        updatePuffinToggleDisplay();
-    } else {
-        console.warn("Puffin toggle element not found in DOM");
-        editorState.puffinActive = config.puffinActive || false;
-    }
-    
-    // Store current configuration
-    editorState.currentConfig = {
-        lanes: config.lanes || 1,
-        leftTurnLanes: Array.isArray(config.leftTurnLanes) ? config.leftTurnLanes : [],
-        busLanes: Array.isArray(config.busLanes) ? config.busLanes : [],
-        priority: config.priority !== undefined ? config.priority : 0
-    };
+     // Set up puffin crossing toggle
+     const puffinToggle = document.getElementById('puffinToggle');
+     if (puffinToggle) {
+         // Update puffin state based on config
+         editorState.puffinActive = config.puffinActive || false;
+         updatePuffinToggleDisplay();
+     } else {
+         console.warn("Puffin toggle element not found in DOM");
+         editorState.puffinActive = config.puffinActive || false;
+     }
+     
+     // Store current configuration
+     editorState.currentConfig = {
+         lanes: config.lanes || 1,
+         leftLaneAttribute: config.leftLaneAttribute || null,  // Use the passed attribute
+         priority: config.priority !== undefined ? config.priority : 0
+     };
+     
+     // Update editor state to match config
+     editorState.leftLaneAttribute = config.leftLaneAttribute || null;
 
     // Clear and rebuild lanes container
     const container = document.getElementById('columnsContainer');
@@ -150,27 +149,26 @@ window.initializeEditorUI = function(config) {
     // Initialize with the provided lane count
     initializeColumns(editorState.currentConfig.lanes);
 
-    // Restore left turn lanes
-    editorState.currentConfig.leftTurnLanes.forEach(laneIndex => {
-        const column = document.querySelectorAll('.column')[laneIndex];
-        if (column) {
-            const leftTurnButton = column.querySelector('.left-turn-button');
-            if (leftTurnButton) {
-                spawnLeftTurn(leftTurnButton);
+    // Apply attribute to leftmost lane if specified
+    if (editorState.currentConfig.leftLaneAttribute) {
+        const columns = document.querySelectorAll('.column');
+        if (columns.length > 0) {
+            const leftmostColumn = columns[0];
+            
+            // Apply the appropriate attribute
+            switch (editorState.currentConfig.leftLaneAttribute) {
+                case 'left-turn':
+                    createNewIcon(leftmostColumn, 'fa-turn-left');
+                    break;
+                case 'bus':
+                    createNewIcon(leftmostColumn, 'fa-bus');
+                    break;
+                case 'bike':
+                    createNewIcon(leftmostColumn, 'fa-bicycle');
+                    break;
             }
         }
-    });
-
-    // Restore bus lanes
-    editorState.currentConfig.busLanes.forEach(laneIndex => {
-        const column = document.querySelectorAll('.column')[laneIndex];
-        if (column) {
-            const busButton = column.querySelector('.button-label');
-            if (busButton) {
-                spawnBusImage(busButton);
-            }
-        }
-    });
+    }
 
     // Create the priority pagination
     rebuildPriorityPagination(editorState.currentConfig.priority);
@@ -180,15 +178,18 @@ window.initializeEditorUI = function(config) {
  * Updates the display of the puffin crossing toggle button
  */
 function updatePuffinToggleDisplay() {
+    console.log("Updating puffin toggle display");
     const puffinToggle = document.getElementById('puffinToggle');
     if (!puffinToggle) return;
     
     if (editorState.puffinActive) {
+        console.log("Becoming active");
         puffinToggle.classList.remove('inactive');
         puffinToggle.classList.add('active');
         puffinToggle.textContent = "Puffin Active";
         puffinToggle.setAttribute('aria-pressed', 'true');
     } else {
+        console.log("Becoming inactive");
         puffinToggle.classList.remove('active');
         puffinToggle.classList.add('inactive');
         puffinToggle.textContent = "Puffin Inactive";
@@ -198,85 +199,94 @@ function updatePuffinToggleDisplay() {
 
 /**
  * Get the current editor configuration
- * @returns {Object} Configuration object with lanes, leftTurnLanes, busLanes, and priority
+ * @returns {Object} Configuration object with lanes, leftLaneAttribute, and priority
  */
 window.getEditorConfiguration = function() {
     const columns = document.querySelectorAll('.column');
-    const leftTurnLanes = [];
-    const busLanes = [];
-
-    // Identify lanes with left turns and bus priority
-    columns.forEach((column, index) => {
-        // Check for left turn lane
-        if (column.querySelector('.fa-turn-left')) {
-            leftTurnLanes.push(index);
-        }
+    
+    // Check if the leftmost lane has an attribute
+    let leftLaneAttribute = null;
+    if (columns.length > 0) {
+        const leftmostColumn = columns[0];
         
-        // Check for bus lane
-        if (column.querySelector('.fa-bus')) {
-            busLanes.push(index);
+        // Check for left turn lane
+        if (leftmostColumn.querySelector('.fa-turn-left')) {
+            leftLaneAttribute = 'left-turn';
+            console.log("setting left lane attribute to left-turn");
         }
-    });
-
-    console.log(`getEditorConfiguration - editorState.currentConfig.priority: ${editorState.currentConfig.priority}`);
+        // Check for bus lane
+        else if (leftmostColumn.querySelector('.fa-bus')) {
+            leftLaneAttribute = 'bus';
+        }
+        // Check for bike lane
+        else if (leftmostColumn.querySelector('.fa-bicycle')) {
+            leftLaneAttribute = 'bike';
+        }
+    }
 
     // Return current configuration
     return {
         lanes: columns.length,
-        leftTurnLanes,
-        busLanes,
+        leftLaneAttribute: leftLaneAttribute,
         priority: editorState.currentConfig.priority,
         puffinActive: editorState.puffinActive
     };
 };
 
 /**
- * Handles transition between different lane icons
+ * Handles transition between different lane icons for the leftmost lane
  * @param {HTMLElement} column - The column element where the icon appears
- * @param {string} iconClass - FontAwesome icon class to display
- * @param {boolean} isBus - Whether this is a bus lane icon (special handling)
+ * @param {string} iconClassOrImageSrc - FontAwesome icon class or image source URL to display
+ * @param {string} attributeType - Type of attribute ('bus', 'bike', or 'left-turn')
  */
-function handleImageTransition(column, iconClass, isBus = false) {
-    const imageContainer = column.querySelector('.lane-image-container');
-    console.log("Creating new icon");
+function handleImageTransition(column, iconClassOrImageSrc, attributeType) {
+    console.log(iconClassOrImageSrc);
+    // Only allow changes to the leftmost lane
+    const columns = document.querySelectorAll('.column');
+    if (columns.length === 0 || column !== columns[0]) {
+        console.log("Only the leftmost lane can have attributes");
+        return;
+    }
     
-    // Handle special case for bus lanes (only one allowed at a time)
-    if (isBus) {
-        // If there's an active bus in a different column, remove it first
-        if (editorState.activeBusColumn && editorState.activeBusColumn !== column) {
-            const existingBusContainer = editorState.activeBusColumn.querySelector('.lane-image-container');
-            if (existingBusContainer) {
-                existingBusContainer.classList.add('fade-out');
-                existingBusContainer.addEventListener('animationend', () => {
-                    existingBusContainer.remove();
-                }, { once: true });
+    const imageContainer = column.querySelector('.lane-image-container');
+    
+    // Check if we're toggling the same attribute (turning it off)
+    if (editorState.leftLaneAttribute === attributeType && imageContainer) {
+        // Remove the current attribute
+        imageContainer.classList.add('fade-out');
+        imageContainer.addEventListener('animationend', () => {
+            imageContainer.remove();
+            editorState.leftLaneAttribute = null;
+            editorState.currentConfig.leftLaneAttribute = null;
+        }, { once: true });
+    } else {
+        // Handle existing icon (if any)
+        if (imageContainer) {
+            // Fade out existing image
+            imageContainer.classList.add('fade-out');
+            
+            // Replace with new icon after animation completes
+            imageContainer.addEventListener('animationend', () => {
+                imageContainer.remove();
+                if (attributeType === 'left-turn') {
+                    createNewImage(column, iconClassOrImageSrc);
+                } else {
+                    createNewIcon(column, iconClassOrImageSrc);
+                }
+            }, { once: true });
+        } else {
+            // No existing icon, create new one
+            if (attributeType === 'left-turn') {
+                createNewImage(column, iconClassOrImageSrc);
+            } else {
+                createNewIcon(column, iconClassOrImageSrc);
             }
         }
         
-        // Update active bus column reference
-        editorState.activeBusColumn = (imageContainer && column === editorState.activeBusColumn) ? null : column;
-    }
-    
-    // Handle existing icon (if any)
-    if (imageContainer) {
-        // Fade out existing image
-        imageContainer.classList.add('fade-out');
-        
-        // Replace with new icon after animation completes
-        imageContainer.addEventListener('animationend', () => {
-            imageContainer.remove();
-            if (!isBus || (isBus && editorState.activeBusColumn === column)) {
-                createNewIcon(column, iconClass);
-            }
-        }, { once: true });
-    } else {
-        // No existing icon, create new one immediately
-        createNewIcon(column, iconClass);
-    }
-
-    // Update configuration after changes
-    if (isBus || iconClass === 'fa-turn-left') {
-        editorState.currentConfig = window.getEditorConfiguration();
+        // Update the attribute type
+        editorState.leftLaneAttribute = attributeType;
+        console.log("setting left lane attribute to", attributeType);
+        editorState.currentConfig.leftLaneAttribute = attributeType;
     }
 }
 
@@ -286,6 +296,7 @@ function handleImageTransition(column, iconClass, isBus = false) {
  * @param {string} iconClass - FontAwesome icon class to display
  */
 function createNewIcon(column, iconClass) {
+    console.log("creating new icon", iconClass);
     // Create container for the icon
     const imageContainer = document.createElement('div');
     imageContainer.className = 'lane-image-container';
@@ -300,11 +311,32 @@ function createNewIcon(column, iconClass) {
 }
 
 /**
- * Creates a left turn icon in the specified column
+ * Creates a new image in a column
+ * @param {HTMLElement} column - The column element where the image should appear
+ * @param {string} imageSrc - Source URL for the image
+ */
+function createNewImage(column, imageSrc) {
+    console.log("creating new image", imageSrc);
+    // Create container for the image
+    const imageContainer = document.createElement('div');
+    imageContainer.className = 'lane-image-container';
+    
+    // Create the image element
+    const image = document.createElement('img');
+    image.src = imageSrc;
+    image.alt = "Lane configuration icon"; // Accessibility improvement
+    image.className = 'lane-image fade-in';
+    
+    // Add to DOM
+    imageContainer.appendChild(image);
+    column.appendChild(imageContainer);
+}
+/**
+ * Creates a left turn icon in the leftmost lane
  * @param {HTMLElement} buttonElement - The button that triggered this action
  */
 function spawnLeftTurn(buttonElement) {
-    console.log("Spawning left turn");
+    console.log("Toggling left turn lane");
     if (!buttonElement) {
         console.warn("Invalid button element for left turn");
         return;
@@ -312,15 +344,16 @@ function spawnLeftTurn(buttonElement) {
     
     const column = buttonElement.closest('.column');
     if (column) {
-        handleImageTransition(column, 'fa-turn-left', false);
+        handleImageTransition(column, 'arrow.png', 'left-turn');
     }
 }
 
 /**
- * Creates a bus lane icon in the specified column
+ * Creates a bus lane icon in the leftmost lane
  * @param {HTMLElement} buttonElement - The button that triggered this action
  */
 function spawnBusImage(buttonElement) {
+    console.log("Toggling bus lane");
     if (!buttonElement) {
         console.warn("Invalid button element for bus lane");
         return;
@@ -328,10 +361,26 @@ function spawnBusImage(buttonElement) {
     
     const column = buttonElement.closest('.column');
     if (column) {
-        handleImageTransition(column, 'fa-bus', true);
+        handleImageTransition(column, 'fa-bus', 'bus');
     }
 }
 
+/**
+ * Creates a bike lane icon in the leftmost lane
+ * @param {HTMLElement} buttonElement - The button that triggered this action
+ */
+function spawnBikeImage(buttonElement) {
+    console.log("Toggling bike lane");
+    if (!buttonElement) {
+        console.warn("Invalid button element for bike lane");
+        return;
+    }
+    
+    const column = buttonElement.closest('.column');
+    if (column) {
+        handleImageTransition(column, 'fa-bicycle', 'bike');
+    }
+}
 /**
  * Creates a new image in a column (for non-FontAwesome images)
  * @param {HTMLElement} column - The column element where the image should appear
@@ -361,7 +410,6 @@ function puffinToggle() {
     editorState.puffinActive = !editorState.puffinActive;
     console.log(editorState.puffinActive ? "Puffin activated" : "Puffin deactivated");
     
-    // Update display
     updatePuffinToggleDisplay();
     
     // Notify the main view of puffin state change
@@ -424,7 +472,7 @@ function createButtonsDiv(isFirstColumn) {
     const buttonsDiv = document.createElement('div');
     buttonsDiv.className = 'column-buttons';
     
-    // Only show lane type buttons on the first column for UI clarity
+    // Only show lane type buttons on the first column
     if (isFirstColumn) {
         const leftTurnButton = document.createElement('button');
         leftTurnButton.id = 'leftToggle';
@@ -450,9 +498,8 @@ function createButtonsDiv(isFirstColumn) {
         bikeButton.textContent = 'Bike';
         bikeButton.setAttribute('aria-label', 'Toggle bike lane');
         bikeButton.addEventListener('click', function() {
-            // This function seems to be missing in the original code
-            // Placeholder for implementation
-            console.log("Bike lane functionality not implemented");
+            // Now we're implementing the bike lane functionality
+            spawnBikeImage(this);
         });
         
         // Add buttons to div
@@ -505,7 +552,6 @@ function initializeColumns(count = 1) {
     }
 }
 
-// Initialize the editor when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Set up event listeners for lane controls
     const addLaneButton = document.getElementById('addLane');

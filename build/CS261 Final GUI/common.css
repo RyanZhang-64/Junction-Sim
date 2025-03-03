@@ -119,3 +119,7 @@ html, body {
 .metrics-section {
     margin: 1rem 0;
 }
+
+.fa-circle-info {
+    margin-left: 0.5rem;
+}
