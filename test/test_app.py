@@ -1,6 +1,10 @@
 import pytest
+import logging
 from flask import json
 from build.app import app  # Import the Flask app
+
+#set up logging (Logs results into `test_logs.log`)
+logging.basicConfig(filename="test_logs.log", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 @pytest.fixture
 def client():
