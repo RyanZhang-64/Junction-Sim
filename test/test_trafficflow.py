@@ -1,6 +1,10 @@
 import pytest
+import logging
 from unittest.mock import patch
 from build.trafficflow import traffic_volume_inputs, lane_configuration
+
+#set up logging (Logs results into `test_logs.log`)
+logging.basicConfig(filename="test_logs.log", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 #mock traffic inputs- avoids users entering values 
 #makes the system fully automated 
