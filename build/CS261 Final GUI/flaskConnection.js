@@ -1,4 +1,5 @@
 // Testing Flask REMOVE -----------------------------------------
+// Testing Flask REMOVE -----------------------------------------
 fetch('/api/data')
     .then(response => response.json())
     .then(data => console.log(data.message)); // Logs "Hello from Flask!"

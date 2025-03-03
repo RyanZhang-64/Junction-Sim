@@ -1,0 +1,53 @@
+/**
+ * Junction Simulator - Main View Styles
+ * Styles specific to the main junction visualization view
+ */
+
+/* Canvas Styles */
+canvas {
+    height: 100vmin;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* Junction Canvas */
+#junctionCanvas {
+    width: 65vw;
+    height: 95vh;
+    display: block;  /* Removes any default spacing */
+    margin: 1vw 1vh;
+    border: 1px solid var(--border-light);
+    background-color: var(--junction-green);
+}
+
+/* Direction Edit Buttons - Styled but not positioned (positioning via JS) */
+.edit-arm-button {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    /* No positioning or transform properties - these are set by JS */
+}
+
+.edit-arm-button:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.edit-arm-button:active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Compare Button */
+#compareButton {
+    transition: all 0.2s ease;
+}
+
+#compareButton:hover {
+    background-color: #f8f9fa;
+    color: #0056b3 !important;
+}

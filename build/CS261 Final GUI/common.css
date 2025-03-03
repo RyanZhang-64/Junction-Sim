@@ -1,0 +1,125 @@
+/**
+ * Junction Simulator - Common Styles
+ * Shared styles used across all application views
+ */
+
+/* CSS Variables */
+:root {
+    /* Color palette */
+    --primary-text: #495057;
+    --bg-light: #e8ecf2;
+    --bg-lighter: #eff6ff;
+    --bg-darker: #d9d9d9;
+    --border-light: rgba(0, 0, 0, 0.1);
+    --puffin-active: #ffd700;
+    --puffin-hover: #fff6c1;
+    --junction-green: #8dc945;
+
+    /* Layout measurements */
+    --stripe-width: 7px;
+    --control-lane-width: 10vw;
+
+    /* Animation durations */
+    --transition-speed: 0.3s;
+}
+
+/* Base resets and common styles */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* View Container - Base for all full-screen views */
+.view-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transition: opacity var(--transition-speed) ease-in-out;
+}
+
+/* Hidden View */
+#editor-view {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Common Flex Utilities */
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Common Animation Keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.fade-in {
+    animation: fadeIn var(--transition-speed) forwards;
+}
+
+.fade-out {
+    animation: fadeOut var(--transition-speed) forwards;
+}
+
+/* Metrics Display Typography */
+.stat {
+    font-size: clamp(14px, 2vw, 24px);
+}
+
+.stat-title {
+    font-size: clamp(18px, 2.5vw, 30px);
+}
+
+.infobar-title {
+    font-size: clamp(24px, 3vw, 36px);
+}
+
+.infobar-label {
+    font-size: clamp(14px, 2vh, 20px);
+}
+
+/* Rounded Corner Utilities */
+.rounded-top-4 {
+    border-top-left-radius: 0.5rem !important;
+    border-top-right-radius: 0.5rem !important;
+}
+
+.rounded-bottom-4 {
+    border-bottom-left-radius: 0.5rem !important;
+    border-bottom-right-radius: 0.5rem !important;
+}
+
+/* Common Button Styles */
+.info-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+/* Metrics Section Styles */
+.metrics-section {
+    margin: 1rem 0;
+}
+
+.fa-circle-info {
+    margin-left: 0.5rem;
+}
