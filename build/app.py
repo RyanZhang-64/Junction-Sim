@@ -29,6 +29,7 @@ def print_junction_model():
 @app.route("/")
 def home():
     reset_temp_model()
+    saveFiles.create_junction_files()
     return send_from_directory(app.template_folder, "index.html")
 
 # Metrics for whole junction
@@ -51,11 +52,14 @@ def get_metrics():
     performance = junction_model.performance
 
     print("METRICS")
+
+    environment = junction_model.environment
     
     return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
                     "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
-                    "performance": performance})
+                    "performance": performance,
+                    "environment": environment})
 
 # Changes user selection for which lane will be modified
 # This creates a temporary model, and we will only set this model
@@ -95,13 +99,15 @@ def edit_northbound():
     max_queue = junction_arm.max_queue
     performance = junction_arm.performance
     
+    environment = junction_arm.environment
     
     return jsonify({"mean_wait_mins": mean_wait_mins, 
                     "mean_wait_secs": mean_wait_secs,
                     "max_wait_mins": max_wait_mins, 
                     "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
-                    "performance": performance})
+                    "performance": performance,
+                    "environment": environment})
 
 @app.route("/edit-eastbound")
 def edit_eastbound():
@@ -126,12 +132,15 @@ def edit_eastbound():
     max_queue = junction_arm.max_queue
     performance = junction_arm.performance
     
+    environment = junction_arm.environment
+    
     return jsonify({"mean_wait_mins": mean_wait_mins, 
                     "mean_wait_secs": mean_wait_secs,
                     "max_wait_mins": max_wait_mins, 
                     "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
-                    "performance": performance})
+                    "performance": performance,
+                    "environment": environment})
 
 @app.route("/edit-southbound")
 def edit_southbound():
@@ -157,12 +166,15 @@ def edit_southbound():
     max_queue = junction_arm.max_queue
     performance = junction_arm.performance
     
+    environment = junction_arm.environment
+    
     return jsonify({"mean_wait_mins": mean_wait_mins, 
                     "mean_wait_secs": mean_wait_secs,
                     "max_wait_mins": max_wait_mins, 
                     "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
-                    "performance": performance})
+                    "performance": performance,
+                    "environment": environment})
 
 @app.route("/edit-westbound")
 def edit_westbound():
@@ -187,13 +199,15 @@ def edit_westbound():
     max_wait_secs = junction_arm.max_wait_secs
     max_queue = junction_arm.max_queue
     performance = junction_arm.performance
+    environment = junction_arm.environment
     
     return jsonify({"mean_wait_mins": mean_wait_mins, 
                     "mean_wait_secs": mean_wait_secs,
                     "max_wait_mins": max_wait_mins, 
                     "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
-                    "performance": performance})
+                    "performance": performance,
+                    "environment": environment})
 
 # Lane modification ----------------------------------------------------------------------------
 
@@ -295,6 +309,7 @@ def apply_changes():
     max_wait_secs = junction_model.max_wait_secs
     max_queue = junction_model.max_queue
     performance = junction_model.performance
+    environment = junction_model.environment
 
     # TODO save to file
     saveFiles.save_junction_to_file(junction_model)
@@ -303,7 +318,8 @@ def apply_changes():
     return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
                     "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
-                    "performance": performance})
+                    "performance": performance,
+                    "environment": environment})
 
 @app.route("/cancel-changes")
 def cancel_changes():
@@ -326,13 +342,15 @@ def cancel_changes():
     max_wait_secs = junction_model.max_wait_secs
     max_queue = junction_model.max_queue
     performance = junction_model.performance
+    environment = junction_model.environment
 
     print("METRICS")
     
     return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
                     "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
-                    "performance": performance})
+                    "performance": performance,
+                    "environment": environment})
 
 
 # Other -----------------------------------------------------------------------------------------------

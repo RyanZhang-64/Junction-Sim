@@ -6,7 +6,7 @@ def create_junction_files():
     folder_name = "savedJunctions"
     os.makedirs(folder_name, exist_ok=True)
     
-    for i in range(1, 6):
+    for i in range(1, 11):
         file_path = os.path.join(folder_name, f"junction{i}.txt")
         if not os.path.exists(file_path):
             open(file_path, "w").close()
@@ -20,7 +20,7 @@ def file_empty(file_path):
 # Returns true if there exists a free save file
 def free_slot_exists():
 
-    for i in range(1, 6):
+    for i in range(1, 11):
         file_path = os.path.join("savedJunctions", f"junction{i}.txt")
         if file_empty(file_path):
             return True
@@ -30,7 +30,7 @@ def free_slot_exists():
 # Returns the first free save file, searching ascending 1-5
 def free_slot_number():
     if free_slot_exists():
-        for i in range(1, 6):
+        for i in range(1, 11):
             file_path = os.path.join("savedJunctions", f"junction{i}.txt")
             if file_empty(file_path):
                 return i
@@ -94,7 +94,7 @@ def create_model_from_save(save_number):
         with open(file_path, "r") as file:
             lines = [line.strip() for line in file]  # Stores lines as a list
 
-        # Lines 1 - 6 are junction metrics
+        # Lines 1 - 7 are junction metrics
         return_junction = Junction.Junction()
         return_junction.mean_wait_mins = int(lines[0])
         return_junction.mean_wait_secs = int(lines[1])
@@ -102,8 +102,9 @@ def create_model_from_save(save_number):
         return_junction.max_wait_secs = int(lines[3])
         return_junction.max_queue = int(lines[4])
         return_junction.performance = float(lines[5])
+        return_junction.environment = float(lines[6])
 
-        direction_ranges = [(0, 6, 16), (1, 17, 27), (2, 28, 38), (3, 39, 49)]
+        direction_ranges = [(0, 7, 19), (1, 20, 32), (2, 33, 45), (3, 45, 57)]
         roads = return_junction.get_all_roads()
 
         for (direction, start, end) in direction_ranges:
@@ -116,6 +117,7 @@ def create_model_from_save(save_number):
             road.max_wait_secs = int(lines[start + 3])
             road.max_queue = int(lines[start + 4])
             road.performance = float(lines[start + 5])
+            road.environment = float(lines[start + 6])
 
             # Config
             road.priority_factor = int(lines[start + 6])
@@ -124,6 +126,10 @@ def create_model_from_save(save_number):
             road.has_bus_lane = lines[start + 8].lower() == "true"
             road.has_left_lane = lines[start + 9].lower() == "true"
             road.puffin_crossing = lines[start + 10].lower() == "true"
+
+            road.has_bike_lane = lines[start + 11].lower() == "true"
+
+            
 
         save_junction_to_file(return_junction)
 

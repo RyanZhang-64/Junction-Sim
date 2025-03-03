@@ -19,12 +19,14 @@ fetch('/api/data')
 // Editing north, east, south and west lanes
 
 function format_editor_metrics(mean_wait_mins, mean_wait_secs,
-    max_wait_mins, max_wait_secs, max_queue, performance) {
+    max_wait_mins, max_wait_secs, max_queue, performance, environment) {
     document.getElementById("editor-mean-wait-time").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
     document.getElementById("editor-max-wait-time").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
-    document.getElementById("editor-max-queue-length").textContent =  max_queue;
-    document.getElementById("editor-performance-score").textContent =  performance;
+    document.getElementById("editor-max-queue-length").textContent = max_queue;
+    document.getElementById("editor-performance-score").textContent = performance;
     // TODO change top 41% of scores
+
+    document.getElementById("editor-environment-score").textContent = environment;
 }
 
 document.getElementById("editSouth").addEventListener("click", function() {
@@ -33,7 +35,7 @@ document.getElementById("editSouth").addEventListener("click", function() {
     .then(data => {
         format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs,
             data.max_wait_mins, data.max_wait_secs,
-            data.max_queue, data.performance);
+            data.max_queue, data.performance, data.environment);
     })
     .catch(error => console.error("Error fetching data:", error));
 });
@@ -44,7 +46,7 @@ document.getElementById("editNorth").addEventListener("click", function() {
     .then(data => {
         format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs,
             data.max_wait_mins, data.max_wait_secs,
-            data.max_queue, data.performance);
+            data.max_queue, data.performance, data.environment);
     })
     .catch(error => console.error("Error fetching data:", error));
 });
@@ -55,7 +57,7 @@ document.getElementById("editEast").addEventListener("click", function() {
     .then(data => {
         format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs,
             data.max_wait_mins, data.max_wait_secs,
-            data.max_queue, data.performance);
+            data.max_queue, data.performance, data.environment);
     })
     .catch(error => console.error("Error fetching data:", error));
 });
@@ -66,20 +68,21 @@ document.getElementById("editWest").addEventListener("click", function() {
     .then(data => {
         format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs,
             data.max_wait_mins, data.max_wait_secs,
-            data.max_queue, data.performance);
+            data.max_queue, data.performance, data.environment);
     })
     .catch(error => console.error("Error fetching data:", error));
 });
 
 function update_metrics(mean_wait_mins, mean_wait_secs,
-    max_wait_mins, max_wait_secs, max_queue, performance) {
+    max_wait_mins, max_wait_secs, max_queue, performance, environment) {
 
-    document.getElementById("editor-mean-wait-time").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
-    document.getElementById("editor-max-wait-time").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
-    document.getElementById("editor-max-queue-length").textContent =  max_queue;
-    document.getElementById("performanceOverall").textContent =  performance;
+    document.getElementById("mean-wait-time").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
+    document.getElementById("max-wait-time").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
+    document.getElementById("max-queue-length").textContent = max_queue;
+    document.getElementById("performance-score").textContent = performance;
 
     // TODO change top 41% of scoress
+    document.getElementById("environment-score").textContent = environment;
 }
 
 // Metrics for whole junction
@@ -88,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .then(response => response.json())  // Convert response to JSON
     .then(data => {
         update_metrics(data.mean_wait_mins, data.mean_wait_secs,
-            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance);
+            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance, data.environment);
         
     })
     .catch(error => console.error("Error fetching data:", error));
@@ -235,7 +238,8 @@ document.getElementById("applyChanges").addEventListener("click", function() {
     .then(response => response.json()) // Assuming the response is JSON
     .then(data => {
         update_metrics(data.mean_wait_mins, data.mean_wait_secs,
-            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance);
+            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance,
+        data.environment);
         console.log("Success:", data)
 
     })
@@ -254,7 +258,8 @@ document.getElementById("cancelChanges").addEventListener("click", function() {
 
 
         update_metrics(data.mean_wait_mins, data.mean_wait_secs,
-            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance);
+            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance,
+        data.environment);
         console.log("Success:", data)
     })
     .catch(error => console.error("Error:", error));

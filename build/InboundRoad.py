@@ -5,6 +5,7 @@ class InboundRoad:
     def __init__(self):
         self.total_standard_lanes = 1
         self.has_bus_lane = False
+        self.has_bike_lane = False
         self.has_left_lane = False
         self.priority_factor = 1
         self.puffin_crossing = False
@@ -16,15 +17,18 @@ class InboundRoad:
         self.max_wait_secs = 0
         self.max_queue = 0
         self.performance = 0
+
+        self.environment = 0
     
     def get_metrics_as_array(self):
         return [self.mean_wait_mins, self.mean_wait_secs, 
                 self.max_wait_mins, self.max_wait_secs,
-                self.max_queue, self.performance]
+                self.max_queue, self.performance,
+                self.environment]
     
     def get_configuration_as_array(self):
         return [self.priority_factor, self.total_standard_lanes, self.has_bus_lane,
-                self.has_left_lane, self.puffin_crossing]
+                self.has_left_lane, self.puffin_crossing, self.has_bike_lane]
 
     # Updates the junction arms metrics
     def update_junction_arm_metrics(self, vph_rates, junction, road_direction):
@@ -46,6 +50,8 @@ class InboundRoad:
             self.max_wait_secs = math.ceil(max_wait - (60 * self.max_wait_mins))  
 
         self.max_queue = self.get_max_queue(vph_rates, junction, road_direction)
+
+        self.environment = self.get_arm_environment_score()
 
         # TODO change this
         self.performance = 15000000000000
@@ -122,15 +128,22 @@ class InboundRoad:
         return self.puffin_crossing
 
     def get_max_wait(self, vph_rates, junction, road_direction):
-        print(round(Equations.max_wait(vph_rates, junction, road_direction)*60, 2))
+        #print(round(Equations.max_wait(vph_rates, junction, road_direction)*60, 2))
         return round(Equations.max_wait(vph_rates, junction, road_direction)*60, 2)
 
     def get_max_queue(self, vph_rates, junction, road_direction):
         return math.ceil(Equations.max_queue(vph_rates, junction, road_direction))
 
     def get_average_wait(self, vph_rates, junction, road_direction):
-        print(round(Equations.average_wait(vph_rates, junction, road_direction)*60, 2))
+        #print(round(Equations.average_wait(vph_rates, junction, road_direction)*60, 2))
         return round(Equations.average_wait(vph_rates, junction, road_direction)*60, 2)
+    
+    def get_arm_environment_score(self):
+        #print("SCORE")
+        #print(Equations.environmental_score(self.has_bike_lane, self.has_bus_lane, self.has_puffin_crossing))
+        return Equations.environmental_score(self.has_bike_lane, self.has_bus_lane, self.has_puffin_crossing)
+
+
 
 if __name__ == "__main__":
     from Junction import Junction

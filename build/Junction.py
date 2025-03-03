@@ -15,11 +15,14 @@ class Junction:
         self.max_queue = 0
         self.performance = 0
 
+        self.environment = 0
+
     # Returns the metrics as an array
     def get_metrics_as_array(self):
         return [self.mean_wait_mins, self.mean_wait_secs, 
                 self.max_wait_mins, self.max_wait_secs,
-                self.max_queue, self.performance]
+                self.max_queue, self.performance,
+                self.environment]
 
     def efficiency_score(self, vph_rates):
         return Equations.get_efficiency_score(vph_rates, self)
@@ -77,6 +80,16 @@ class Junction:
 
         self.max_queue = self.get_max_queue(vph_rates)
         self.performance = self.efficiency_score(vph_rates)
+        self.environment = self.get_environment_score_junction()
+    
+    # Gets the mean of environment score for each arm
+    def get_environment_score_junction(self):
+        s = 0
+        for arm in self.get_all_roads():
+            #print(s)
+            s += arm.get_arm_environment_score()
+        
+        return s / 4
 
 
 if __name__ == "__main__":
