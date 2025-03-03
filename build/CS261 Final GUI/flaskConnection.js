@@ -20,10 +20,10 @@ fetch('/api/data')
 
 function format_editor_metrics(mean_wait_mins, mean_wait_secs,
     max_wait_mins, max_wait_secs, max_queue, performance) {
-    document.getElementById("meanWaitEditor").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
-    document.getElementById("maxWaitEditor").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
-    document.getElementById("maxQueueEditor").textContent =  max_queue;
-    document.getElementById("performanceEditor").textContent =  performance;
+    document.getElementById("editor-mean-wait-time").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
+    document.getElementById("editor-max-wait-time").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
+    document.getElementById("editor-max-queue-length").textContent =  max_queue;
+    document.getElementById("editor-performance-score").textContent =  performance;
     // TODO change top 41% of scores
 }
 
@@ -74,9 +74,9 @@ document.getElementById("editWest").addEventListener("click", function() {
 function update_metrics(mean_wait_mins, mean_wait_secs,
     max_wait_mins, max_wait_secs, max_queue, performance) {
 
-    document.getElementById("meanWaitOverall").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
-    document.getElementById("maxWaitOverall").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
-    document.getElementById("maxQueueOverall").textContent =  max_queue;
+    document.getElementById("editor-mean-wait-time").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
+    document.getElementById("editor-max-wait-time").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
+    document.getElementById("editor-max-queue-length").textContent =  max_queue;
     document.getElementById("performanceOverall").textContent =  performance;
 
     // TODO change top 41% of scoress

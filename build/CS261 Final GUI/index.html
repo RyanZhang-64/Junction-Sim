@@ -82,11 +82,11 @@
                                     <div class="px-4">
                                         <div class="d-flex justify-content-between">
                                             <div class="text-secondary stat">Mean:</div>
-                                            <div class="font-weight-bold stat" id="mean-wait-time">xxm:xxs</div>
+                                            <div id="meanWaitOverall" class="font-weight-bold stat" id="mean-wait-time">xxm:xxs</div>
                                         </div>
                                         <div class="d-flex justify-content-between">
                                             <div class="text-secondary stat">Maximum:</div>
-                                            <div class="font-weight-bold stat" id="max-wait-time">xxm:xxs</div>
+                                            <div id="maxWaitOverall" class="font-weight-bold stat" id="max-wait-time">xxm:xxs</div>
                                         </div>
                                     </div>
                                 </section>
@@ -108,7 +108,7 @@
                                     <div class="px-4 fs-4">
                                         <div class="d-flex justify-content-between">
                                             <div class="text-secondary stat">Maximum:</div>
-                                            <div class="stat" id="max-queue-length">xx cars</div>
+                                            <div id="maxQueueOverall" class="stat" id="max-queue-length">xx cars</div>
                                         </div>
                                     </div>
                                 </section>
@@ -128,7 +128,7 @@
                                         </button>
                                     </div>
                                     <div class="text-center">
-                                        <div class="performance-score text-primary font-weight-bold stat" id="performance-score">47.83</div>
+                                        <div id="performanceOverall" class="performance-score text-primary font-weight-bold stat" id="performance-score">47.83</div>
                                         <div class="performance-rank text-secondary stat" id="performance-rank">Top 41% of recorded scores</div>
                                     </div>
                                 </section>
@@ -173,7 +173,7 @@
                     <!-- Lane Editor Section -->
                     <div class="col-7">
                         <!-- Puffin Crossing Toggle -->
-                        <button id="puffinToggle" 
+                        <button id="puffin" 
                                 class="puffin-crossing inactive"
                                 aria-label="Toggle puffin crossing"
                                 aria-pressed="false">
