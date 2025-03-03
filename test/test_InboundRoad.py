@@ -1,6 +1,10 @@
 import pytest
 import time
+import logging
 from build.InboundRoad import InboundRoad  
+
+#set up logging (Logs results into `test_logs.log`)
+logging.basicConfig(filename="test_logs.log", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 #unit tests
 def test_InboundRoad_defaults():
