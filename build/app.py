@@ -446,9 +446,18 @@ def overwrite_save():
 # Given a direction, return the metrics from all stored in that direction
 
 
-
 # Give metrics of overall junction stored on file
+@app.route("/overwrite-save", methods=["POST"])
+def overwrite_save():
+    global junction_model
 
+    # Save file number
+    data = request.get_json()
+    print("JSON DATA: " + str(data))
+    save_number = int(data.get('save_file', 1))  # Default to 1
+
+    saveFiles.overwrite_file(junction_model, save_number)
+    return Response(status=204)
 
 
 # Other -----------------------------------------------------------------------------------------------
