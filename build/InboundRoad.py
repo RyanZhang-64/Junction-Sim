@@ -12,6 +12,8 @@ class InboundRoad:
         self.priority_factor = 1
         self.puffin_crossing = False
 
+        self.vph_rate = 100
+
         # Storing metrics
         self.mean_wait_secs = 0
         self.mean_wait_mins = 0
@@ -34,6 +36,10 @@ class InboundRoad:
 
     # Updates the junction arms metrics
     def update_junction_arm_metrics(self, vph_rates, junction, road_direction):
+
+        
+
+
         mean_wait = self.get_average_wait(vph_rates, junction, road_direction)
         max_wait = self.get_max_queue(vph_rates, junction, road_direction)
 
@@ -54,9 +60,7 @@ class InboundRoad:
         self.max_queue = self.get_max_queue(vph_rates, junction, road_direction)
 
         self.environment = self.get_arm_environment_score()
-
-        # TODO change this
-        self.performance = 15000000000000
+        self.performance = self.get_arm_efficiency_score(vph_rates, junction, road_direction)
 
     # Here we return the number of lanes that the road has 
     def get_total_standard_lanes(self):
@@ -73,6 +77,9 @@ class InboundRoad:
     # changed name because property has same name
     def is_bus_lane(self):
         return self.has_bus_lane
+    
+    def is_bike_lane(self):
+        return self.has_bike_lane
 
     # Changes the flag if there is a bus lane or if there isn't
     # has_bus should be the input if the toggle is on or not
@@ -122,6 +129,9 @@ class InboundRoad:
 
     def toggle_left_lane(self):
         self.has_left_lane = not self.has_left_lane
+
+    def toggle_bike_lane(self):
+        self.has_bike_lane = not self.has_bike_lane
 
     def toggle_puffin_crossing(self):
         self.puffin_crossing = not self.puffin_crossing

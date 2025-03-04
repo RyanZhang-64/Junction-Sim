@@ -96,11 +96,11 @@ def create_model_from_save(save_number):
 
         # Lines 1 - 7 are junction metrics
         return_junction = Junction.Junction()
-        return_junction.mean_wait_mins = int(lines[0])
-        return_junction.mean_wait_secs = int(lines[1])
-        return_junction.max_wait_mins = int(lines[2])
-        return_junction.max_wait_secs = int(lines[3])
-        return_junction.max_queue = int(lines[4])
+        return_junction.mean_wait_mins = float(lines[0])
+        return_junction.mean_wait_secs = float(lines[1])
+        return_junction.max_wait_mins = float(lines[2])
+        return_junction.max_wait_secs = float(lines[3])
+        return_junction.max_queue = float(lines[4])
         return_junction.performance = float(lines[5])
         return_junction.environment = float(lines[6])
 
@@ -111,17 +111,17 @@ def create_model_from_save(save_number):
             road = roads[direction]
 
             # Metrics
-            road.mean_wait_mins = int(lines[start])
-            road.mean_wait_secs = int(lines[start + 1])
-            road.max_wait_mins = int(lines[start + 2])
-            road.max_wait_secs = int(lines[start + 3])
-            road.max_queue = int(lines[start + 4])
+            road.mean_wait_mins = float(lines[start])
+            road.mean_wait_secs = float(lines[start + 1])
+            road.max_wait_mins = float(lines[start + 2])
+            road.max_wait_secs = float(lines[start + 3])
+            road.max_queue = float(lines[start + 4])
             road.performance = float(lines[start + 5])
             road.environment = float(lines[start + 6])
 
             # Config
-            road.priority_factor = int(lines[start + 6])
-            road.total_standard_lanes = int(lines[start + 7])
+            road.priority_factor = float(lines[start + 6])
+            road.total_standard_lanes = float(lines[start + 7])
 
             road.has_bus_lane = lines[start + 8].lower() == "true"
             road.has_left_lane = lines[start + 9].lower() == "true"
@@ -135,6 +135,45 @@ def create_model_from_save(save_number):
 
         return return_junction
 
+# Given a performance score, returns the top % that the score is in
+# based on the saved junctions
+def top_percent(score, direction, lines_to_read):
+    # Creates an array of all the scores
+    stored_scores = []
+    line_to_read = lines_to_read[direction + 1]
+
+    # If direction is -1, it wants it for the whole junction
+    
+    # Searches every file
+    for i in range(1, 11):
+        file_path = os.path.join("savedJunctions", f"junction{i}.txt")
+        if not file_empty(file_path):
+            with open(file_path, "r") as file:
+                lines = file.readlines()
+                if len(lines) >= line_to_read:  
+                    stored_scores.append(float(lines[line_to_read - 1].strip()))
+                else:
+                    return None  # Not enough lines in the file
+
+    if stored_scores == []:
+        return 100
+
+    # Calculate the percentage rank of this score
+    stored_scores.append(score)
+    stored_scores = sorted(stored_scores, reverse=True) # Descending
+    rank = stored_scores.index(score) + 1 # Get rank
+    percentile = (rank / len(stored_scores)) * 100 # Gets percentile
+
+    return round(percentile, 2) # To 2dp
 
 
+# Direction -1 represents the whole junction
+def top_percent_environment(score, direction):
+    # Lines 7, 14, 27, 40, 53 store environment
+    lines_to_read = [7, 14, 27, 40, 53]
+    return top_percent(score, direction, lines_to_read)
 
+def top_percent_performance(score, direction):
+    # Lines 6, 13, 26, 39, 52 store performance
+    lines_to_read = [6, 13, 26, 39, 52]
+    return top_percent(score, direction, lines_to_read)

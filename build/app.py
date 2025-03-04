@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_from_directory, jsonify
+from flask import Flask, render_template, send_from_directory, jsonify, request
 import Junction, InboundRoad, saveFiles
 from flask import Response
 import copy, os, math
@@ -43,23 +43,24 @@ def get_metrics():
     global temp_vph_rates
 
 
-    junction_model.update_junction_metrics(temp_vph_rates)
+    junction_model.update_junction_metrics()
     mean_wait_mins = junction_model.mean_wait_mins
     mean_wait_secs = junction_model.mean_wait_secs
     max_wait_mins = junction_model.max_wait_mins
     max_wait_secs = junction_model.max_wait_secs
     max_queue = junction_model.max_queue
     performance = junction_model.performance
-
-    print("METRICS")
-
     environment = junction_model.environment
+    environment_rank = saveFiles.top_percent_environment(environment, -1)
+    performance_rank = saveFiles.top_percent_performance(performance, -1)
     
     return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
                     "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
                     "performance": performance,
-                    "environment": environment})
+                    "environment": environment,
+                    "environment_rank": environment_rank,
+                    "performance_rank": performance_rank})
 
 # Changes user selection for which lane will be modified
 # This creates a temporary model, and we will only set this model
@@ -87,11 +88,12 @@ def edit_northbound():
     direction = 0
     # direction as number 0-3
     # TODO set vph_rates
-    global temp_vph_rates
+
 
     junction_arm = junction_model.get_lane("north")
+    vph_rates = junction_model.get_vph_rates()
 
-    junction_arm.update_junction_arm_metrics(temp_vph_rates, junction_model, direction)
+    junction_arm.update_junction_arm_metrics(vph_rates, junction_model, direction)
     mean_wait_mins = junction_arm.mean_wait_mins
     mean_wait_secs = junction_arm.mean_wait_secs
     max_wait_mins = junction_arm.max_wait_mins
@@ -100,6 +102,10 @@ def edit_northbound():
     performance = junction_arm.performance
     
     environment = junction_arm.environment
+
+    environment_rank = saveFiles.top_percent_environment(junction_arm.environment, direction)
+
+    performance_rank = saveFiles.top_percent_performance(performance, direction)
     
     return jsonify({"mean_wait_mins": mean_wait_mins, 
                     "mean_wait_secs": mean_wait_secs,
@@ -107,7 +113,9 @@ def edit_northbound():
                     "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
                     "performance": performance,
-                    "environment": environment})
+                    "environment": environment,
+                    "environment_rank": environment_rank, 
+                    "performance_rank": performance_rank})
 
 @app.route("/edit-eastbound")
 def edit_eastbound():
@@ -121,10 +129,12 @@ def edit_eastbound():
     direction = 1
     # direction as number 0-3
     # TODO set vph_rates
-    global temp_vph_rates
+
 
     junction_arm = junction_model.get_lane("east")
-    junction_arm.update_junction_arm_metrics(temp_vph_rates, junction_model, direction)
+    vph_rates = junction_model.get_vph_rates()
+
+    junction_arm.update_junction_arm_metrics(vph_rates, junction_model, direction)
     mean_wait_mins = junction_arm.mean_wait_mins
     mean_wait_secs = junction_arm.mean_wait_secs
     max_wait_mins = junction_arm.max_wait_mins
@@ -134,13 +144,18 @@ def edit_eastbound():
     
     environment = junction_arm.environment
     
+    environment_rank = saveFiles.top_percent_environment(junction_arm.environment, direction)
+    performance_rank = saveFiles.top_percent_performance(performance, direction)
+    
     return jsonify({"mean_wait_mins": mean_wait_mins, 
                     "mean_wait_secs": mean_wait_secs,
                     "max_wait_mins": max_wait_mins, 
                     "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
                     "performance": performance,
-                    "environment": environment})
+                    "environment": environment,
+                    "environment_rank": environment_rank, 
+                    "performance_rank": performance_rank})
 
 @app.route("/edit-southbound")
 def edit_southbound():
@@ -154,11 +169,13 @@ def edit_southbound():
     direction = 2
     # direction as number 0-3
     # TODO set vph_rates
-    global temp_vph_rates
+
 
     junction_arm = junction_model.get_lane("south")
 
-    junction_arm.update_junction_arm_metrics(temp_vph_rates, junction_model, direction)
+    vph_rates = junction_model.get_vph_rates()
+
+    junction_arm.update_junction_arm_metrics(vph_rates, junction_model, direction)
     mean_wait_mins = junction_arm.mean_wait_mins
     mean_wait_secs = junction_arm.mean_wait_secs
     max_wait_mins = junction_arm.max_wait_mins
@@ -168,13 +185,19 @@ def edit_southbound():
     
     environment = junction_arm.environment
     
+    environment_rank = saveFiles.top_percent_environment(junction_arm.environment, direction)
+    
+    performance_rank = saveFiles.top_percent_performance(performance, direction)
+    
     return jsonify({"mean_wait_mins": mean_wait_mins, 
                     "mean_wait_secs": mean_wait_secs,
                     "max_wait_mins": max_wait_mins, 
                     "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
                     "performance": performance,
-                    "environment": environment})
+                    "environment": environment,
+                    "environment_rank": environment_rank, 
+                    "performance_rank": performance_rank})
 
 @app.route("/edit-westbound")
 def edit_westbound():
@@ -188,11 +211,13 @@ def edit_westbound():
     direction = 3
     # direction as number 0-3
     # TODO set vph_rates
-    global temp_vph_rates
+
 
     junction_arm = junction_model.get_lane("west")
 
-    junction_arm.update_junction_arm_metrics(temp_vph_rates, junction_model, direction)
+    vph_rates = junction_model.get_vph_rates()
+
+    junction_arm.update_junction_arm_metrics(vph_rates, junction_model, direction)
     mean_wait_mins = junction_arm.mean_wait_mins
     mean_wait_secs = junction_arm.mean_wait_secs
     max_wait_mins = junction_arm.max_wait_mins
@@ -200,6 +225,9 @@ def edit_westbound():
     max_queue = junction_arm.max_queue
     performance = junction_arm.performance
     environment = junction_arm.environment
+    environment_rank = saveFiles.top_percent_environment(environment, direction)
+    
+    performance_rank = saveFiles.top_percent_performance(performance, direction)
     
     return jsonify({"mean_wait_mins": mean_wait_mins, 
                     "mean_wait_secs": mean_wait_secs,
@@ -207,7 +235,9 @@ def edit_westbound():
                     "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
                     "performance": performance,
-                    "environment": environment})
+                    "environment": environment,
+                    "environment_rank": environment_rank, 
+                    "performance_rank": performance_rank})
 
 # Lane modification ----------------------------------------------------------------------------
 
@@ -234,6 +264,10 @@ def bus_toggle():
     global temp_junction_model, selected_lane
     temp_junction_model.get_lane(selected_lane).toggle_bus_lane()
     print("Has bus lane:" + str(temp_junction_model.get_lane(selected_lane).is_bus_lane()))
+    # Should turn off left and bike
+    if temp_junction_model.get_lane(selected_lane).has_bus_lane:
+        temp_junction_model.get_lane(selected_lane).has_bike_lane = False
+        temp_junction_model.get_lane(selected_lane).has_left_lane = False
     return Response(status=204)
 
 # Left turn lane
@@ -242,9 +276,21 @@ def left_toggle():
     global temp_junction_model, selected_lane
     temp_junction_model.get_lane(selected_lane).toggle_left_lane()
     print("Has left lane:" + str(temp_junction_model.get_lane(selected_lane).is_left_lane()))
+    if temp_junction_model.get_lane(selected_lane).has_left_lane:
+        temp_junction_model.get_lane(selected_lane).has_bike_lane = False
+        temp_junction_model.get_lane(selected_lane).has_bus_lane = False
     return Response(status=204)
 
 # TODO bike lane toggle
+@app.route("/bike-toggle")
+def bike_toggle():
+    global temp_junction_model, selected_lane
+    temp_junction_model.get_lane(selected_lane).toggle_bike_lane()
+    print("Has bike lane:" + str(temp_junction_model.get_lane(selected_lane).is_bike_lane()))
+    if temp_junction_model.get_lane(selected_lane).has_bike_lane:
+        temp_junction_model.get_lane(selected_lane).has_left_lane = False
+        temp_junction_model.get_lane(selected_lane).has_bus_lane = False
+    return Response(status=204)
 
 # Puffin toggle
 @app.route("/puffin-toggle")
@@ -285,24 +331,29 @@ def priority_4():
     return Response(status=204)
 
 # Model changes ---------------------------------------------------------------------------
-@app.route("/apply-changes")
+@app.route("/apply-changes", methods=["POST"])
 def apply_changes():
     #print_junction_model()
-    apply_model_changes()
+    
     print_junction_model()
     print("Changes applied")
-
-
-    # save_current_model()
-    #return Response(status=204)
-    global junction_model
 
     # Using the current junction model, get relevant metrics for whole model
 
     # TODO set vph_rates
-    global temp_vph_rates
+    global temp_vph_rates, selected_lane, junction_model
 
-    junction_model.update_junction_metrics(temp_vph_rates)
+    data = request.get_json()
+    print("JSON DATA: " + str(data))
+    vph_value = int(data.get('vph', 100))  # Default to 100 if not provided
+
+    apply_model_changes()
+
+    if selected_lane is not None:
+        junction_model.get_lane(selected_lane).vph_rate = vph_value
+
+    junction_model.update_junction_metrics()
+
     mean_wait_mins = junction_model.mean_wait_mins
     mean_wait_secs = junction_model.mean_wait_secs
     max_wait_mins = junction_model.max_wait_mins
@@ -311,15 +362,24 @@ def apply_changes():
     performance = junction_model.performance
     environment = junction_model.environment
 
+    
+
     # TODO save to file
-    saveFiles.save_junction_to_file(junction_model)
-    saveFiles.create_model_from_save(1)
+    #saveFiles.save_junction_to_file(junction_model)
+    #saveFiles.create_model_from_save(1)
+    
+    environment_rank = saveFiles.top_percent_environment(environment, -1)
+    performance_rank = saveFiles.top_percent_performance(performance, -1)
+
+    print("VPH RATE: " + str(junction_model.get_lane(selected_lane).vph_rate))
     
     return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
                     "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
                     "performance": performance,
-                    "environment": environment})
+                    "environment": environment,
+                    "environment_rank": environment_rank,
+                    "performance_rank": performance_rank})
 
 @app.route("/cancel-changes")
 def cancel_changes():
@@ -335,7 +395,7 @@ def cancel_changes():
     global temp_vph_rates
 
 
-    junction_model.update_junction_metrics(temp_vph_rates)
+    junction_model.update_junction_metrics()
     mean_wait_mins = junction_model.mean_wait_mins
     mean_wait_secs = junction_model.mean_wait_secs
     max_wait_mins = junction_model.max_wait_mins
@@ -346,11 +406,16 @@ def cancel_changes():
 
     print("METRICS")
     
+    environment_rank = saveFiles.top_percent_environment(environment, -1)
+    performance_rank = saveFiles.top_percent_performance(performance, -1)
+    
     return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
                     "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,
                     "max_queue": max_queue, 
                     "performance": performance,
-                    "environment": environment})
+                    "environment": environment,
+                    "environment_rank": environment_rank,
+                    "performance_rank": performance_rank})
 
 
 # Other -----------------------------------------------------------------------------------------------

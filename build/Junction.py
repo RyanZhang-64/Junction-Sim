@@ -60,7 +60,13 @@ class Junction:
     def get_average_wait(self, vph_rates):
         return round(self.get_max_wait(vph_rates)/Equations.MAX_VEHICLE_MOVEMENT *60,2)
     
-    def update_junction_metrics(self, vph_rates):
+    def update_junction_metrics(self):
+        # Getting bph rates of each ar,
+        vph_rates = []
+        for arm in self.get_all_roads():
+            vph_rates.append(arm.vph_rate)
+
+
         mean_wait = self.get_average_wait(vph_rates)
         max_wait = self.get_max_queue(vph_rates)
 
@@ -90,6 +96,12 @@ class Junction:
             s += arm.get_arm_environment_score()
         
         return s / 4
+    
+    def get_vph_rates(self):
+        vph_rates = []
+        for arm in self.get_all_roads():
+            vph_rates.append(arm.vph_rate)
+        return vph_rates
 
 
 if __name__ == "__main__":
