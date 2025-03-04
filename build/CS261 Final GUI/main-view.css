@@ -51,3 +51,10 @@ canvas {
     background-color: #f8f9fa;
     color: #0056b3 !important;
 }
+
+#saveButton {
+    position: absolute;
+    bottom: 3vh;
+    right: 1vw;
+    transition: all 0.2s ease;
+}

@@ -5,7 +5,7 @@ import numpy
 import logging
 
 #importing functions from equations.py
-from build.equations import (
+from build.Equations import (
     get_efficiency_score,
     get_green_proportion,
     max_queue,

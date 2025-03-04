@@ -57,6 +57,8 @@
                                 <i class="fas fa-edit"></i> Edit Westbound
                             </button>
                         </div>
+
+                        <button id="saveButton" onclick="save()" class="btn btn-secondary"><i class="fa-solid fa-floppy-disk"></i>  Save</button>
                     </div>
                     
                     <!-- Metrics Display -->
@@ -423,6 +425,12 @@
          * View Control Module - Handles switching between main view and editor view
          */
         let currentDirection = null;
+
+        function save() {
+            const button = document.getElementById('saveButton');
+            button.classList.replace('btn-secondary', 'btn-primary');
+            button.innerHTML = '<i class="fa-solid fa-check"></i>  Saved';
+        }
 
         /**
          * Shows the editor view for configuring a specific direction (arm) of the junction

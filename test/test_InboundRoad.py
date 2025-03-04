@@ -1,6 +1,7 @@
 import pytest
 import logging
 import time
+import logging
 from build.InboundRoad import InboundRoad  
 
 #set up logging (Logs results into `test_logs.log`)
