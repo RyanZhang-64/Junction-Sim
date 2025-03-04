@@ -1,12 +1,32 @@
-bus
-left
-bike 
-num lanes   
-priorities   
-puffin  
+Junction
+mean wait min
+mean wait sec
 
+max wait min
+max wait sec
 
+max queue
+performance
 
-there are 5 slots
+environment
+
+for every junction NESW
+mean wait min
+mean wait sec
+
+max wait min
+max wait sec
+
+queue
+performance
+environment
+
+priority
+num lanes
+bus lane
+left lane
+priority
+bike lane
+
 
 

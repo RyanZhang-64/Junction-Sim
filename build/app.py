@@ -1,172 +1,38 @@
-from flask import Flask, render_template, send_from_directory, jsonify
-import Junction, InboundRoad
+from flask import Flask, render_template, send_from_directory, jsonify, request
+import Junction, InboundRoad, saveFiles
 from flask import Response
-import copy
-import os
+import copy, os, math
 
 app = Flask(__name__, 
             static_folder="CS261 Final GUI", 
             template_folder="CS261 Final GUI")
 
-# File ----------------------------------------------------------------
-
-folder = "savedJunctions"
-filename = os.path.join(folder, "savedJunctions.txt")
-
-# Check if the file exists
-if not os.path.exists(filename):
-    # Create an empty file
-    with open(filename, "w") as file:
-        pass  # This just ensures the file is created and left empty
-    print(f"{filename} created successfully.")
-else:
-    print(f"{filename} already exists.")
-
-# check whether we have reached 5 save files already
-def full_num_saves():
-    global filename
-    if not check_line_not_occupied(1) and not check_line_not_occupied(25):
-        if not check_line_not_occupied(49) and not check_line_not_occupied(73):
-            if not check_line_not_occupied(97):
-                return True
-    return False
-
-# Saves info about current junction to file
-def save_current_model():
-    global junction_model
-    if not full_num_saves():
-
-        
-
-        print("file is not full")
-        # temp_vph_rates = [100, 100, 100, 100]
-        #mean_wait = junction_model.efficiency_score(temp_vph_rates)
-
-        roads = junction_model.get_all_roads()
-
-        bus_lanes = [i.is_bus_lane() for i in roads]
-        left_lanes = [i.is_left_lane() for i in roads]
-        #TODO add bike lane later
-        bike_lanes = ["bike lane" for i in roads]
-        num_lanes = [i.get_total_standard_lanes() for i in roads]
-        priorities = [i.get_priority_factor() for i in roads]
-        puffin_crossings = [i.has_puffin_crossing() for i in roads]
-
-        # TODO - find the first non occupied line to write this info to
-
-
-
-        # writing data to file
-        with open(filename, "a") as file:
-            for i in range(0, 4):
-                file.write(f"{bus_lanes[i]}\n")
-                file.write(f"{left_lanes[i]}\n")
-                file.write(f"{bike_lanes[i]}\n")
-                file.write(f"{num_lanes[i]}\n")
-                file.write(f"{priorities[i]}\n")
-                file.write(f"{puffin_crossings[i]}\n")
-    else:
-        print("Full save files")
-
-def check_line_not_occupied(self, line_num):
-    try:
-        with open(filename, "r") as file:
-            lines = file.readlines()
-
-        if len(lines) < line_num:
-            return False  # Line 120 does not exist
-        return bool(lines[line_num - 1].strip())  
-        # True if line 120 has content, False if empty
-    except FileNotFoundError:
-        print("File not found.")
-        return False
-
-# Get junction
-# Given a save file (1-5) returns a junction object
-def get_saved_junction(self, save_file):
-    global filename
-
-    # start line of each junction
-    start_line = 1 + ((save_file - 1) * 24)
-    
-    if check_line_not_occupied(start_line):
-        print("Nothing is saved here")
-        return None
-    else:
-        print("Something is saved here")
-
-        # Parses the data on txt file
-        junction_save = []
-
-        try:
-            with open(filename, 'r') as file:
-                lines = file.readlines()
-
-                for line_number in range(start_line, start_line + 24):
-                    if line_number < len(lines):  
-                        junction_save.append(lines[line_number].strip())  
-                    else:
-                        break  # If we reach the end of the file, stop
-        except FileNotFoundError:
-            print(f"The file {filename} does not exist.")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-        
-        return_junction = Junction.Junction()
-
-        # Builds the junction using the data
-        for i in range(junction_save):
-            # determines direction
-            if i < 6:
-                dir = 0
-            elif i >= 6 and i < 12:
-                dir = 1
-            elif i >= 12 and i < 18:
-                dir = 2
-            else:
-                dir = 3
-            
-            # Uses mod to determine the property at this line
-            current_property = i % 6
-                
-            if current_property == 0:
-                return_junction.get_lane().set_has_bus_lane(bool(junction_save[i]))
-            elif current_property == 1:
-                return_junction.get_lane().set_has_left_lane(bool(junction_save[i]))
-            elif current_property == 2:
-                return_junction.get_lane().set_has_bike_lane(bool(junction_save[i]))
-            elif current_property == 3:
-                return_junction.get_lane().set_total_standard_lanes(int(junction_save[i]))
-            elif current_property == 4:
-                return_junction.get_lane().set_priority(int(junction_save[i]))
-            elif current_property == 5:
-                return_junction.get_lane().set_has_puffin_crossing(int(junction_save[i]))
-        
-        return return_junction
-            
-
-
-
-
-
-# -------------------------------------------------------
-
 # Initialises the true model objects
 junction_model = Junction.Junction()
-#lanes = [InboundRoad.InboundRoad()] * 4
 selected_lane = None
-
-# Reset temp model. This creates the temporary object for editing
 temp_junction_model = Junction.Junction()
-#temp_lanes = [InboundRoad.InboundRoad()] * 4
-# 0 = north, 1 = east. 2 = south, 3 = west
+
+
+
+def print_junction_model():
+    global junction_model
+    i = 0
+    for dir in junction_model.get_all_roads():
+        print(i)
+        print("Has bus lane: " + str(dir.is_bus_lane()))
+        print("Num lanes: " + str(dir.get_total_standard_lanes()))
+        i += 1
+
+# ----------------------------------------------------------
 
 # Serve the main HTML page
 @app.route("/")
 def home():
     reset_temp_model()
+    saveFiles.create_junction_files()
     return send_from_directory(app.template_folder, "index.html")
 
+# Metrics for whole junction
 @app.route("/metrics")
 def get_metrics():
     global junction_model
@@ -174,17 +40,27 @@ def get_metrics():
     # Using the current junction model, get relevant metrics for whole model
 
     # TODO set vph_rates
-    temp_vph_rates = [100, 100, 100, 100]
 
 
-    mean_wait = 2
-    max_wait = 3
-    max_queue = 10
-    performance = junction_model.efficiency_score(temp_vph_rates)
+
+    junction_model.update_junction_metrics()
+    mean_wait_mins = junction_model.mean_wait_mins
+    mean_wait_secs = junction_model.mean_wait_secs
+    max_wait_mins = junction_model.max_wait_mins
+    max_wait_secs = junction_model.max_wait_secs
+    max_queue = junction_model.max_queue
+    performance = junction_model.performance
+    environment = junction_model.environment
+    environment_rank = saveFiles.top_percent_environment(environment, -1)
+    performance_rank = saveFiles.top_percent_performance(performance, -1)
     
-    return jsonify({"mean_wait": mean_wait, 
-                    "max_wait": max_wait, "max_queue": max_queue, 
-                    "performance": performance})
+    return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
+                    "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,
+                    "max_queue": max_queue, 
+                    "performance": performance,
+                    "environment": environment,
+                    "environment_rank": environment_rank,
+                    "performance_rank": performance_rank})
 
 # Changes user selection for which lane will be modified
 # This creates a temporary model, and we will only set this model
@@ -208,13 +84,38 @@ def edit_northbound():
     print("North")
 
     # send JSON response of data 
-    mean_wait = 2
-    max_wait = 3
-    max_queue = 10
-    performance = 13
-    return jsonify({"mean_wait": mean_wait, 
-                    "max_wait": max_wait, "max_queue": max_queue, 
-                    "performance": performance})
+    global junction_model
+    direction = 0
+    # direction as number 0-3
+    # TODO set vph_rates
+
+
+    junction_arm = junction_model.get_lane("north")
+    vph_rates = junction_model.get_vph_rates()
+
+    junction_arm.update_junction_arm_metrics(vph_rates, junction_model, direction)
+    mean_wait_mins = junction_arm.mean_wait_mins
+    mean_wait_secs = junction_arm.mean_wait_secs
+    max_wait_mins = junction_arm.max_wait_mins
+    max_wait_secs = junction_arm.max_wait_secs
+    max_queue = junction_arm.max_queue
+    performance = junction_arm.performance
+    
+    environment = junction_arm.environment
+
+    environment_rank = saveFiles.top_percent_environment(junction_arm.environment, direction)
+
+    performance_rank = saveFiles.top_percent_performance(performance, direction)
+    
+    return jsonify({"mean_wait_mins": mean_wait_mins, 
+                    "mean_wait_secs": mean_wait_secs,
+                    "max_wait_mins": max_wait_mins, 
+                    "max_wait_secs": max_wait_secs,
+                    "max_queue": max_queue, 
+                    "performance": performance,
+                    "environment": environment,
+                    "environment_rank": environment_rank, 
+                    "performance_rank": performance_rank})
 
 @app.route("/edit-eastbound")
 def edit_eastbound():
@@ -224,13 +125,37 @@ def edit_eastbound():
     print("East")
     
     # send JSON response of data 
-    mean_wait = 2
-    max_wait = 3
-    max_queue = 10
-    performance = 13
-    return jsonify({"mean_wait": mean_wait, 
-                    "max_wait": max_wait, "max_queue": max_queue, 
-                    "performance": performance})
+    global junction_model
+    direction = 1
+    # direction as number 0-3
+    # TODO set vph_rates
+
+
+    junction_arm = junction_model.get_lane("east")
+    vph_rates = junction_model.get_vph_rates()
+
+    junction_arm.update_junction_arm_metrics(vph_rates, junction_model, direction)
+    mean_wait_mins = junction_arm.mean_wait_mins
+    mean_wait_secs = junction_arm.mean_wait_secs
+    max_wait_mins = junction_arm.max_wait_mins
+    max_wait_secs = junction_arm.max_wait_secs
+    max_queue = junction_arm.max_queue
+    performance = junction_arm.performance
+    
+    environment = junction_arm.environment
+    
+    environment_rank = saveFiles.top_percent_environment(junction_arm.environment, direction)
+    performance_rank = saveFiles.top_percent_performance(performance, direction)
+    
+    return jsonify({"mean_wait_mins": mean_wait_mins, 
+                    "mean_wait_secs": mean_wait_secs,
+                    "max_wait_mins": max_wait_mins, 
+                    "max_wait_secs": max_wait_secs,
+                    "max_queue": max_queue, 
+                    "performance": performance,
+                    "environment": environment,
+                    "environment_rank": environment_rank, 
+                    "performance_rank": performance_rank})
 
 @app.route("/edit-southbound")
 def edit_southbound():
@@ -240,13 +165,39 @@ def edit_southbound():
     print("South")
     
     # send JSON response of data 
-    mean_wait = 2
-    max_wait = 3
-    max_queue = 10
-    performance = 13
-    return jsonify({"mean_wait": mean_wait, 
-                    "max_wait": max_wait, "max_queue": max_queue, 
-                    "performance": performance})
+    global junction_model
+    direction = 2
+    # direction as number 0-3
+    # TODO set vph_rates
+
+
+    junction_arm = junction_model.get_lane("south")
+
+    vph_rates = junction_model.get_vph_rates()
+
+    junction_arm.update_junction_arm_metrics(vph_rates, junction_model, direction)
+    mean_wait_mins = junction_arm.mean_wait_mins
+    mean_wait_secs = junction_arm.mean_wait_secs
+    max_wait_mins = junction_arm.max_wait_mins
+    max_wait_secs = junction_arm.max_wait_secs
+    max_queue = junction_arm.max_queue
+    performance = junction_arm.performance
+    
+    environment = junction_arm.environment
+    
+    environment_rank = saveFiles.top_percent_environment(junction_arm.environment, direction)
+    
+    performance_rank = saveFiles.top_percent_performance(performance, direction)
+    
+    return jsonify({"mean_wait_mins": mean_wait_mins, 
+                    "mean_wait_secs": mean_wait_secs,
+                    "max_wait_mins": max_wait_mins, 
+                    "max_wait_secs": max_wait_secs,
+                    "max_queue": max_queue, 
+                    "performance": performance,
+                    "environment": environment,
+                    "environment_rank": environment_rank, 
+                    "performance_rank": performance_rank})
 
 @app.route("/edit-westbound")
 def edit_westbound():
@@ -256,13 +207,37 @@ def edit_westbound():
     print("West")
     
     # send JSON response of data 
-    mean_wait = 2
-    max_wait = 3
-    max_queue = 10
-    performance = 13
-    return jsonify({"mean_wait": mean_wait, 
-                    "max_wait": max_wait, "max_queue": max_queue, 
-                    "performance": performance})
+    global junction_model
+    direction = 3
+    # direction as number 0-3
+    # TODO set vph_rates
+
+
+    junction_arm = junction_model.get_lane("west")
+
+    vph_rates = junction_model.get_vph_rates()
+
+    junction_arm.update_junction_arm_metrics(vph_rates, junction_model, direction)
+    mean_wait_mins = junction_arm.mean_wait_mins
+    mean_wait_secs = junction_arm.mean_wait_secs
+    max_wait_mins = junction_arm.max_wait_mins
+    max_wait_secs = junction_arm.max_wait_secs
+    max_queue = junction_arm.max_queue
+    performance = junction_arm.performance
+    environment = junction_arm.environment
+    environment_rank = saveFiles.top_percent_environment(environment, direction)
+    
+    performance_rank = saveFiles.top_percent_performance(performance, direction)
+    
+    return jsonify({"mean_wait_mins": mean_wait_mins, 
+                    "mean_wait_secs": mean_wait_secs,
+                    "max_wait_mins": max_wait_mins, 
+                    "max_wait_secs": max_wait_secs,
+                    "max_queue": max_queue, 
+                    "performance": performance,
+                    "environment": environment,
+                    "environment_rank": environment_rank, 
+                    "performance_rank": performance_rank})
 
 # Lane modification ----------------------------------------------------------------------------
 
@@ -289,6 +264,10 @@ def bus_toggle():
     global temp_junction_model, selected_lane
     temp_junction_model.get_lane(selected_lane).toggle_bus_lane()
     print("Has bus lane:" + str(temp_junction_model.get_lane(selected_lane).is_bus_lane()))
+    # Should turn off left and bike
+    if temp_junction_model.get_lane(selected_lane).has_bus_lane:
+        temp_junction_model.get_lane(selected_lane).has_bike_lane = False
+        temp_junction_model.get_lane(selected_lane).has_left_lane = False
     return Response(status=204)
 
 # Left turn lane
@@ -297,9 +276,21 @@ def left_toggle():
     global temp_junction_model, selected_lane
     temp_junction_model.get_lane(selected_lane).toggle_left_lane()
     print("Has left lane:" + str(temp_junction_model.get_lane(selected_lane).is_left_lane()))
+    if temp_junction_model.get_lane(selected_lane).has_left_lane:
+        temp_junction_model.get_lane(selected_lane).has_bike_lane = False
+        temp_junction_model.get_lane(selected_lane).has_bus_lane = False
     return Response(status=204)
 
 # TODO bike lane toggle
+@app.route("/bike-toggle")
+def bike_toggle():
+    global temp_junction_model, selected_lane
+    temp_junction_model.get_lane(selected_lane).toggle_bike_lane()
+    print("Has bike lane:" + str(temp_junction_model.get_lane(selected_lane).is_bike_lane()))
+    if temp_junction_model.get_lane(selected_lane).has_bike_lane:
+        temp_junction_model.get_lane(selected_lane).has_left_lane = False
+        temp_junction_model.get_lane(selected_lane).has_bus_lane = False
+    return Response(status=204)
 
 # Puffin toggle
 @app.route("/puffin-toggle")
@@ -340,19 +331,132 @@ def priority_4():
     return Response(status=204)
 
 # Model changes ---------------------------------------------------------------------------
-@app.route("/apply-changes")
+@app.route("/apply-changes", methods=["POST"])
 def apply_changes():
-    apply_model_changes()
+    #print_junction_model()
+    
+    print_junction_model()
     print("Changes applied")
 
+    # Using the current junction model, get relevant metrics for whole model
 
-    save_current_model()
-    return Response(status=204)
+    # TODO set vph_rates
+    global selected_lane, junction_model
+
+    data = request.get_json()
+    print("JSON DATA: " + str(data))
+    vph_value = int(data.get('vph', 100))  # Default to 100 if not provided
+
+    apply_model_changes()
+
+    if selected_lane is not None:
+        junction_model.get_lane(selected_lane).vph_rate = vph_value
+
+    junction_model.update_junction_metrics()
+
+    mean_wait_mins = junction_model.mean_wait_mins
+    mean_wait_secs = junction_model.mean_wait_secs
+    max_wait_mins = junction_model.max_wait_mins
+    max_wait_secs = junction_model.max_wait_secs
+    max_queue = junction_model.max_queue
+    performance = junction_model.performance
+    environment = junction_model.environment
+
+    
+
+    # TODO save to file
+    #saveFiles.save_junction_to_file(junction_model)
+    #saveFiles.create_model_from_save(1)
+    
+    environment_rank = saveFiles.top_percent_environment(environment, -1)
+    performance_rank = saveFiles.top_percent_performance(performance, -1)
+
+    print("VPH RATE: " + str(junction_model.get_lane(selected_lane).vph_rate))
+    
+    return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
+                    "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,
+                    "max_queue": max_queue, 
+                    "performance": performance,
+                    "environment": environment,
+                    "environment_rank": environment_rank,
+                    "performance_rank": performance_rank})
 
 @app.route("/cancel-changes")
 def cancel_changes():
     reset_temp_model()
     print("Changes discarded")
+    #return Response(status=204)
+
+    global junction_model
+
+    # Using the current junction model, get relevant metrics for whole model
+
+    # TODO set vph_rates
+
+
+    junction_model.update_junction_metrics()
+    mean_wait_mins = junction_model.mean_wait_mins
+    mean_wait_secs = junction_model.mean_wait_secs
+    max_wait_mins = junction_model.max_wait_mins
+    max_wait_secs = junction_model.max_wait_secs
+    max_queue = junction_model.max_queue
+    performance = junction_model.performance
+    environment = junction_model.environment
+
+    print("METRICS")
+    
+    environment_rank = saveFiles.top_percent_environment(environment, -1)
+    performance_rank = saveFiles.top_percent_performance(performance, -1)
+    
+    return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
+                    "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,
+                    "max_queue": max_queue, 
+                    "performance": performance,
+                    "environment": environment,
+                    "environment_rank": environment_rank,
+                    "performance_rank": performance_rank})
+
+# Save files ------------------------------------------------------------------------------------
+
+@app.route("/save-junction")
+def save_junction():
+    global junction_model
+    if saveFiles.save_junction_to_file(junction_model):
+        result = "success"
+    else:
+        result = "fail"
+    return jsonify({"result": result})
+
+@app.route("/overwrite-save", methods=["POST"])
+def overwrite_save():
+    global junction_model
+
+    # Save file number
+    data = request.get_json()
+    print("JSON DATA: " + str(data))
+    save_number = int(data.get('save_file', 1))  # Default to 1
+
+    saveFiles.overwrite_file(junction_model, save_number)
+    return Response(status=204)
+
+
+
+# Junction comparison -------------------------------------------------------------------------------
+
+# Given a direction, return the metrics from all stored in that direction
+
+
+# Give metrics of overall junction stored on file
+@app.route("/overwrite-save", methods=["POST"])
+def overwrite_save():
+    global junction_model
+
+    # Save file number
+    data = request.get_json()
+    print("JSON DATA: " + str(data))
+    save_number = int(data.get('save_file', 1))  # Default to 1
+
+    saveFiles.overwrite_file(junction_model, save_number)
     return Response(status=204)
 
 
