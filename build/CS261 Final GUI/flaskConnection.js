@@ -280,3 +280,26 @@ document.getElementById("cancelChanges").addEventListener("click", function() {
     })
     .catch(error => console.error("Error:", error));
 });
+
+// Saving ---------------------------------------------------------------------
+
+document.getElementById("saveButton").addEventListener("click", function() {
+
+    fetch("/save-junction", {
+        method: "POST", // Change to "POST" if needed
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ result: outcome })
+    })
+    .then(response => response.json()) // Assuming the response is JSON
+    .then(data => {
+        if (outcome == "success") {
+            // Change the button to say saved as normal
+        } else {
+            // Should inform the user about overwriting a save etc
+        }
+
+    })
+    .catch(error => console.error("Error:", error));
+});
