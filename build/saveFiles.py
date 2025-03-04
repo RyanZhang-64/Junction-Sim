@@ -96,6 +96,7 @@ def create_model_from_save(save_number):
 
         # Lines 1 - 7 are junction metrics
         return_junction = Junction.Junction()
+
         return_junction.mean_wait_mins = float(lines[0])
         return_junction.mean_wait_secs = float(lines[1])
         return_junction.max_wait_mins = float(lines[2])
@@ -104,10 +105,10 @@ def create_model_from_save(save_number):
         return_junction.performance = float(lines[5])
         return_junction.environment = float(lines[6])
 
-        direction_ranges = [(0, 7, 19), (1, 20, 32), (2, 33, 45), (3, 45, 57)]
+        direction_ranges = [(0, 7), (1, 21), (2, 35), (3, 48)]
         roads = return_junction.get_all_roads()
 
-        for (direction, start, end) in direction_ranges:
+        for (direction, start) in direction_ranges:
             road = roads[direction]
 
             # Metrics
@@ -120,17 +121,15 @@ def create_model_from_save(save_number):
             road.environment = float(lines[start + 6])
 
             # Config
-            road.priority_factor = float(lines[start + 6])
-            road.total_standard_lanes = float(lines[start + 7])
-
-            road.has_bus_lane = lines[start + 8].lower() == "true"
-            road.has_left_lane = lines[start + 9].lower() == "true"
-            road.puffin_crossing = lines[start + 10].lower() == "true"
-
-            road.has_bike_lane = lines[start + 11].lower() == "true"
+            road.vph_rate = float(lines[start + 7])
+            road.priority_factor = float(lines[start + 8])
+            road.total_standard_lanes = float(lines[start + 9])
+            road.has_bus_lane = lines[start + 10].lower() == "true"
+            road.has_left_lane = lines[start + 11].lower() == "true"
+            road.has_bike_lane = lines[start + 12].lower() == "true"
+            road.puffin_crossing = lines[start + 13].lower() == "true"
 
             
-
         save_junction_to_file(return_junction)
 
         return return_junction
@@ -169,11 +168,9 @@ def top_percent(score, direction, lines_to_read):
 
 # Direction -1 represents the whole junction
 def top_percent_environment(score, direction):
-    # Lines 7, 14, 27, 40, 53 store environment
-    lines_to_read = [7, 14, 27, 40, 53]
+    lines_to_read = [14, 28, 42, 55]
     return top_percent(score, direction, lines_to_read)
 
 def top_percent_performance(score, direction):
-    # Lines 6, 13, 26, 39, 52 store performance
-    lines_to_read = [6, 13, 26, 39, 52]
+    lines_to_read = [13, 27, 41, 54]
     return top_percent(score, direction, lines_to_read)

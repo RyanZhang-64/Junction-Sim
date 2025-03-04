@@ -31,14 +31,11 @@ class InboundRoad:
                 self.environment]
     
     def get_configuration_as_array(self):
-        return [self.priority_factor, self.total_standard_lanes, self.has_bus_lane,
-                self.has_left_lane, self.puffin_crossing, self.has_bike_lane]
+        return [self.vph_rate, self.priority_factor, self.total_standard_lanes, self.has_bus_lane,
+                self.has_left_lane, self.has_bike_lane, self.puffin_crossing]
 
     # Updates the junction arms metrics
     def update_junction_arm_metrics(self, vph_rates, junction, road_direction):
-
-        
-
 
         mean_wait = self.get_average_wait(vph_rates, junction, road_direction)
         max_wait = self.get_max_queue(vph_rates, junction, road_direction)

@@ -12,7 +12,7 @@ junction_model = Junction.Junction()
 selected_lane = None
 temp_junction_model = Junction.Junction()
 
-temp_vph_rates = [500, 500, 500, 500]
+
 
 def print_junction_model():
     global junction_model
@@ -40,7 +40,7 @@ def get_metrics():
     # Using the current junction model, get relevant metrics for whole model
 
     # TODO set vph_rates
-    global temp_vph_rates
+
 
 
     junction_model.update_junction_metrics()
@@ -341,7 +341,7 @@ def apply_changes():
     # Using the current junction model, get relevant metrics for whole model
 
     # TODO set vph_rates
-    global temp_vph_rates, selected_lane, junction_model
+    global selected_lane, junction_model
 
     data = request.get_json()
     print("JSON DATA: " + str(data))
@@ -392,7 +392,6 @@ def cancel_changes():
     # Using the current junction model, get relevant metrics for whole model
 
     # TODO set vph_rates
-    global temp_vph_rates
 
 
     junction_model.update_junction_metrics()
@@ -416,6 +415,40 @@ def cancel_changes():
                     "environment": environment,
                     "environment_rank": environment_rank,
                     "performance_rank": performance_rank})
+
+# Save files ------------------------------------------------------------------------------------
+
+@app.route("/save-junction")
+def save_junction():
+    global junction_model
+    if saveFiles.save_junction_to_file(junction_model):
+        result = "success"
+    else:
+        result = "fail"
+    return jsonify({"result": result})
+
+@app.route("/overwrite-save", methods=["POST"])
+def overwrite_save():
+    global junction_model
+
+    # Save file number
+    data = request.get_json()
+    print("JSON DATA: " + str(data))
+    save_number = int(data.get('save_file', 1))  # Default to 1
+
+    saveFiles.overwrite_file(junction_model, save_number)
+    return Response(status=204)
+
+
+
+# Junction comparison -------------------------------------------------------------------------------
+
+# Given a direction, return the metrics from all stored in that direction
+
+
+
+# Give metrics of overall junction stored on file
+
 
 
 # Other -----------------------------------------------------------------------------------------------
