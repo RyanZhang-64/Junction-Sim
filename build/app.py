@@ -447,6 +447,7 @@ def overwrite_save():
 
 
 # Give metrics of overall junction stored on file
+"""
 @app.route("/overwrite-save", methods=["POST"])
 def overwrite_save():
     global junction_model
@@ -458,6 +459,7 @@ def overwrite_save():
 
     saveFiles.overwrite_file(junction_model, save_number)
     return Response(status=204)
+"""
 
 
 # Other -----------------------------------------------------------------------------------------------
