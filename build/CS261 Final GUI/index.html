@@ -11,6 +11,7 @@
     
     <!-- Custom Styles -->
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
     <!-- External JavaScript Libraries -->
     <!-- Font Awesome with defer to improve page load performance -->
@@ -56,6 +57,8 @@
                                 <i class="fas fa-edit"></i> Edit Westbound
                             </button>
                         </div>
+
+                        <button id="saveButton" onclick="save()" class="btn btn-secondary"><i class="fa-solid fa-floppy-disk"></i>  Save</button>
                     </div>
                     
                     <!-- Metrics Display -->
@@ -127,8 +130,8 @@
                                         </button>
                                     </div>
                                     <div class="text-center">
-                                        <div class="performance-score text-primary font-weight-bold stat" id="performance-score">47.83</div>
-                                        <div class="performance-rank text-secondary stat" id="performance-rank">Top 41% of recorded scores</div>
+                                        <div class="performance-score text-primary font-weight-bold stat" id="performance-score">ADD HERE</div>
+                                        <div class="performance-rank text-secondary stat" id="performance-rank">Top ADD HERE% of recorded scores</div>
                                     </div>
                                 </section>
 
@@ -147,8 +150,8 @@
                                         </button>
                                     </div>
                                     <div class="text-center">
-                                        <div class="performance-score text-primary font-weight-bold stat" id="editor-performance-score">47.83</div>
-                                        <div class="performance-rank text-secondary stat" id="editor-performance-rank">Top 41% of recorded scores</div>
+                                        <div class="performance-score text-primary font-weight-bold stat" id="environment-score">ADD HERE</div>
+                                        <div class="performance-rank text-secondary stat" id="environment-rank">Top ADD HERE% of recorded scores</div>
                                     </div>
                                 </section>
                                 
@@ -172,7 +175,7 @@
                     <!-- Lane Editor Section -->
                     <div class="col-7">
                         <!-- Puffin Crossing Toggle -->
-                        <button id="puffinToggle" 
+                        <button id="puffin" 
                                 class="puffin-crossing inactive"
                                 aria-label="Toggle puffin crossing"
                                 aria-pressed="false">
@@ -343,8 +346,8 @@
                                         </button>
                                     </div>
                                     <div class="text-center">
-                                        <div class="performance-score text-primary font-weight-bold stat" id="editor-performance-score">47.83</div>
-                                        <div class="performance-rank text-secondary stat" id="editor-performance-rank">Top 41% of recorded scores</div>
+                                        <div class="performance-score text-primary font-weight-bold stat" id="editor-performance-score">5000</div>
+                                        <div class="performance-rank text-secondary stat" id="editor-performance-rank">Top 4588581% of recorded scores</div>
                                     </div>
                                 </section>
                                 
@@ -363,8 +366,8 @@
                                         </button>
                                     </div>
                                     <div class="text-center">
-                                        <div class="performance-score text-primary font-weight-bold stat" id="editor-performance-score">47.83</div>
-                                        <div class="performance-rank text-secondary stat" id="editor-performance-rank">Top 41% of recorded scores</div>
+                                        <div class="performance-score text-primary font-weight-bold stat" id="editor-environment-score">ADD HERE</div>
+                                        <div class="performance-rank text-secondary stat" id="editor-environment-rank">Top ADD HERE% of recorded scores</div>
                                     </div>
                                 </section>
                                 
@@ -422,6 +425,12 @@
          * View Control Module - Handles switching between main view and editor view
          */
         let currentDirection = null;
+
+        function save() {
+            const button = document.getElementById('saveButton');
+            button.classList.replace('btn-secondary', 'btn-primary');
+            button.innerHTML = '<i class="fa-solid fa-check"></i>  Saved';
+        }
 
         /**
          * Shows the editor view for configuring a specific direction (arm) of the junction
