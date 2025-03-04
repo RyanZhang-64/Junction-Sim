@@ -1,8 +1,12 @@
 import pytest
 import time
+import logging
 from build.Junction import Junction  
 from build.InboundRoad import InboundRoad  
 from build.Equations import get_efficiency_score  
+
+#set up logging (Logs results into `test_logs.log`)
+logging.basicConfig(filename="test_logs.log", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 #unit test 
 def test_Junction_defaults():

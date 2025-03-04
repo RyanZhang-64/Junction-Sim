@@ -2,6 +2,7 @@ import pytest
 import time
 import statistics
 import numpy
+import logging
 
 #importing functions from equations.py
 from build.equations import (
@@ -15,6 +16,9 @@ from build.equations import (
     worst_case_statistic
 )
 from build.Junction import Junction  
+
+#set up logging (Logs results into `test_logs.log`)
+logging.basicConfig(filename="test_logs.log", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 #mock junction for unit tests- mimics a single road at a junction
 @pytest.fixture
