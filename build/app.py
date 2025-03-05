@@ -418,13 +418,12 @@ def cancel_changes():
 
 # Save files ------------------------------------------------------------------------------------
 
-@app.route("/save-junction")
+@app.route("/save-junction", methods=["POST"])
 def save_junction():
     global junction_model
-    if saveFiles.save_junction_to_file(junction_model):
-        result = "success"
-    else:
-        result = "fail"
+    success = saveFiles.save_junction_to_file(junction_model)
+    result = "success" if success else "fail"
+    print(result)
     return jsonify({"result": result})
 
 @app.route("/overwrite-save", methods=["POST"])
@@ -432,9 +431,11 @@ def overwrite_save():
     global junction_model
 
     # Save file number
-    data = request.get_json()
-    print("JSON DATA: " + str(data))
-    save_number = int(data.get('save_file', 1))  # Default to 1
+    #data = request.get_json()
+    #print("JSON DATA: " + str(data))
+    #save_number = int(data.get('save_file', 1))  # Default to 1
+
+    save_number = 1
 
     saveFiles.overwrite_file(junction_model, save_number)
     return Response(status=204)

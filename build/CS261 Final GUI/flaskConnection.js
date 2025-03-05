@@ -285,20 +285,16 @@ document.getElementById("cancelChanges").addEventListener("click", function() {
 
 // JavaScript
 document.getElementById("saveButton").addEventListener("click", function() {
-    save();
-});
-
-function save() {
     fetch("/save-junction", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ result: outcome })
+        body: JSON.stringify({})
     })
     .then(response => response.json())
     .then(data => {
-        if (outcome === "success") {
+        if (data.result === "success") {
             // Change the button to indicate saved
             const saveButton = document.getElementById("saveButton");
             saveButton.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
@@ -313,11 +309,27 @@ function save() {
             }, 2000);
         } else {
             // Inform about overwriting
-            alert("Warning: This will overwrite your previous save. Continue?");
+            const overwriteSave = confirm("Warning: This will overwrite your oldest save. Continue?");
+
+            if (overwriteSave) {
+                
+                
+                fetch("/overwrite-save", {
+                    method: "GET", // Change to "POST" if needed
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => response.json()) // Assuming the response is JSON
+                .then(data => console.log("Success:", data))
+                .catch(error => console.error("Error:", error));
+
+            }
         }
     })
     .catch(error => {
         console.error("Error:", error);
         alert("Error saving. Please try again.");
     });
-}
+});
+
