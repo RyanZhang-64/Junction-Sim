@@ -29,6 +29,7 @@ html, body {
     padding: 0;
     height: 100%;
     overflow: hidden;
+    /* filter: contrast(150%) brightness(110%); */
 }
 
 /* View Container - Base for all full-screen views */

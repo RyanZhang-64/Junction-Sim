@@ -323,7 +323,6 @@ document.getElementById("saveButton").addEventListener("click", function() {
                 .then(response => response.json()) // Assuming the response is JSON
                 .then(data => console.log("Success:", data))
                 .catch(error => console.error("Error:", error));
-
             }
         }
     })

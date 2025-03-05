@@ -36,41 +36,41 @@
                         
                         <!-- Direction Edit Buttons -->
                         <div class="direction-buttons">
-                            <button id="editNorth" class="edit-arm-button" 
+                            <button id="editNorth" class="edit-arm-button readable" 
                                     aria-label="Edit Northbound traffic configuration"
                                     onclick="showEditor('north')">
                                 <i class="fas fa-edit"></i> Edit Northbound
                             </button>
-                            <button id="editSouth" class="edit-arm-button" 
+                            <button id="editSouth" class="edit-arm-button readable" 
                                     aria-label="Edit Southbound traffic configuration"
                                     onclick="showEditor('south')">
                                 <i class="fas fa-edit"></i> Edit Southbound
                             </button>
-                            <button id="editEast" class="edit-arm-button" 
+                            <button id="editEast" class="edit-arm-button readable" 
                                     aria-label="Edit Eastbound traffic configuration"
                                     onclick="showEditor('east')">
                                 <i class="fas fa-edit"></i> Edit Eastbound
                             </button>
-                            <button id="editWest" class="edit-arm-button" 
+                            <button id="editWest" class="edit-arm-button readable" 
                                     aria-label="Edit Westbound traffic configuration"
                                     onclick="showEditor('west')">
                                 <i class="fas fa-edit"></i> Edit Westbound
                             </button>
                         </div>
 
-                        <button id="saveButton" onclick="save()" class="btn btn-secondary"><i class="fa-solid fa-floppy-disk"></i>  Save</button>
+                        <button id="saveButton" onclick="save()" class="btn btn-secondary readable"><i class="fa-solid fa-floppy-disk"></i>  Save</button>
                     </div>
                     
                     <!-- Metrics Display -->
                     <div class="col-5">
                         <div class="card h-100">
                             <div class="card-body d-flex flex-column justify-content-between p-5">
-                                <h1 class="text-center infobar-title">Junction Metrics</h1>
+                                <h1 class="text-center infobar-title readable">Junction Metrics</h1>
                                 
                                 <!-- Wait Times Metrics -->
                                 <section class="metrics-section my-2">
                                     <div class="d-flex align-items-center fs-4">
-                                        <span class="stat-title">
+                                        <span class="stat-title readable">
                                             <i class="fa-solid fa-clock me-3 stat-title"></i> Wait Times
                                         </span>
                                         <button class="info-button ms-2" 
@@ -83,12 +83,12 @@
                                     </div>
                                     <div class="px-4">
                                         <div class="d-flex justify-content-between">
-                                            <div class="text-secondary stat">Mean:</div>
-                                            <div class="font-weight-bold stat" id="mean-wait-time">xxm:xxs</div>
+                                            <div class="text-secondary stat readable">Mean:</div>
+                                            <div class="font-weight-bold stat readable" id="mean-wait-time">xxm:xxs</div>
                                         </div>
                                         <div class="d-flex justify-content-between">
-                                            <div class="text-secondary stat">Maximum:</div>
-                                            <div class="font-weight-bold stat" id="max-wait-time">xxm:xxs</div>
+                                            <div class="text-secondary stat readable">Maximum:</div>
+                                            <div class="font-weight-bold stat readable" id="max-wait-time">xxm:xxs</div>
                                         </div>
                                     </div>
                                 </section>
@@ -96,7 +96,7 @@
                                 <!-- Queue Length Metrics -->
                                 <section class="metrics-section my-2">
                                     <div class="d-flex align-items-center fs-4">
-                                        <span class="stat-title">
+                                        <span class="stat-title readable">
                                             <i class="fa-solid fa-car me-3"></i> Queue Length
                                         </span>
                                         <button class="info-button ms-2" 
@@ -109,8 +109,8 @@
                                     </div>
                                     <div class="px-4 fs-4">
                                         <div class="d-flex justify-content-between">
-                                            <div class="text-secondary stat">Maximum:</div>
-                                            <div class="stat" id="max-queue-length">xx cars</div>
+                                            <div class="text-secondary stat readable">Maximum:</div>
+                                            <div class="stat readable" id="max-queue-length">xx cars</div>
                                         </div>
                                     </div>
                                 </section>
@@ -118,7 +118,7 @@
                                 <!-- Performance Score Metrics -->
                                 <section class="metrics-section my-2">
                                     <div class="d-flex align-items-center fs-4">
-                                        <span class="stat-title">
+                                        <span class="stat-title readable">
                                             <i class="fa-solid fa-trophy me-3"></i> Performance Score
                                         </span>
                                         <button class="info-button ms-2" 
@@ -130,15 +130,15 @@
                                         </button>
                                     </div>
                                     <div class="text-center">
-                                        <div class="performance-score text-primary font-weight-bold stat" id="performance-score">ADD HERE</div>
-                                        <div class="performance-rank text-secondary stat" id="performance-rank">Top ADD HERE% of recorded scores</div>
+                                        <div class="performance-score text-primary font-weight-bold stat readable" id="performance-score">ADD HERE</div>
+                                        <div class="performance-rank text-secondary stat readable" id="performance-rank">Top ADD HERE% of recorded scores</div>
                                     </div>
                                 </section>
 
                                 <!-- Environmental -->
                                 <section class="metrics-section my-2">
                                     <div class="d-flex align-items-center fs-4">
-                                        <span class="stat-title">
+                                        <span class="stat-title readable">
                                             <i class="fa-solid fa-leaf me-3"></i> Environmental Score
                                         </span>
                                         <button class="info-button ms-2" 
@@ -150,8 +150,8 @@
                                         </button>
                                     </div>
                                     <div class="text-center">
-                                        <div class="performance-score text-primary font-weight-bold stat" id="environment-score">ADD HERE</div>
-                                        <div class="performance-rank text-secondary stat" id="environment-rank">Top ADD HERE% of recorded scores</div>
+                                        <div class="performance-score text-primary font-weight-bold stat readable" id="environment-score">ADD HERE</div>
+                                        <div class="performance-rank text-secondary stat readable" id="environment-rank">Top ADD HERE% of recorded scores</div>
                                     </div>
                                 </section>
 
@@ -159,7 +159,7 @@
                                 
                                 <!-- Compare Button -->
                                 <button id="compareButton" 
-                                        class="btn btn-light text-primary w-100 stat"
+                                        class="btn btn-light text-primary w-100 stat readable"
                                         aria-label="Compare with other junction configurations">
                                     Compare with other scores
                                 </button>
@@ -180,7 +180,7 @@
                     <div class="col-7">
                         <!-- Puffin Crossing Toggle -->
                         <button id="puffin" 
-                                class="puffin-crossing inactive"
+                                class="puffin-crossing inactive readable"
                                 aria-label="Toggle puffin crossing"
                                 aria-pressed="false">
                             Puffin Inactive
@@ -191,13 +191,13 @@
                             <div id="columnsContainer" class="lanes-container"></div>
                             <div class="control-lane">
                                 <button id="addLane" 
-                                        class="control-btn add-lane"
+                                        class="control-btn add-lane readable"
                                         aria-label="Add a new lane"
                                         title="Add a new lane to the current direction">
                                     Press to Add Lane
                                 </button>
                                 <button id="removeLane" 
-                                        class="control-btn remove-lane"
+                                        class="control-btn remove-lane readable"
                                         aria-label="Remove a lane"
                                         title="Remove the last lane from the current direction">
                                     Press to<br>Remove<br>Lane
@@ -209,7 +209,7 @@
                         <div class="row border-top align-items-start">
                             <!-- Instructions -->
                             <div class="col-3 text-center bottom-menu">
-                                <p class="editor-instructions">
+                                <p class="editor-instructions readable">
                                     Hover over lanes for options<br>Click to toggle
                                 </p>
                             </div>
@@ -218,7 +218,7 @@
                             <div class="col-3">
                                 <div class="container d-flex justify-content-center align-items-center traffic-volume-container">
                                     <div class="form-group w-100">
-                                        <label for="trafficVolumeInput" id="trafficVolumeLabel" class="traffic-volume-label">
+                                        <label for="trafficVolumeInput" id="trafficVolumeLabel" class="traffic-volume-label readable">
                                             <span id="directionLabel">Direction</span>bound VPH
                                         </label>
                                         <div class="input-group">
@@ -236,7 +236,7 @@
                                                 <span class="input-group-text">veh/hr</span>
                                             </div>
                                         </div>
-                                        <small class="form-text text-muted">Range: 0-400 vehicles per hour</small>
+                                        <small class="form-text text-muted readable">Range: 0-400 vehicles per hour</small>
                                     </div>
                                 </div>
                             </div>
@@ -248,7 +248,7 @@
                                         <nav aria-label="Priority navigation" class="h-100">
                                             <div class="d-flex flex-column h-100">
                                                 <div class="text-center flex-grow-1 d-flex align-items-center justify-content-center">
-                                                    <span class="priority-label">Priority Unset</span>
+                                                    <span class="priority-label readable">Priority Unset</span>
                                                 </div>
                                                 <div class="flex-grow-1 d-flex align-items-center">
                                                     <ul class="pagination justify-content-center w-100 mb-0" id="priorityPagination">
@@ -266,12 +266,12 @@
                                 <div class="container button-container">
                                     <div class="button-group">
                                         <button id="applyChanges" 
-                                                class="btn btn-success action-button"
+                                                class="btn btn-success action-button readable"
                                                 aria-label="Apply lane configuration changes">
                                             Apply
                                         </button>
                                         <button id="cancelChanges" 
-                                                class="btn btn-danger action-button"
+                                                class="btn btn-danger action-button readable"
                                                 aria-label="Cancel lane configuration changes">
                                             Cancel
                                         </button>
@@ -285,12 +285,12 @@
                     <div class="col-5 info-column">
                         <div class="card h-100">
                             <div class="card-body d-flex flex-column justify-content-between p-5">
-                                <h1 class="text-center infobar-title">Junction Metrics</h1>
+                                <h1 class="text-center infobar-title readable">Junction Metrics</h1>
                                 
                                 <!-- Wait Times -->
                                 <section class="metrics-section my-2">
                                     <div class="d-flex align-items-center fs-4">
-                                        <span class="stat-title">
+                                        <span class="stat-title readable">
                                             <i class="fa-solid fa-clock me-3 stat-title"></i> Wait Times
                                         </span>
                                         <button class="info-button ms-2" 
@@ -303,12 +303,12 @@
                                     </div>
                                     <div class="px-4">
                                         <div class="d-flex justify-content-between">
-                                            <div class="text-secondary stat">Mean:</div>
-                                            <div class="font-weight-bold stat" id="editor-mean-wait-time">xxm:xxs</div>
+                                            <div class="text-secondary stat readable">Mean:</div>
+                                            <div class="font-weight-bold stat readable" id="editor-mean-wait-time">xxm:xxs</div>
                                         </div>
                                         <div class="d-flex justify-content-between">
-                                            <div class="text-secondary stat">Maximum:</div>
-                                            <div class="font-weight-bold stat" id="editor-max-wait-time">xxm:xxs</div>
+                                            <div class="text-secondary stat readable">Maximum:</div>
+                                            <div class="font-weight-bold stat readable" id="editor-max-wait-time">xxm:xxs</div>
                                         </div>
                                     </div>
                                 </section>
@@ -316,7 +316,7 @@
                                 <!-- Queue Length -->
                                 <section class="metrics-section my-2">
                                     <div class="d-flex align-items-center fs-4">
-                                        <span class="stat-title">
+                                        <span class="stat-title readable">
                                             <i class="fa-solid fa-car me-3"></i> Queue Length
                                         </span>
                                         <button class="info-button ms-2" 
@@ -329,8 +329,8 @@
                                     </div>
                                     <div class="px-4 fs-4">
                                         <div class="d-flex justify-content-between">
-                                            <div class="text-secondary stat">Maximum:</div>
-                                            <div class="stat" id="editor-max-queue-length">xx cars</div>
+                                            <div class="text-secondary stat readable">Maximum:</div>
+                                            <div class="stat readable" id="editor-max-queue-length">xx cars</div>
                                         </div>
                                     </div>
                                 </section>
@@ -338,7 +338,7 @@
                                 <!-- Performance Score -->
                                 <section class="metrics-section my-2">
                                     <div class="d-flex align-items-center fs-4">
-                                        <span class="stat-title">
+                                        <span class="stat-title readable">
                                             <i class="fa-solid fa-trophy me-3"></i> Performance Score
                                         </span>
                                         <button class="info-button ms-2" 
@@ -350,15 +350,15 @@
                                         </button>
                                     </div>
                                     <div class="text-center">
-                                        <div class="performance-score text-primary font-weight-bold stat" id="editor-performance-score">5000</div>
-                                        <div class="performance-rank text-secondary stat" id="editor-performance-rank">Top 4588581% of recorded scores</div>
+                                        <div class="performance-score text-primary font-weight-bold stat readable" id="editor-performance-score">5000</div>
+                                        <div class="performance-rank text-secondary stat readable" id="editor-performance-rank">Top 4588581% of recorded scores</div>
                                     </div>
                                 </section>
                                 
                                 <!-- Environmental -->
                                 <section class="metrics-section my-2">
                                     <div class="d-flex align-items-center fs-4">
-                                        <span class="stat-title">
+                                        <span class="stat-title readable">
                                             <i class="fa-solid fa-leaf me-3"></i> Environmental Score
                                         </span>
                                         <button class="info-button ms-2" 
@@ -370,19 +370,19 @@
                                         </button>
                                     </div>
                                     <div class="text-center">
-                                        <div class="performance-score text-primary font-weight-bold stat" id="editor-environment-score">ADD HERE</div>
-                                        <div class="performance-rank text-secondary stat" id="editor-environment-rank">Top ADD HERE% of recorded scores</div>
+                                        <div class="performance-score text-primary font-weight-bold stat readable" id="editor-environment-score">ADD HERE</div>
+                                        <div class="performance-rank text-secondary stat readable" id="editor-environment-rank">Top ADD HERE% of recorded scores</div>
                                     </div>
                                 </section>
                                 
                                 <!-- Compare Button -->
                                 <button id="editorCompareButton" 
-                                        class="btn btn-light text-primary w-100 stat"
+                                        class="btn btn-light text-primary w-100 stat readable"
                                         aria-label="Compare with other junction configurations">
                                     Compare with other scores
                                 </button>
 
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
+                                <button type="button" class="btn btn-primary readable" data-toggle="modal" data-target="#exampleModalLong">
                                     Launch demo modal
                                   </button>
                             </div>
@@ -396,7 +396,7 @@
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                  <h5 class="modal-title readable" id="exampleModalLongTitle">Modal title</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -405,13 +405,15 @@
                   ...
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary">Save changes</button>
+                  <button type="button" class="btn btn-secondary readable" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary readable">Save changes</button>
                 </div>
               </div>
             </div>
           </div>
     </main>
+
+    <div id="overlay"></div>
 
     <!-- Application Scripts -->
     <!-- Core functionality script -->
@@ -560,5 +562,3 @@
     </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
-</html>

@@ -55,9 +55,31 @@ function rebuildPriorityPagination(priorityValue) {
         
         // Create the pagination link
         const link = document.createElement('a');
-        link.className = 'page-link text-center';
+        link.className = 'page-link text-center readable'; // Add readable class to the link
         link.href = '#';
         link.textContent = i;
+        
+        // Attach TTS functionality to this newly created element
+        link.onmouseenter = function(event) {
+            // Ensure the event is only triggered for the direct target
+            if (event.target !== this) {
+                return;
+            }
+            
+            console.log('Mouse entered readable element:', this.textContent.trim());
+            const text = this.textContent.trim();
+            if (text) {
+                // Stop any current speech
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
+                
+                // Speak the text
+                const utterance = new SpeechSynthesisUtterance(text);
+                window.speechSynthesis.speak(utterance);
+                console.log('Speaking:', text);
+            }
+        };
         
         // Add click handler for priority selection
         link.addEventListener('click', function(e) {
@@ -554,7 +576,191 @@ function initializeColumns(count = 1) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+const ttsConfig = {
+    selector: 'p, h1, h2, h3, h4, h5, h6, li, a, button, label, .readable', // Elements to enable TTS on
+    hoverDelay: 500, // Milliseconds to wait before speaking (prevents triggering on quick mouse movements)
+    rate: 1.0,      // Speech rate (0.1 to 10)
+    pitch: 1.0,     // Speech pitch (0 to 2)
+    volume: 1.0,    // Speech volume (0 to 1)
+    highlightColor: 'rgba(255, 255, 0, 0.3)' // Background color for highlighting speaking element
+  };
+
+// Variables to track state
+let isSpeaking = false;
+let currentElement = null;
+let hoverTimer = null;
+let utterance = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded');
+    
+    // Simple test to verify speech synthesis is available
+    if ('speechSynthesis' in window) {
+        console.log('Speech synthesis is supported');
+    } else {
+        console.error('Speech synthesis is NOT supported in this browser');
+        return;
+    }
+    
+    // Global variable to track if TTS is enabled
+    let ttsEnabled = false;
+    
+    // Stop currently speaking text
+    const stopSpeaking = function() {
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
+    };
+    
+    // Function to attach TTS functionality to readable elements
+    function attachTTSToReadableElements() {
+        const elements = document.querySelectorAll('.readable:not([data-tts-attached])');
+        console.log(`Attaching TTS to ${elements.length} readable elements`);
+        
+        elements.forEach(function(element) {
+            // Add TTS event listener
+            element.onmouseenter = function(event) {
+                // Skip if TTS is disabled
+                if (!ttsEnabled) return;
+                
+                // Ensure the event is only triggered for the direct target
+                if (event.target !== this) {
+                    return;
+                }
+                
+                console.log('Mouse entered readable element:', this.textContent.trim());
+                const text = this.textContent.trim();
+                if (text) {
+                    stopSpeaking(); // Stop any current speech
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    window.speechSynthesis.speak(utterance);
+                    console.log('Speaking:', text);
+                }
+            };
+            
+            // Mark as having TTS attached
+            element.setAttribute('data-tts-attached', 'true');
+        });
+    }
+    
+    // Function to detach TTS functionality
+    function detachTTSFromReadableElements() {
+        const elements = document.querySelectorAll('[data-tts-attached="true"]');
+        console.log(`Detaching TTS from ${elements.length} elements`);
+        
+        elements.forEach(function(element) {
+            // Remove the event listener
+            element.onmouseenter = null;
+            
+            // Remove the attribute
+            element.removeAttribute('data-tts-attached');
+        });
+    }
+    
+    // Create a toggle button for TTS functionality
+    function createTTSToggleButton() {
+        // Create the button element
+        const toggleButton = document.createElement('button');
+        toggleButton.id = 'tts-toggle';
+        toggleButton.className = 'tts-toggle-button';
+        toggleButton.setAttribute('aria-pressed', 'false');
+        toggleButton.setAttribute('aria-label', 'Enable text to speech on hover');
+        
+        // Set initial state (disabled by default)
+        updateButtonState();
+        
+        // Style the button
+        toggleButton.style.position = 'fixed';
+        toggleButton.style.bottom = '20px';
+        toggleButton.style.left = '20px';
+        toggleButton.style.zIndex = '9999';
+        toggleButton.style.padding = '10px 15px';
+        toggleButton.style.borderRadius = '4px';
+        toggleButton.style.border = 'none';
+        toggleButton.style.cursor = 'pointer';
+        toggleButton.style.display = 'flex';
+        toggleButton.style.alignItems = 'center';
+        toggleButton.style.fontWeight = 'bold';
+        toggleButton.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+        
+        // Add button click handler
+        toggleButton.addEventListener('click', function() {
+            ttsEnabled = !ttsEnabled;
+            updateButtonState();
+            
+            if (ttsEnabled) {
+                // Enable TTS functionality
+                attachTTSToReadableElements();
+            } else {
+                // Disable TTS functionality
+                // We don't detach the listeners to avoid having to reattach them later
+                // Instead we check the ttsEnabled flag in the listener
+                
+                // Stop any ongoing speech
+                stopSpeaking();
+            }
+        });
+        
+        // Update button appearance based on state
+        function updateButtonState() {
+            if (ttsEnabled) {
+                toggleButton.innerHTML = '🔊 Text-to-Speech: ON';
+                toggleButton.style.backgroundColor = '#4CAF50';
+                toggleButton.style.color = 'white';
+                toggleButton.setAttribute('aria-pressed', 'true');
+                toggleButton.setAttribute('aria-label', 'Disable text to speech on hover');
+            } else {
+                toggleButton.innerHTML = '🔇 Text-to-Speech: OFF';
+                toggleButton.style.backgroundColor = '#f5f5f5';
+                toggleButton.style.color = '#333';
+                toggleButton.setAttribute('aria-pressed', 'false');
+                toggleButton.setAttribute('aria-label', 'Enable text to speech on hover');
+            }
+        }
+        
+        // Add to the DOM
+        document.body.appendChild(toggleButton);
+        
+        return toggleButton;
+    }
+    
+    // Add a stop button
+    const stopButton = document.createElement('button');
+    stopButton.id = 'tts-stop-button';
+    stopButton.textContent = '🔇 Stop Speaking';
+    stopButton.style.position = 'fixed';
+    stopButton.style.bottom = '20px';
+    stopButton.style.right = '20px';
+    stopButton.style.zIndex = '9999';
+    stopButton.style.padding = '8px 15px';
+    stopButton.style.backgroundColor = '#f44336';
+    stopButton.style.color = 'white';
+    stopButton.style.border = 'none';
+    stopButton.style.borderRadius = '4px';
+    stopButton.style.cursor = 'pointer';
+    stopButton.style.display = 'none';
+    
+    stopButton.addEventListener('click', stopSpeaking);
+    document.body.appendChild(stopButton);
+    
+    // Show/hide stop button based on speech state
+    setInterval(() => {
+        stopButton.style.display = window.speechSynthesis.speaking ? 'block' : 'none';
+    }, 100);
+    
+    // Create the toggle button
+    createTTSToggleButton();
+    
+    // Set up initial TTS attachments (but they won't activate until enabled)
+    attachTTSToReadableElements();
+    
+    // Make the functions available globally
+    window.ttsHelpers = {
+        attachTTSToReadableElements: attachTTSToReadableElements,
+        stopSpeaking: stopSpeaking,
+        isTTSEnabled: function() { return ttsEnabled; }
+    };
+
     // Set up event listeners for lane controls
     const addLaneButton = document.getElementById('addLane');
     if (addLaneButton) {
@@ -577,3 +783,10 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeColumns(1);
     }
 });
+
+// Function to be called when new readable elements are added to the DOM
+function updateTTSElements() {
+    if (window.ttsHelpers && typeof window.ttsHelpers.attachTTSToReadableElements === 'function') {
+        window.ttsHelpers.attachTTSToReadableElements();
+    }
+}
