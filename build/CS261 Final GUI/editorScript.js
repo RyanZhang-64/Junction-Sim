@@ -210,7 +210,7 @@ window.getEditorConfiguration = function() {
         const leftmostColumn = columns[0];
         
         // Check for left turn lane
-        if (leftmostColumn.querySelector('.fa-turn-left')) {
+        if (leftmostColumn.querySelector('img[src="arrow.png"]')) {
             leftLaneAttribute = 'left-turn';
             console.log("setting left lane attribute to left-turn");
         }
@@ -225,6 +225,7 @@ window.getEditorConfiguration = function() {
     }
 
     // Return current configuration
+    console.log("Left lane attribute is", leftLaneAttribute);
     return {
         lanes: columns.length,
         leftLaneAttribute: leftLaneAttribute,
@@ -240,7 +241,7 @@ window.getEditorConfiguration = function() {
  * @param {string} attributeType - Type of attribute ('bus', 'bike', or 'left-turn')
  */
 function handleImageTransition(column, iconClassOrImageSrc, attributeType) {
-    console.log(iconClassOrImageSrc);
+    console.log(attributeType);
     // Only allow changes to the leftmost lane
     const columns = document.querySelectorAll('.column');
     if (columns.length === 0 || column !== columns[0]) {
@@ -253,6 +254,7 @@ function handleImageTransition(column, iconClassOrImageSrc, attributeType) {
     // Check if we're toggling the same attribute (turning it off)
     if (editorState.leftLaneAttribute === attributeType && imageContainer) {
         // Remove the current attribute
+        console.log("Cancelling");
         imageContainer.classList.add('fade-out');
         imageContainer.addEventListener('animationend', () => {
             imageContainer.remove();

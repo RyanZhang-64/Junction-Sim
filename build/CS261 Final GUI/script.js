@@ -414,7 +414,7 @@ class JunctionSimulation {
                 let arrowX, arrowY, rotation;
                 
                 // Position arrows relative to junction size
-                const arrowOffset = this.junctionSize * 0.25;  // Place arrows 1/4 of the way from junction
+                const arrowOffset = this.junctionSize * 0.4;  // Place arrows 1/4 of the way from junction
                 
                 switch(direction) {
                     case 'west':
@@ -449,6 +449,7 @@ class JunctionSimulation {
                 const arrowHeight = arrowSize;
                 
                 // Draw image centered at the position
+                console.log("drawing arrow")
                 this.ctx.drawImage(
                     this.arrowImage,
                     -arrowWidth / 2,  // Center horizontally
@@ -895,7 +896,5 @@ class JunctionSimulation {
         this.hideEditor();
     };
 })();
-
-
 
 const simulation = new JunctionSimulation('junctionCanvas');

@@ -283,23 +283,41 @@ document.getElementById("cancelChanges").addEventListener("click", function() {
 
 // Saving ---------------------------------------------------------------------
 
+// JavaScript
 document.getElementById("saveButton").addEventListener("click", function() {
+    save();
+});
 
+function save() {
     fetch("/save-junction", {
-        method: "POST", // Change to "POST" if needed
+        method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ result: outcome })
     })
-    .then(response => response.json()) // Assuming the response is JSON
+    .then(response => response.json())
     .then(data => {
-        if (outcome == "success") {
-            // Change the button to say saved as normal
+        if (outcome === "success") {
+            // Change the button to indicate saved
+            const saveButton = document.getElementById("saveButton");
+            saveButton.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
+            saveButton.classList.remove("btn-secondary");
+            saveButton.classList.add("btn-success");
+            
+            // Optionally revert after a delay
+            setTimeout(() => {
+                saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+                saveButton.classList.remove("btn-success");
+                saveButton.classList.add("btn-secondary");
+            }, 2000);
         } else {
-            // Should inform the user about overwriting a save etc
+            // Inform about overwriting
+            alert("Warning: This will overwrite your previous save. Continue?");
         }
-
     })
-    .catch(error => console.error("Error:", error));
-});
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Error saving. Please try again.");
+    });
+}
