@@ -22,6 +22,8 @@
             integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" 
             crossorigin="anonymous" 
             referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- Main Application Container -->
@@ -400,9 +402,14 @@
     <script src="lane-limit-feedback.js" defer></script>
 
     <script src="dark-mode-toggle.js" defer></script>
+
+    <!-- Add the new script file reference before closing body tag -->
+    <script src="chartCarousel.js" defer></script>
     
     <!-- Server communication script -->
     <script src="flaskConnection.js" defer></script>
+
+    
     
     
     <!-- View Control Script -->
@@ -538,6 +545,67 @@
             if (typeof $().tooltip === 'function') {
                 $('[data-toggle="tooltip"]').tooltip();
             }
+        });
+
+        // This script connects the metrics display with the chart carousel
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to get metrics from DOM display
+            function getDisplayedMetrics() {
+                return {
+                    meanWaitTime: parseFloat(document.getElementById('mean-wait-time').textContent) || 0,
+                    maxWaitTime: parseFloat(document.getElementById('max-wait-time').textContent) || 0,
+                    queueLength: parseFloat(document.getElementById('max-queue-length').textContent) || 0,
+                    performanceScore: parseFloat(document.getElementById('performance-score').textContent) || 0,
+                    environmentalScore: parseFloat(document.getElementById('environment-score').textContent) || 0
+                };
+            }
+            
+            // Function to update charts when metrics change
+            function updateChartsFromDisplay() {
+                if (window.chartCarousel && typeof window.chartCarousel.updateCurrentMetrics === 'function') {
+                    const metrics = getDisplayedMetrics();
+                    window.chartCarousel.updateCurrentMetrics(metrics);
+                }
+            }
+            
+            // Add event listeners to Compare buttons to record current run
+            const compareButtons = document.querySelectorAll('#compareButton, #editorCompareButton');
+            compareButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (window.chartCarousel && typeof window.chartCarousel.addHistoricalRun === 'function') {
+                        const metrics = getDisplayedMetrics();
+                        const direction = window.simulation?.currentDirection || 'all';
+                        window.chartCarousel.addHistoricalRun(direction, metrics);
+                        
+                        // Also add to 'all' if we're in a specific direction
+                        if (direction !== 'all') {
+                            window.chartCarousel.addHistoricalRun('all', metrics);
+                        }
+                        
+                        // Show success message or feedback
+                        this.innerHTML = '<i class="fas fa-check"></i> Recorded';
+                        setTimeout(() => {
+                            this.innerHTML = 'Compare with other scores';
+                        }, 2000);
+                    }
+                });
+            });
+            
+            // Set up a MutationObserver to watch for changes to metrics displays
+            const metricsElements = document.querySelectorAll('.stat');
+            if (metricsElements.length > 0) {
+                const observer = new MutationObserver(function(mutations) {
+                    updateChartsFromDisplay();
+                });
+                
+                const observerConfig = { childList: true, characterData: true, subtree: true };
+                metricsElements.forEach(element => {
+                    observer.observe(element, observerConfig);
+                });
+            }
+            
+            // Call once initially to set up charts with current values
+            setTimeout(updateChartsFromDisplay, 500);
         });
     </script>
 

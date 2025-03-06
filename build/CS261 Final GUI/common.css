@@ -54,6 +54,17 @@
 
     /* Animation durations */
     --transition-speed: 0.3s;
+
+     /* Light mode variables */
+     --chart-history-color: rgba(108, 117, 125, 0.7);
+     --chart-history-border: #495057;
+     --chart-current-color: rgba(13, 110, 253, 0.7);
+     --chart-current-border: #0a58ca;
+     --chart-grid-color: rgba(0, 0, 0, 0.1);
+     --text-color: #212529;
+     --carousel-control-bg: rgba(0, 0, 0, 0.2);
+     --carousel-control-hover-bg: rgba(0, 0, 0, 0.3);
+     --carousel-icon-bg: rgba(0, 0, 0, 0.5);
 }
 
 /* Dark mode color overrides */
@@ -100,6 +111,16 @@
     --column-bg: #555555;
     --column-hover: #444444;
     --lane-divider: #dddddd;
+
+    --chart-history-color: rgba(73, 80, 87, 0.7);
+    --chart-history-border: #343a40;
+    --chart-current-color: rgba(13, 110, 253, 0.7);
+    --chart-current-border: #0a58ca;
+    --chart-grid-color: rgba(255, 255, 255, 0.1);
+    --text-color: #f8f9fa;
+    --carousel-control-bg: rgba(255, 255, 255, 0.2);
+    --carousel-control-hover-bg: rgba(255, 255, 255, 0.3);
+    --carousel-icon-bg: rgba(255, 255, 255, 0.5);
 }
 
 /* Base resets and common styles */
@@ -335,3 +356,168 @@ button:hover,
 .control-btn.at-limit:hover {
     background-color: var(--bg-light); /* Light gray background to indicate disabled state */
 }
+
+/* chartCarousel.css */
+
+/**
+ * Styles for the chart comparison carousel
+ */
+
+ .chart-carousel-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 58.33%; /* col-7 width */
+    height: 100%;
+    background-color: var(--bg-primary);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+    border-right: 1px solid var(--border-color);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .chart-carousel-container.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .chart-content-area {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .close-chart-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--button-light-bg);
+    color: var(--button-light-text);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .close-chart-button:hover {
+    background: var(--button-primary-bg);
+    color: var(--button-primary-text);
+  }
+  
+  .chart-title {
+    margin: 20px 0;
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .chart-carousel-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+    width: 100%;
+    height: calc(100% - 120px);
+    margin-bottom: 20px;
+  }
+  
+  .chart-nav-button {
+    background: var(--button-light-bg);
+    color: var(--button-light-text);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .chart-nav-button:hover {
+    background: var(--button-primary-bg);
+    color: var(--button-primary-text);
+  }
+  
+  .chart-nav-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--button-primary-bg-lighter);
+  }
+  
+  .chart-display-area {
+    flex-grow: 1;
+    height: 100%;
+    padding: 0 20px;
+    max-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .chart-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .chart-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--button-light-bg);
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .chart-indicator.active {
+    background-color: var(--button-primary-bg);
+    transform: scale(1.2);
+  }
+  
+  .chart-indicator:hover {
+    background-color: var(--button-primary-bg-lighter);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 992px) {
+    .chart-carousel-container {
+      width: 100%;
+      left: 0;
+      right: 0;
+      height: 100%;
+      z-index: 1000;
+    }
+    
+    .chart-nav-button {
+      width: 40px;
+      height: 40px;
+    }
+    
+    .chart-title {
+      font-size: 1.2rem;
+      margin: 15px 0;
+    }
+  }
+  
+  /* Ensure chart canvas is responsive */
+  #comparisonChart {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 60vh;
+  }
