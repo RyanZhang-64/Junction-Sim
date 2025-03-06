@@ -5,7 +5,7 @@
 
 /* CSS Variables */
 :root {
-    /* Color palette */
+    /* Core color palette */
     --primary-text: #495057;
     --bg-light: #e8ecf2;
     --bg-lighter: #eff6ff;
@@ -15,6 +15,39 @@
     --puffin-hover: #fff6c1;
     --junction-green: #8dc945;
 
+    /* Additional UI colors */
+    --body-bg: #ffffff;
+    --card-bg: #ffffff;
+    --modal-bg: #ffffff;
+    --modal-text: #212529;
+    --modal-border: #dee2e6;
+    
+    /* Button and control colors */
+    --button-light-bg: #f8f9fa;
+    --button-light-text: #212529;
+    --button-light-hover: #e2e6ea;
+    --button-primary-bg: #007bff;
+    --button-primary-text: #ffffff;
+    --button-secondary-bg: #6c757d;
+    --button-danger-bg: #dc3545;
+    --button-success-bg: #28a745;
+    
+    /* Form colors */
+    --input-bg: #ffffff;
+    --input-text: #495057;
+    --input-border: #ced4da;
+    --input-focus-border: #80bdff;
+    
+    /* Text colors */
+    --text-primary: #007bff;
+    --text-secondary: #6c757d;
+    --text-muted: #6c757d;
+    
+    /* Lane editor colors */
+    --column-bg: #888888;
+    --column-hover: #777777;
+    --lane-divider: #ffffff;
+
     /* Layout measurements */
     --stripe-width: 7px;
     --control-lane-width: 10vw;
@@ -23,12 +56,60 @@
     --transition-speed: 0.3s;
 }
 
+/* Dark mode color overrides */
+.dark-mode {
+    /* Core color palette */
+    --primary-text: #b6afa8;
+    --bg-light: #3a3d42;
+    --bg-lighter: #2c3037;
+    --bg-darker: #222222;
+    --border-light: rgba(255, 255, 255, 0.1);
+    --puffin-active: #ccac00;
+    --puffin-hover: #665d3f;
+    --junction-green: #547829;
+
+    /* Additional UI colors */
+    --body-bg: #222222;
+    --card-bg: #333333;
+    --modal-bg: #333333;
+    --modal-text: #b6afa8;
+    --modal-border: #444444;
+    
+    /* Button and control colors */
+    --button-light-bg: #3a3d42;
+    --button-light-text: #b6afa8;
+    --button-light-hover: #4a4d52;
+    --button-primary-bg: #0069d9;
+    --button-primary-text: #ffffff;
+    --button-secondary-bg: #5a6268;
+    --button-danger-bg: #c82333;
+    --button-success-bg: #218838;
+    
+    /* Form colors */
+    --input-bg: #444444;
+    --input-text: #dddddd;
+    --input-border: #666666;
+    --input-focus-border: #0069d9;
+    
+    /* Text colors */
+    --text-primary: #6ca0fa;
+    --text-secondary: #a0a7b5;
+    --text-muted: #7a8192;
+    
+    /* Lane editor colors */
+    --column-bg: #555555;
+    --column-hover: #444444;
+    --lane-divider: #dddddd;
+}
+
 /* Base resets and common styles */
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
     overflow: hidden;
+    background-color: var(--body-bg);
+    color: var(--primary-text);
     /* filter: contrast(150%) brightness(110%); */
 }
 
@@ -123,4 +204,134 @@ html, body {
 
 .fa-circle-info {
     margin-left: 0.5rem;
+}
+
+/**
+ * Junction Simulator - Additional Theme-Compatible Styles
+ * 
+ * These styles address specific Bootstrap components and other elements
+ * that might need explicit theme support. Add this to common.css or create
+ * a new file and import it in style.css.
+ */
+
+/* Card styles */
+.card {
+    background-color: var(--card-bg);
+    border-color: var(--border-light);
+}
+
+.card-body {
+    color: var(--primary-text);
+}
+
+/* Bootstrap text utilities */
+.text-primary {
+    color: var(--text-primary) !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Bootstrap buttons */
+.btn-primary {
+    background-color: var(--button-primary-bg);
+    border-color: var(--button-primary-bg);
+    color: var(--button-primary-text);
+}
+
+.btn-secondary {
+    background-color: var(--button-secondary-bg);
+    border-color: var(--button-secondary-bg);
+    color: var(--button-primary-text);
+}
+
+.btn-success {
+    background-color: var(--button-success-bg);
+    border-color: var(--button-success-bg);
+    color: var(--button-primary-text);
+}
+
+.btn-danger {
+    background-color: var(--button-danger-bg);
+    border-color: var(--button-danger-bg);
+    color: var(--button-primary-text);
+}
+
+.btn-light {
+    background-color: var(--button-light-bg);
+    border-color: var(--border-light);
+    color: var(--button-light-text);
+}
+
+/* Modal styles */
+.modal-content {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border-color: var(--modal-border);
+}
+
+.modal-header, 
+.modal-footer {
+    border-color: var(--modal-border);
+}
+
+.close {
+    color: var(--primary-text);
+    text-shadow: none;
+}
+
+.close:hover {
+    color: var(--primary-text);
+    opacity: 0.75;
+}
+
+/* Form inputs */
+.form-control {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--input-border);
+}
+
+.form-control:focus {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Transition for theme switching */
+body, 
+body * {
+    transition: background-color 0.3s ease, 
+                color 0.3s ease, 
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+/* Limit transition specifically for hover effects */
+button:hover,
+.btn:hover {
+    transition: background-color 0.1s ease, 
+                transform 0.1s ease,
+                filter 0.1s ease;
+}
+
+/* Overlay styles */
+#overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Lane limit button styles */
+.control-btn.at-limit {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.control-btn.at-limit:hover {
+    background-color: var(--bg-light); /* Light gray background to indicate disabled state */
 }

@@ -23,18 +23,19 @@ canvas {
 
 /* Direction Edit Buttons - Styled but not positioned (positioning via JS) */
 .edit-arm-button {
-    background: white;
-    border: 1px solid #ccc;
+    background: var(--button-light-bg);
+    border: 1px solid var(--input-border);
     border-radius: 4px;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 10;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    color: var(--primary-text);
     /* No positioning or transform properties - these are set by JS */
 }
 
 .edit-arm-button:hover {
-    background-color: #f8f9fa;
+    background-color: var(--button-light-hover);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -45,11 +46,14 @@ canvas {
 /* Compare Button */
 #compareButton {
     transition: all 0.2s ease;
+    background-color: var(--button-light-bg);
+    color: var(--text-primary) !important;
+    border-color: var(--border-light);
 }
 
 #compareButton:hover {
-    background-color: #f8f9fa;
-    color: #0056b3 !important;
+    background-color: var(--button-light-hover);
+    color: var(--text-primary) !important;
 }
 
 #saveButton {
@@ -57,4 +61,12 @@ canvas {
     bottom: 3vh;
     right: 1vw;
     transition: all 0.2s ease;
+    background-color: var(--button-secondary-bg);
+    color: var(--button-primary-text);
+    border-color: var(--button-secondary-bg);
+}
+
+#saveButton.btn-primary {
+    background-color: var(--button-primary-bg);
+    border-color: var(--button-primary-bg);
 }

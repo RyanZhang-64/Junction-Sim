@@ -28,7 +28,7 @@
     <main>
         <!-- Main View - Primary Junction Display -->
         <section id="main-view" class="view-container">
-            <div class="container-fluid">
+            <div class="container-fluid p-0">
                 <div class="row">
                     <!-- Junction Canvas Section -->
                     <div class="col-7 position-relative">
@@ -62,7 +62,7 @@
                     </div>
                     
                     <!-- Metrics Display -->
-                    <div class="col-5">
+                    <div class="col-5 info-column">
                         <div class="card h-100">
                             <div class="card-body d-flex flex-column justify-content-between p-5">
                                 <h1 class="text-center infobar-title readable">Junction Metrics</h1>
@@ -216,12 +216,12 @@
                             
                             <!-- Traffic Volume Input -->
                             <div class="col-3">
-                                <div class="container d-flex justify-content-center align-items-center traffic-volume-container">
-                                    <div class="form-group w-100">
-                                        <label for="trafficVolumeInput" id="trafficVolumeLabel" class="traffic-volume-label readable">
+                                <div class="container bottom-menu">
+                                    <div class="form-group w-100 d-flex flex-column h-100">
+                                        <label for="trafficVolumeInput" id="trafficVolumeLabel" class="traffic-volume-label readable flex-grow-1 text-center">
                                             <span id="directionLabel">Direction</span>bound VPH
                                         </label>
-                                        <div class="input-group">
+                                        <div class="input-group flex-grow-1">
                                             <input 
                                                 type="number" 
                                                 class="form-control" 
@@ -233,10 +233,9 @@
                                                 aria-labelledby="trafficVolumeLabel"
                                             >
                                             <div class="input-group-append">
-                                                <span class="input-group-text">veh/hr</span>
+                                                <span class="input-group-text">vph/hr</span>
                                             </div>
                                         </div>
-                                        <small class="form-text text-muted readable">Range: 0-400 vehicles per hour</small>
                                     </div>
                                 </div>
                             </div>
@@ -285,7 +284,7 @@
                     <div class="col-5 info-column">
                         <div class="card h-100">
                             <div class="card-body d-flex flex-column justify-content-between p-5">
-                                <h1 class="text-center infobar-title readable">Junction Metrics</h1>
+                                <h1 class="text-center infobar-title readable"><span id="editorDirectionLabel"></span>bound Metrics</h1>
                                 
                                 <!-- Wait Times -->
                                 <section class="metrics-section my-2">
@@ -381,36 +380,12 @@
                                         aria-label="Compare with other junction configurations">
                                     Compare with other scores
                                 </button>
-
-                                <button type="button" class="btn btn-primary readable" data-toggle="modal" data-target="#exampleModalLong">
-                                    Launch demo modal
-                                  </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-        <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title readable" id="exampleModalLongTitle">Modal title</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  ...
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary readable" data-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary readable">Save changes</button>
-                </div>
-              </div>
-            </div>
-          </div>
     </main>
 
     <div id="overlay"></div>
@@ -421,9 +396,14 @@
     
     <!-- Editor functionality script -->
     <script src="editorScript.js" defer></script>
+
+    <script src="lane-limit-feedback.js" defer></script>
+
+    <script src="dark-mode-toggle.js" defer></script>
     
     <!-- Server communication script -->
     <script src="flaskConnection.js" defer></script>
+    
     
     <!-- View Control Script -->
     <script>

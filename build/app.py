@@ -2,6 +2,7 @@ from flask import Flask, render_template, send_from_directory, jsonify, request
 import Junction, InboundRoad, saveFiles
 from flask import Response
 import copy, os, math
+import traceback
 
 app = Flask(__name__, 
             static_folder="CS261 Final GUI", 
@@ -297,8 +298,9 @@ def bike_toggle():
 def puffin_toggle():
     global temp_junction_model, selected_lane
     temp_junction_model.get_lane(selected_lane).toggle_puffin_crossing()
-    print("Has puffin crossing: " + str(temp_junction_model.get_lane(selected_lane).has_puffin_crossing()))
-    return Response(status=204)
+    has_crossing = temp_junction_model.get_lane(selected_lane).has_puffin_crossing()
+    print("Has puffin crossing: " + str(has_crossing))
+    return jsonify({"success": True, "has_puffin": has_crossing})
 
 # Priority --------------------------------------------------------------------------------------------
 
@@ -420,25 +422,51 @@ def cancel_changes():
 
 @app.route("/save-junction", methods=["POST"])
 def save_junction():
-    global junction_model
-    success = saveFiles.save_junction_to_file(junction_model)
-    result = "success" if success else "fail"
-    print(result)
-    return jsonify({"result": result})
+    try:
+        print("=== SAVE JUNCTION ROUTE CALLED ===")
+        global junction_model
+        print(f"Junction model exists: {junction_model is not None}")
+        
+        # Check if free slot exists
+        has_free_slot = saveFiles.free_slot_exists()
+        print(f"Free slot exists: {has_free_slot}")
+        
+        # Try to save
+        success = saveFiles.save_junction_to_file(junction_model)
+        print(f"Save result: {success}")
+        
+        result = "success" if success else "fail"
+        print(f"Returning result: {result}")
+        return jsonify({"result": result})
+    except Exception as e:
+        print(f"Exception during save: {str(e)}")
+        traceback.print_exc()
+        return jsonify({"result": "error", "message": str(e)})
 
-@app.route("/overwrite-save", methods=["POST"])
+@app.route("/overwrite-save", methods=["GET"])  # Note: This is currently GET in flaskConnection.js
 def overwrite_save():
-    global junction_model
-
-    # Save file number
-    #data = request.get_json()
-    #print("JSON DATA: " + str(data))
-    #save_number = int(data.get('save_file', 1))  # Default to 1
-
-    save_number = 1
-
-    saveFiles.overwrite_file(junction_model, save_number)
-    return Response(status=204)
+    try:
+        print("=== OVERWRITE SAVE ROUTE CALLED ===")
+        global junction_model
+        print(f"Junction model exists: {junction_model is not None}")
+        
+        # Find oldest save or use save number 1
+        save_number = 1  # Current implementation uses a hardcoded value
+        print(f"Using save number: {save_number}")
+        
+        # Try to overwrite
+        overwrite_result = saveFiles.overwrite_file(junction_model, save_number)
+        print(f"Overwrite result: {overwrite_result}")
+        
+        if overwrite_result:
+            return jsonify({"result": "success"})
+        else:
+            print("Overwrite operation failed")
+            return jsonify({"result": "fail", "message": "Overwrite failed"})
+    except Exception as e:
+        print(f"Exception during overwrite: {str(e)}")
+        traceback.print_exc()
+        return jsonify({"result": "error", "message": str(e)})
 
 
 

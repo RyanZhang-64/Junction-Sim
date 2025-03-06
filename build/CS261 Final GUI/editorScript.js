@@ -43,6 +43,7 @@ function rebuildPriorityPagination(priorityValue) {
     paginationContainer.innerHTML = '';
     
     // Create new pagination items (priority levels 1-4)
+    // Create new pagination items (priority levels 1-4)
     for (let i = 1; i <= 4; i++) {
         const listItem = document.createElement('li');
         listItem.id = `priority${i}`;
@@ -58,28 +59,6 @@ function rebuildPriorityPagination(priorityValue) {
         link.className = 'page-link text-center readable'; // Add readable class to the link
         link.href = '#';
         link.textContent = i;
-        
-        // Attach TTS functionality to this newly created element
-        link.onmouseenter = function(event) {
-            // Ensure the event is only triggered for the direct target
-            if (event.target !== this) {
-                return;
-            }
-            
-            console.log('Mouse entered readable element:', this.textContent.trim());
-            const text = this.textContent.trim();
-            if (text) {
-                // Stop any current speech
-                if (window.speechSynthesis.speaking) {
-                    window.speechSynthesis.cancel();
-                }
-                
-                // Speak the text
-                const utterance = new SpeechSynthesisUtterance(text);
-                window.speechSynthesis.speak(utterance);
-                console.log('Speaking:', text);
-            }
-        };
         
         // Add click handler for priority selection
         link.addEventListener('click', function(e) {
@@ -105,7 +84,12 @@ function rebuildPriorityPagination(priorityValue) {
         listItem.appendChild(link);
         paginationContainer.appendChild(listItem);
     }
-    
+
+    // After adding all elements to the DOM, call updateTTSElements
+    // to attach TTS functionality to the new elements
+    if (typeof updateTTSElements === 'function') {
+        updateTTSElements();
+    }
     // Update the priority label
     updatePriorityLabel(priorityValue);
 }
@@ -201,7 +185,7 @@ window.initializeEditorUI = function(config) {
  */
 function updatePuffinToggleDisplay() {
     console.log("Updating puffin toggle display");
-    const puffinToggle = document.getElementById('puffinToggle');
+    const puffinToggle = document.getElementById('puffin');
     if (!puffinToggle) return;
     
     if (editorState.puffinActive) {
@@ -576,6 +560,36 @@ function initializeColumns(count = 1) {
     }
 }
 
+// Function to update the add/remove lane buttons' states based on current lane count
+function updateLaneButtonStates() {
+    const currentCount = getCurrentColumnCount();
+    const addLaneButton = document.getElementById('addLane');
+    const removeLaneButton = document.getElementById('removeLane');
+    
+    if (!addLaneButton || !removeLaneButton) {
+        console.error("Lane buttons not found");
+        return;
+    }
+    
+    // Update Add Lane button state
+    if (currentCount >= LANE_LIMITS.MAX) {
+        addLaneButton.classList.add('at-limit');
+        addLaneButton.setAttribute('data-limit-message', 'This arm is already at the max number of lanes!');
+    } else {
+        addLaneButton.classList.remove('at-limit');
+        addLaneButton.removeAttribute('data-limit-message');
+    }
+    
+    // Update Remove Lane button state
+    if (currentCount <= LANE_LIMITS.MIN) {
+        removeLaneButton.classList.add('at-limit');
+        removeLaneButton.setAttribute('data-limit-message', 'This arm must have at least one lane!');
+    } else {
+        removeLaneButton.classList.remove('at-limit');
+        removeLaneButton.removeAttribute('data-limit-message');
+    }
+}
+
 const ttsConfig = {
     selector: 'p, h1, h2, h3, h4, h5, h6, li, a, button, label, .readable', // Elements to enable TTS on
     hoverDelay: 500, // Milliseconds to wait before speaking (prevents triggering on quick mouse movements)
@@ -643,20 +657,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Function to detach TTS functionality
-    function detachTTSFromReadableElements() {
-        const elements = document.querySelectorAll('[data-tts-attached="true"]');
-        console.log(`Detaching TTS from ${elements.length} elements`);
-        
-        elements.forEach(function(element) {
-            // Remove the event listener
-            element.onmouseenter = null;
-            
-            // Remove the attribute
-            element.removeAttribute('data-tts-attached');
-        });
-    }
-    
     // Create a toggle button for TTS functionality
     function createTTSToggleButton() {
         // Create the button element
@@ -671,7 +671,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Style the button
         toggleButton.style.position = 'fixed';
-        toggleButton.style.bottom = '20px';
+        toggleButton.style.top = '20px';
         toggleButton.style.left = '20px';
         toggleButton.style.zIndex = '9999';
         toggleButton.style.padding = '10px 15px';
@@ -705,14 +705,14 @@ document.addEventListener('DOMContentLoaded', function() {
         function updateButtonState() {
             if (ttsEnabled) {
                 toggleButton.innerHTML = '🔊 Text-to-Speech: ON';
-                toggleButton.style.backgroundColor = '#4CAF50';
-                toggleButton.style.color = 'white';
+                toggleButton.style.backgroundColor = 'var(--button-success-bg)';
+                toggleButton.style.color = 'var(--button-primary-text)';
                 toggleButton.setAttribute('aria-pressed', 'true');
                 toggleButton.setAttribute('aria-label', 'Disable text to speech on hover');
             } else {
                 toggleButton.innerHTML = '🔇 Text-to-Speech: OFF';
-                toggleButton.style.backgroundColor = '#f5f5f5';
-                toggleButton.style.color = '#333';
+                toggleButton.style.backgroundColor = 'var(--button-light-bg)';
+                toggleButton.style.color = 'var(--button-light-text)';
                 toggleButton.setAttribute('aria-pressed', 'false');
                 toggleButton.setAttribute('aria-label', 'Enable text to speech on hover');
             }
@@ -729,8 +729,8 @@ document.addEventListener('DOMContentLoaded', function() {
     stopButton.id = 'tts-stop-button';
     stopButton.textContent = '🔇 Stop Speaking';
     stopButton.style.position = 'fixed';
-    stopButton.style.bottom = '20px';
-    stopButton.style.right = '20px';
+    stopButton.style.top = '80px';
+    stopButton.style.left = '20px';
     stopButton.style.zIndex = '9999';
     stopButton.style.padding = '8px 15px';
     stopButton.style.backgroundColor = '#f44336';
@@ -772,7 +772,7 @@ document.addEventListener('DOMContentLoaded', function() {
         removeLaneButton.addEventListener('click', decreaseColumns);
     }
     
-    const puffinButton = document.getElementById('puffinToggle');
+    const puffinButton = document.getElementById('puffin');
     if (puffinButton) {
         puffinButton.addEventListener('click', puffinToggle);
     }

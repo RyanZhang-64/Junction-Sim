@@ -15,6 +15,7 @@
     display: flex;
     align-items: center;
     min-height: 15vh;
+    width: 100%;
     justify-content: center;
     font-size: min(2vw, 2vh);
     color: var(--primary-text);
@@ -35,7 +36,7 @@
     flex: 1;
     min-width: 0;
     position: relative;
-    background-color: #888888;
+    background-color: var(--column-bg);
     margin: 0;
     padding: 0;
     height: 100%;
@@ -51,8 +52,8 @@
     right: 0;
     background: repeating-linear-gradient(
         to bottom,
-        white 0px,
-        white 30px,
+        var(--lane-divider) 0px,
+        var(--lane-divider) 30px,
         transparent 30px,
         transparent 100px
     );
@@ -114,7 +115,7 @@
     height: 10vh;
     margin: 1vw;
     transition: background-color 0.5s;
-    border: 1px dashed #000;
+    border: 1px dashed var(--primary-text);
     outline: none;
     color: var(--primary-text);
     font-size: clamp(16px, 3vh, 24px);
@@ -127,11 +128,12 @@
 }
 
 .puffin-crossing.inactive {
-    background-color: white;
+    background-color: var(--body-bg);
 }
 
 .puffin-crossing.active {
     background-color: var(--puffin-active);
+    color: var(--button-primary-text); /* Using white text for better contrast with yellow */
 }
 
 /* Action Buttons Container */
@@ -181,11 +183,15 @@
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     margin-bottom: -1px; /* Removes any potential gap from border */
+    background-color: var(--button-success-bg);
+    color: var(--button-primary-text);
 }
 
 #cancelChanges {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+    background-color: var(--button-danger-bg);
+    color: var(--button-primary-text);
 }
 
 /* Lane Image Styles */
@@ -207,7 +213,7 @@
     max-width: 80%;
     max-height: 80%;
     object-fit: contain;
-    color: white; /* For FontAwesome icons */
+    color: var(--lane-divider); /* For FontAwesome icons */
     font-size: 3rem;
 }
 
@@ -287,11 +293,11 @@
 }
 
 .priority-label.active {
-    color: #027bff !important;
+    color: var(--text-primary) !important;
 }
 
 .priority-label.text-muted {
-    color: #6c757d !important;
+    color: var(--text-muted) !important;
 }
 
 /* Pagination Styling */
@@ -308,6 +314,9 @@
     align-items: center;
     justify-content: center;
     padding: 0 1.5vh;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--input-border);
 }
 
 .page-item:first-child .page-link {
@@ -318,6 +327,12 @@
 .page-item:last-child .page-link {
     border-top-right-radius: 0.375rem !important;
     border-bottom-right-radius: 0.375rem !important;
+}
+
+.page-item.active .page-link {
+    background-color: var(--button-primary-bg);
+    border-color: var(--button-primary-bg);
+    color: var(--button-primary-text);
 }
 
 /* Info Column */
@@ -337,5 +352,24 @@
 }
 
 #trafficVolumeInput {
-    text-align: right;
+    text-align: center;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--input-border);
+}
+
+.form-control {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--input-border);
+}
+
+.input-group-text {
+    background-color: var(--bg-light);
+    color: var(--primary-text);
+    border-color: var(--input-border);
+}
+
+.form-text.text-muted {
+    color: var(--text-muted) !important;
 }

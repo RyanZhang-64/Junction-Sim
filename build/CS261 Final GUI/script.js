@@ -769,6 +769,11 @@ class JunctionSimulation {
             // Capitalize first letter of direction
             directionLabel.textContent = direction.charAt(0).toUpperCase() + direction.slice(1);
         }
+
+        const editorDirectionLabel = document.getElementById('editorDirectionLabel');
+        if (editorDirectionLabel) {
+            editorDirectionLabel.textContent = direction.charAt(0).toUpperCase() + direction.slice(1);
+        }
     }
 
     hideEditor() {
