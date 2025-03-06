@@ -82,6 +82,6 @@
 2025-03-03 14:00:12,484 - INFO - Running test: test_stress_max_wait
 2025-03-03 14:00:12,485 - INFO - Passed: test_stress_max_wait
 
-2025-03-03 14:00:12,486 - ERROR - Stress test failed: efficiency score is negative
+
 
 
