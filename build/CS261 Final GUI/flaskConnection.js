@@ -1,59 +1,43 @@
-// Testing Flask REMOVE -----------------------------------------
-// Testing Flask REMOVE -----------------------------------------
-fetch('/api/data')
-    .then(response => response.json())
-    .then(data => console.log(data.message)); // Logs "Hello from Flask!"
+/**
+ * Junction Simulator Interaction - This script specifies the Flask 
+ * routes that are triggered when buttons are pressed on the simulator.
+ */
 
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("compareButton").addEventListener("click", function () {
-            fetch("/api/button-click")  // Calls the Flask backend route
-                .then(response => response.json()) // Convert response to JSON
-                .then(data => {
-                    console.log(data.message); // Log response in console
-                    // document.getElementById("response").innerText = data.message; // Update the page
-                })
-                .catch(error => console.error("Error:", error));
-        });
-    });
-
-// Editing north, east, south and west lanes
-
-function format_editor_metrics(mean_wait_mins, mean_wait_secs,
-    max_wait_mins, max_wait_secs, max_queue, performance, environment, environment_rank, performance_rank) {
+/**
+ * Displays junction arm metrics in the editor
+ * @param - Junction arm metrics
+ */
+function format_editor_metrics(mean_wait_mins, mean_wait_secs, max_wait_mins, max_wait_secs, max_queue, performance, environment, environment_rank, performance_rank) {
     document.getElementById("editor-mean-wait-time").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
     document.getElementById("editor-max-wait-time").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
     document.getElementById("editor-max-queue-length").textContent = max_queue;
     document.getElementById("editor-performance-score").textContent = performance;
-    // TODO change top 41% of scores
-
     document.getElementById("editor-environment-score").textContent = environment;
     document.getElementById("editor-environment-rank").textContent = "Top " + environment_rank + "% of recorded scores";
-
     document.getElementById("editor-performance-rank").textContent = "Top " + performance_rank + "% of recorded scores";
 }
 
-function update_metrics(mean_wait_mins, mean_wait_secs,
-    max_wait_mins, max_wait_secs, max_queue, performance, environment, environment_rank,
-performance_rank) {
-
+/**
+ * Displays metrics of the overall junction in the main editor
+ * @param - Junction metrics
+ */
+function update_metrics(mean_wait_mins, mean_wait_secs, max_wait_mins, max_wait_secs, max_queue, performance, environment, environment_rank, performance_rank) {
     document.getElementById("mean-wait-time").textContent = mean_wait_mins + "m:" + mean_wait_secs + "s";
     document.getElementById("max-wait-time").textContent = max_wait_mins + "m:" + max_wait_secs + "s";
     document.getElementById("max-queue-length").textContent = max_queue;
     document.getElementById("performance-score").textContent = performance;
-
-    // TODO change top 41% of scoress
     document.getElementById("environment-score").textContent = environment;
-
     document.getElementById("environment-rank").textContent = "Top " + environment_rank + "% of recorded scores";
     document.getElementById("performance-rank").textContent = "Top " + performance_rank + "% of recorded scores";
 }
+
+// Displays metrics in the junction arm editor for each direction
 
 document.getElementById("editSouth").addEventListener("click", function() {
     fetch("/edit-southbound")
     .then(response => response.json())  // Convert response to JSON
     .then(data => {
-        format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs,
-            data.max_wait_mins, data.max_wait_secs,
+        format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs, data.max_wait_mins, data.max_wait_secs, 
             data.max_queue, data.performance, data.environment, data.environment_rank, data.performance_rank);
     })
     .catch(error => console.error("Error fetching data:", error));
@@ -63,8 +47,7 @@ document.getElementById("editNorth").addEventListener("click", function() {
     fetch("/edit-northbound")
     .then(response => response.json())  // Convert response to JSON
     .then(data => {
-        format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs,
-            data.max_wait_mins, data.max_wait_secs,
+        format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs, data.max_wait_mins, data.max_wait_secs, 
             data.max_queue, data.performance, data.environment, data.environment_rank, data.performance_rank);
     })
     .catch(error => console.error("Error fetching data:", error));
@@ -74,8 +57,7 @@ document.getElementById("editEast").addEventListener("click", function() {
     fetch("/edit-eastbound")
     .then(response => response.json())  // Convert response to JSON
     .then(data => {
-        format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs,
-            data.max_wait_mins, data.max_wait_secs,
+        format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs, data.max_wait_mins, data.max_wait_secs, 
             data.max_queue, data.performance, data.environment, data.environment_rank, data.performance_rank);
     })
     .catch(error => console.error("Error fetching data:", error));
@@ -85,34 +67,17 @@ document.getElementById("editWest").addEventListener("click", function() {
     fetch("/edit-westbound")
     .then(response => response.json())  // Convert response to JSON
     .then(data => {
-        format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs,
-            data.max_wait_mins, data.max_wait_secs,
+        format_editor_metrics(data.mean_wait_mins, data.mean_wait_secs, data.max_wait_mins, data.max_wait_secs, 
             data.max_queue, data.performance, data.environment, data.environment_rank, data.performance_rank);
     })
     .catch(error => console.error("Error fetching data:", error));
 });
 
+// Adding and removing lanes on the junction arm
 
-
-// Metrics for whole junction
-document.addEventListener("DOMContentLoaded", function() {
-    fetch("/metrics")
-    .then(response => response.json())  // Convert response to JSON
-    .then(data => {
-        update_metrics(data.mean_wait_mins, data.mean_wait_secs,
-            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance, data.environment,
-        data.environment_rank, data.performance_rank);
-        
-    })
-    .catch(error => console.error("Error fetching data:", error));
-});
-
-// Adding and removing lanes
-
-// add lane
 document.getElementById("addLane").addEventListener("click", function() {
     fetch("/add-lane", {
-        method: "GET", // Change to "POST" if needed
+        method: "GET", 
         headers: {
             "Content-Type": "application/json"
         }
@@ -122,10 +87,9 @@ document.getElementById("addLane").addEventListener("click", function() {
     .catch(error => console.error("Error:", error));
 });
 
-// remove lane
 document.getElementById("removeLane").addEventListener("click", function() {
     fetch("/remove-lane", {
-        method: "GET", // Change to "POST" if needed
+        method: "GET", 
         headers: {
             "Content-Type": "application/json"
         }
@@ -135,6 +99,12 @@ document.getElementById("removeLane").addEventListener("click", function() {
     .catch(error => console.error("Error:", error));
 });
 
+/*
+* Toggling bus/bike/left-priority lanes. This uses JQuery
+* since buttons are dynamic
+*/
+
+// Bus 
 $(document).ready(function(){
     $("#columnsContainer").on("click", ".col > .column-buttons > #busToggle", function(){
         console.log("button clicked!");
@@ -144,7 +114,7 @@ $(document).ready(function(){
     })
 })
 
-// Left lane
+// Left-priority
 $(document).ready(function(){
     $("#columnsContainer").on("click", ".col > .column-buttons > #leftToggle", function(){
         console.log("button clicked!");
@@ -154,8 +124,7 @@ $(document).ready(function(){
     })
 })
 
-// Bike lane
-
+// Bike 
 $(document).ready(function(){
     $("#columnsContainer").on("click", ".col > .column-buttons > #bikeToggle", function(){
         console.log("button clicked!");
@@ -165,11 +134,10 @@ $(document).ready(function(){
     })
 })
 
-
 // Puffin toggle
 document.getElementById("puffin").addEventListener("click", function() {
     fetch("/puffin-toggle", {
-        method: "GET", // Change to "POST" if needed
+        method: "GET", 
         headers: {
             "Content-Type": "application/json"
         }
@@ -179,7 +147,10 @@ document.getElementById("puffin").addEventListener("click", function() {
     .catch(error => console.error("Error:", error));
 });
 
-// Priority buttons ----------------------------------------------------------------------
+/*
+* Toggling priority buttons. This uses JQuery
+* since buttons are dynamic
+*/
 
 // Button 1
 $(document).ready(function(){
@@ -221,15 +192,25 @@ $(document).ready(function(){
     })
 })
 
-// Changes --------------------------------------------------------------------------
+// Displays metrics for the whole junction
 
+// Flask app is opened
+document.addEventListener("DOMContentLoaded", function() {
+    fetch("/metrics")
+    .then(response => response.json())  // Convert response to JSON
+    .then(data => {
+        update_metrics(data.mean_wait_mins, data.mean_wait_secs, data.max_wait_mins, data.max_wait_secs, 
+            data.max_queue, data.performance, data.environment, data.environment_rank, data.performance_rank);
+    })
+    .catch(error => console.error("Error fetching data:", error));
+});
 
-
+// Main junction editor is loaded after changes are applied
 document.getElementById("applyChanges").addEventListener("click", function() {
     let vphValue = document.getElementById("trafficVolumeInput").value;
 
     fetch("/apply-changes", {
-        method: "POST", // Change to "POST" if needed
+        method: "POST", 
         headers: {
             "Content-Type": "application/json"
         },
@@ -237,37 +218,33 @@ document.getElementById("applyChanges").addEventListener("click", function() {
     })
     .then(response => response.json()) // Assuming the response is JSON
     .then(data => {
-        update_metrics(data.mean_wait_mins, data.mean_wait_secs,
-            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance,
-        data.environment, data.environment_rank, data.performance_rank);
-        console.log("Success:", data)
-
+        update_metrics(data.mean_wait_mins, data.mean_wait_secs, data.max_wait_mins, data.max_wait_secs, 
+            data.max_queue, data.performance, data.environment, data.environment_rank, data.performance_rank);
     })
     .catch(error => console.error("Error:", error));
 });
 
+// Main junction editor is loaded after changes are discarded
 document.getElementById("cancelChanges").addEventListener("click", function() {
     fetch("/cancel-changes", {
-        method: "GET", // Change to "POST" if needed
+        method: "GET", 
         headers: {
             "Content-Type": "application/json"
         }
     })
     .then(response => response.json()) // Assuming the response is JSON
     .then(data => {
-
-
-        update_metrics(data.mean_wait_mins, data.mean_wait_secs,
-            data.max_wait_mins, data.max_wait_secs, data.max_queue, data.performance,
-        data.environment, data.environment_rank, data.performance_rank);
-        console.log("Success:", data)
+        update_metrics(data.mean_wait_mins, data.mean_wait_secs, data.max_wait_mins, data.max_wait_secs, 
+            data.max_queue, data.performance, data.environment, data.environment_rank, data.performance_rank);
     })
     .catch(error => console.error("Error:", error));
 });
 
-// Saving ---------------------------------------------------------------------
+/*
+* Handles when the user presses to save their junction,
+* including prompting them to overwrite their save if necessary
+*/
 
-// JavaScript
 document.getElementById("saveButton").addEventListener("click", function() {
     fetch("/save-junction", {
         method: "POST",
@@ -278,28 +255,30 @@ document.getElementById("saveButton").addEventListener("click", function() {
     })
     .then(response => response.json())
     .then(data => {
+
         if (data.result === "success") {
+
             // Change the button to indicate saved
             const saveButton = document.getElementById("saveButton");
             saveButton.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
             saveButton.classList.remove("btn-secondary");
             saveButton.classList.add("btn-success");
             
-            // Optionally revert after a delay
+            // Revert after a delay
             setTimeout(() => {
                 saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
                 saveButton.classList.remove("btn-success");
                 saveButton.classList.add("btn-secondary");
             }, 2000);
+
         } else {
+
             // Inform about overwriting
             const overwriteSave = confirm("Warning: This will overwrite your oldest save. Continue?");
 
             if (overwriteSave) {
-                
-                
                 fetch("/overwrite-save", {
-                    method: "GET", // Change to "POST" if needed
+                    method: "GET", 
                     headers: {
                         "Content-Type": "application/json"
                     }
@@ -307,7 +286,7 @@ document.getElementById("saveButton").addEventListener("click", function() {
                 .then(response => response.json()) // Assuming the response is JSON
                 .then(data => console.log("Success:", data))
                 .catch(error => console.error("Error:", error));
-            }
+            } 
         }
     })
     .catch(error => {
