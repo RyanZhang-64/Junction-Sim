@@ -124,11 +124,20 @@ class InboundRoad:
     def toggle_bus_lane(self):
         self.has_bus_lane = not self.has_bus_lane
 
+        # If bus is enbaled, disable all others
+        self.has_bike_lane, self.has_left_lane = False, False
+
     def toggle_left_lane(self):
         self.has_left_lane = not self.has_left_lane
 
+        # If left is enbaled, disable all others
+        self.has_bike_lane, self.has_bus_lane = False, False
+
     def toggle_bike_lane(self):
         self.has_bike_lane = not self.has_bike_lane
+
+        # If bike is enbaled, disable all others
+        self.has_bus_lane, self.has_left_lane = False, False
 
     def toggle_puffin_crossing(self):
         self.puffin_crossing = not self.puffin_crossing
