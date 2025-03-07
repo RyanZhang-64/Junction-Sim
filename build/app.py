@@ -1,8 +1,5 @@
-from flask import Flask, render_template, send_from_directory, jsonify, request
-import Junction, InboundRoad, saveFiles
-from flask import Response
-import copy, os, math
-import traceback
+from flask import Flask, render_template, send_from_directory, jsonify, request, Response
+import Junction, InboundRoad, saveFiles, copy, os, math, traceback
 
 app = Flask(__name__, 
             static_folder="CS261 Final GUI", 
@@ -12,19 +9,6 @@ app = Flask(__name__,
 junction_model = Junction.Junction()
 selected_lane = None
 temp_junction_model = Junction.Junction()
-
-
-
-def print_junction_model():
-    global junction_model
-    i = 0
-    for dir in junction_model.get_all_roads():
-        print(i)
-        print("Has bus lane: " + str(dir.is_bus_lane()))
-        print("Num lanes: " + str(dir.get_total_standard_lanes()))
-        i += 1
-
-# ----------------------------------------------------------
 
 # Serve the main HTML page
 @app.route("/")
@@ -39,11 +23,6 @@ def get_metrics():
     global junction_model
 
     # Using the current junction model, get relevant metrics for whole model
-
-    # TODO set vph_rates
-
-
-
     junction_model.update_junction_metrics()
     mean_wait_mins = junction_model.mean_wait_mins
     mean_wait_secs = junction_model.mean_wait_secs
@@ -57,11 +36,8 @@ def get_metrics():
     
     return jsonify({"mean_wait_mins": mean_wait_mins, "mean_wait_secs": mean_wait_secs, 
                     "max_wait_mins": max_wait_mins, "max_wait_secs": max_wait_secs,
-                    "max_queue": max_queue, 
-                    "performance": performance,
-                    "environment": environment,
-                    "environment_rank": environment_rank,
-                    "performance_rank": performance_rank})
+                    "max_queue": max_queue, "performance": performance, "environment": environment,
+                    "environment_rank": environment_rank, "performance_rank": performance_rank})
 
 # Changes user selection for which lane will be modified
 # This creates a temporary model, and we will only set this model
@@ -69,29 +45,25 @@ def get_metrics():
 def reset_temp_model():
     global temp_junction_model, junction_model
     temp_junction_model = copy.deepcopy(junction_model)
-    #temp_lanes = copy.deepcopy(lanes)
 
 # Apply changes - will set temp model properties to true odel
 def apply_model_changes():
     global temp_junction_model, junction_model
     junction_model = copy.deepcopy(temp_junction_model)
-    #lanes = copy.deepcopy(temp_lanes)
 
 @app.route("/edit-northbound")
 def edit_northbound():
-    global selected_lane
+    global selected_lane, junction_model
     selected_lane = "north"
     reset_temp_model()
-    print("North")
 
     # send JSON response of data 
-    global junction_model
     direction = 0
     # direction as number 0-3
     # TODO set vph_rates
 
 
-    junction_arm = junction_model.get_lane("north")
+    junction_arm = junction_model.get_road(0)
     vph_rates = junction_model.get_vph_rates()
 
     junction_arm.update_junction_arm_metrics(vph_rates, junction_model, direction)

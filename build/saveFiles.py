@@ -1,5 +1,4 @@
-import os
-import InboundRoad, Junction
+import os, InboundRoad, Junction
 
 # Creates 5 save files if they do not exist already
 def create_junction_files():
