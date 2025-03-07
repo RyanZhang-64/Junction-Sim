@@ -1,5 +1,5 @@
-from flask import Flask, render_template, send_from_directory, jsonify, request, Response
-import Junction, InboundRoad, saveFiles, copy, os, math, traceback
+from flask import Flask, send_from_directory, jsonify, request, Response
+import Junction, saveFiles, copy, traceback
 
 app = Flask(__name__, 
             static_folder="CS261 Final GUI", 
