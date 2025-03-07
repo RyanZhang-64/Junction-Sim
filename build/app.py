@@ -179,7 +179,7 @@ def bike_toggle():
 def puffin_toggle():
     global temp_junction_model, selected_lane
     temp_junction_model.get_road(selected_lane).toggle_puffin_crossing()
-    has_crossing = temp_junction_model.get_road(selected_lane).has_puffin_crossing()
+    has_crossing = temp_junction_model.get_road(selected_lane).puffin_crossing
     return jsonify({"success": True, "has_puffin": has_crossing})
 
 # Priority -------

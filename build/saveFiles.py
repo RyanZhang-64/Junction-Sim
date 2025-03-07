@@ -1,4 +1,4 @@
-import os, InboundRoad, Junction
+import os, Junction
 
 # Creates 5 save files if they do not exist already
 def create_junction_files():
@@ -10,7 +10,7 @@ def create_junction_files():
         if not os.path.exists(file_path):
             open(file_path, "w").close()
     
-    print("Files created successfully!")
+    print("Files created successfully")
 
 # Returns if a file is empty - slot not being used
 def file_empty(file_path):
@@ -18,7 +18,6 @@ def file_empty(file_path):
 
 # Returns true if there exists a free save file
 def free_slot_exists():
-
     for i in range(1, 11):
         file_path = os.path.join("savedJunctions", f"junction{i}.txt")
         if file_empty(file_path):
@@ -45,7 +44,7 @@ def save_junction_to_file(junction_model: Junction):
         file_path = os.path.join("savedJunctions", f"junction{slot}.txt")
 
         with open(file_path, "w") as file:
-            # Gets metrics of overall junction - write
+            # Gets metrics of overall junction and writes to file
             junction_metrics = junction_model.get_metrics_as_array()
 
             for metric in junction_metrics:
@@ -55,13 +54,13 @@ def save_junction_to_file(junction_model: Junction):
             junction_roads = junction_model.get_all_roads()
 
             for road in junction_roads:
-                # Gets the metrics of the arm
+                # Gets the metrics of the arm and writes to file
                 arm_metrics = road.get_metrics_as_array()
 
                 for metric in arm_metrics:
                     file.write(f"{metric}\n")
 
-                # Gets the config of the arm
+                # Gets the configurations of the arm and writes to file
                 arm_config = road.get_configuration_as_array()
 
                 for config in arm_config:
@@ -69,7 +68,7 @@ def save_junction_to_file(junction_model: Junction):
         
         return True
 
-# Overwrite file - Clear the file, then call the above function
+# Overwrite file - Clearing the file then saving as normal
 def overwrite_file(junction_model: Junction, save_number):
     file_path = f"savedJunctions/junction{save_number}.txt"
 
@@ -84,14 +83,11 @@ def create_model_from_save(save_number):
     file_path = f"savedJunctions/junction{save_number}.txt"
 
     if file_empty(file_path):
-        print("No data in this save")
         return None
     else:
-        print("there is data here")
-        # TODO
-
+        # Stores lines as a list
         with open(file_path, "r") as file:
-            lines = [line.strip() for line in file]  # Stores lines as a list
+            lines = [line.strip() for line in file]  
 
         # Lines 1 - 7 are junction metrics
         return_junction = Junction.Junction()
@@ -119,7 +115,7 @@ def create_model_from_save(save_number):
             road.performance = float(lines[start + 5])
             road.environment = float(lines[start + 6])
 
-            # Config
+            # Configurations
             road.vph_rate = float(lines[start + 7])
             road.priority_factor = float(lines[start + 8])
             road.total_standard_lanes = float(lines[start + 9])
@@ -128,19 +124,16 @@ def create_model_from_save(save_number):
             road.has_bike_lane = lines[start + 12].lower() == "true"
             road.puffin_crossing = lines[start + 13].lower() == "true"
 
-            
-        save_junction_to_file(return_junction)
-
         return return_junction
 
-# Given a performance score, returns the top % that the score is in
-# based on the saved junctions
+"""
+Given a performance score, returns the top % that the score is in,
+based on the saved junctions
+"""
 def top_percent(score, direction, lines_to_read):
-    # Creates an array of all the scores
+    # Creates an array of all the scores for either NESW or whole junction
     stored_scores = []
     line_to_read = lines_to_read[direction + 1]
-
-    # If direction is -1, it wants it for the whole junction
     
     # Searches every file
     for i in range(1, 11):
@@ -153,6 +146,7 @@ def top_percent(score, direction, lines_to_read):
                 else:
                     return None  # Not enough lines in the file
 
+    # If there are no scores on file, the score is in the top 100%
     if stored_scores == []:
         return 100
 
@@ -164,8 +158,9 @@ def top_percent(score, direction, lines_to_read):
 
     return round(percentile, 2) # To 2dp
 
-
-# Direction -1 represents the whole junction
+"""
+Direction of -1 represents the overall junction
+"""
 def top_percent_environment(score, direction):
     lines_to_read = [14, 28, 42, 55]
     return top_percent(score, direction, lines_to_read)
