@@ -612,7 +612,7 @@ class JunctionSimulation {
                 this.ctx.save();
                 this.ctx.translate(busX, busY);
                 this.ctx.rotate(rotation);
-                this.ctx.font = `${busSize}px FontAwesome`;
+                this.ctx.font = `${busSize}px Arial`;
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
                 this.ctx.fillStyle = 'white';
@@ -634,7 +634,7 @@ class JunctionSimulation {
             // Only draw if there are lanes
             if (lanes > 0) {
                 const laneWidth = this.calculateLaneWidth(lanes);
-                const bikeSize = laneWidth * 0.6;
+                const bikeSize = laneWidth * 0.4;
                 
                 let bikeX, bikeY, rotation;
                 const bikeOffset = this.junctionSize * 0.35;
@@ -674,7 +674,7 @@ class JunctionSimulation {
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
                 this.ctx.fillStyle = 'white';
-                this.ctx.fillText('Bike', 0, 0);
+                this.ctx.fillText('BIKE', 0, 0);
                 this.ctx.restore();
             }
         });
