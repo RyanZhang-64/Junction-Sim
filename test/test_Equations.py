@@ -4,12 +4,13 @@ import statistics
 import numpy
 import logging
 
-#importing functions from equations.py
+# Importing functions from equations.py
 from build.Equations import (
     get_efficiency_score,
     get_green_proportion,
     max_queue,
     max_wait,
+    environmental_score,
     average_wait,
     mean_statistic,
     fairness_statistic,
@@ -17,10 +18,10 @@ from build.Equations import (
 )
 from build.Junction import Junction  
 
-#set up logging (Logs results into `test_logs.log`)
+# Set up logging (Logs results into `test_logs.log`)
 logging.basicConfig(filename="test_logs.log", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-#mock junction for unit tests- mimics a single road at a junction
+# Mock junction for unit tests- mimics a single road at a junction
 @pytest.fixture
 def mock_junction():
     class MockRoad:
@@ -52,43 +53,49 @@ def mock_junction():
 
     return MockJunction()
 
-#defines normal test values
+# Defines normal test values
 test_vph_rates = [800, 1200, 600, 400]
 
 
-#unit tests 
-#tests green light proportions- higher priority should get more green light
+# Unit tests 
+# Tests green light proportions- higher priority should get more green light
 def test_get_green_proportion(mock_junction):
     assert get_green_proportion(mock_junction, "north") > 0
     assert get_green_proportion(mock_junction, "south") > get_green_proportion(mock_junction, "west")
 
-#ensures queue size is not negative 
+# Ensures queue size is not negative 
 def test_max_queue(mock_junction):
     assert max_queue(test_vph_rates, mock_junction, "north") >= 0
 
-#valid wait time (not negative)
+# Valid wait time (not negative)
 def test_max_wait(mock_junction):
     assert max_wait(test_vph_rates, mock_junction, "north") >= 0
 
-#valid average wait time (not negative)
+# Valid average wait time (not negative)
 def test_average_wait(mock_junction):
     assert average_wait(test_vph_rates, mock_junction, "north") >= 0
 
-#mean wait time is not negative
+# Mean wait time is not negative
 def test_mean_statistic(mock_junction):
     assert mean_statistic(test_vph_rates, mock_junction) > 0
 
-#traffic flow fairness is not negative 
+# Traffic flow fairness is not negative 
 def test_fairness_statistic(mock_junction):
     assert fairness_statistic(test_vph_rates, mock_junction) >= 0
 
-#worst case is not negative
+# Worst case is not negative
 def test_worst_case_statistic(mock_junction):
     assert worst_case_statistic(test_vph_rates, mock_junction) > 0
 
+# Test environmental score
+def test_environmental_score():
+    assert environmental_score(False, False, False) == 100
+    assert environmental_score(True, False, False) == 50 # Bike lane reduces score
+    assert environmental_score(False, True, False) == 60 # Bus lane reduces score
+    assert environmental_score(False, False, True) == 90 # Puffind crossing reduces score 
 
-#performance tests 
-#ensures functions execute in under 0.1s
+# Performance tests 
+# Ensures functions execute in under 0.1s
 @pytest.mark.parametrize("func, args", [
     (get_efficiency_score, (test_vph_rates, mock_junction())),
     (get_green_proportion, (mock_junction(), "north")),
@@ -106,20 +113,20 @@ def test_performance(func, args):
     assert duration < 0.1, f"Performance issue: {func.__name__} took {duration:.4f} sec"
 
 
-#stress tests- simulates maximum allowed traffic volumes
-#checks queue size is valid 
+# Stress tests- simulates maximum allowed traffic volumes
+# Checks queue size is valid 
 def test_stress_max_queue(mock_junction):
     large_vph_rates = [2000, 2000, 2000, 2000]  
     result = max_queue(large_vph_rates, mock_junction, "north")
     assert result >= 0, "Stress test failed: max_queue returned negative queue size"
 
-#ensures max wait doesn't return a negative value
+# Ensures max wait doesn't return a negative value
 def test_stress_max_wait(mock_junction):
     large_vph_rates = [2000, 2000, 2000, 2000]
     result = max_wait(large_vph_rates, mock_junction, "north")
     assert result >= 0, "Stress test failed: max_wait returned negative wait time"
 
-#checks a valid efficeny score is always produced
+# Checks a valid efficeny score is always produced
 def test_stress_efficiency_score(mock_junction):
     large_vph_rates = [20000, 2000, 2000, 2000]
     result = get_efficiency_score(large_vph_rates, mock_junction)

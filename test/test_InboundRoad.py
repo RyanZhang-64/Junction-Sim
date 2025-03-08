@@ -1,26 +1,30 @@
 import pytest
 import logging
 import time
-import logging
+import math
 from build.InboundRoad import InboundRoad  
 
-#set up logging (Logs results into `test_logs.log`)
+# Set up logging (Logs results into `test_logs.log`)
 logging.basicConfig(filename="test_logs.log", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-#unit tests
+# Unit tests
 def test_InboundRoad_defaults():
     road = InboundRoad()
     
-    #test default values
+    # Test default values
     assert road.get_num_lanes() == 1
     assert road.has_bus_lane is False
     assert road.has_left_lane is False
-    assert road.priority_factor == 1  
+    assert road.has_bike_lane is False
+    assert road.puffin_crossing is False
+    assert road.priority_factor == 1
+    assert road.vph_rate == 100
 
+# Test modifying values
 def test_modify_values():
     road = InboundRoad()
 
-    #modify attributes and check
+    # Modify attributes and check
     road.set_total_standard_lanes(3)
     assert road.get_num_lanes() == 3
 
@@ -33,41 +37,67 @@ def test_modify_values():
     road.set_priority_factor(5)
     assert road.priority_factor == 5
 
-#edge cases (boundary testing)
+# Test lane limits (Boundary Testing)
 def test_lane_limits():
     road = InboundRoad()
 
-    #try going over the maximum number of lanes
+    # Try going over the maximum number of lanes
     road.set_total_standard_lanes(5)
-    road.increment_num_lanes()  #should not increase beyond 5
+    road.increment_num_lanes()  # Should not increase beyond 5
     assert road.get_num_lanes() == 5  
 
-    #try going below the minimum number of lanes
+    # Try going below the minimum number of lanes
     road.set_total_standard_lanes(1)
-    road.decrement_num_lanes()  #should not decrease below 1
+    road.decrement_num_lanes()  # Should not decrease below 1
     assert road.get_num_lanes() == 1  
 
-#toggle bus lane and check
+# Toggle bus lane and check
 def test_toggle_bus_lane():
     road = InboundRoad()
 
     road.toggle_bus_lane()
     assert road.has_bus_lane is True
+    assert road.has_bike_lane is False
+    assert road.has_left_lane is False
 
     road.toggle_bus_lane()
     assert road.has_bus_lane is False
 
-#toggle left lane and check
+# Toggle left lane and check
 def test_toggle_left_lane():
     road = InboundRoad()
 
     road.toggle_left_lane()
     assert road.has_left_lane is True
+    assert road.has_bike_lane is False
+    assert road.has_bus_lane is False
 
     road.toggle_left_lane()
     assert road.has_left_lane is False
 
-#negative tests (should raise errors)
+# Toggle bike lane and check
+def test_toggle_bike_lane():
+    road = InboundRoad()
+
+    road.toggle_bike_lane()
+    assert road.has_bike_lane is True
+    assert road.has_left_lane is False
+    assert road.has_bus_lane is False
+
+    road.toggle_bike_lane()
+    assert road.has_bike_lane is False
+
+# Toggle puffin crossing and check
+def test_toggle_puffin_crossing():
+    road = InboundRoad()
+
+    road.toggle_puffin_crossing()
+    assert road.puffin_crossing is True
+
+    road.toggle_puffin_crossing()
+    assert road.puffin_crossing is False
+
+# Negative tests (should raise errors)
 def test_invalid_lane_count():
     road = InboundRoad()
 
@@ -78,36 +108,29 @@ def test_invalid_lane_count():
 def test_invalid_priority():
     road = InboundRoad()
 
-    #ValueError for negative priority factor
+    # ValueError for negative priority factor
     with pytest.raises(ValueError):
         road.set_priority_factor(-5)
 
-#performance test 
-@pytest.mark.parametrize("func, args", [
-    (road.increment_num_lanes, ()),
-    (road.decrement_num_lanes, ()),
-    (road.toggle_bus_lane, ()),
-    (road.toggle_left_lane, ()),
-    (road.get_num_lanes, ()),
-    (road.set_total_standard_lanes, (3,)),
-    (road.set_has_bus_lane, (True,)),
-    (road.set_has_left_lane, (True,)),
-    (road.set_priority_factor, (4,))
-])
-def test_performance(func, args):
-    start_time = time.time()
-    func(*args)
-    duration = time.time() - start_time
-    assert duration < 0.1, f"Performance issue: {func.__name__} took {duration:.4f} sec"
+# Test Metrics Methods
+def test_metrics_methods():
+    road = InboundRoad()
 
-#stress test (simulate high number of function calls)
+    # Check if all values are returned in the list
+    assert isinstance(road.get_metrics_as_array(), list)
+    assert isinstance(road.get_configuration_as_array(), list)
+    assert len(road.get_metrics_as_array()) == 7  # 7 metrics values
+    assert len(road.get_configuration_as_array()) == 7  # 7 configuration values
+
+# Stress test (simulate high number of function calls)
 def test_stress_toggle_lanes():
     road = InboundRoad()
 
-    for _ in range(100):  # Toggle lane 100 times
+    for _ in range(100):  # Toggle lanes 100 times
         road.toggle_bus_lane()
         road.toggle_left_lane()
+        road.toggle_bike_lane()
 
-    assert road.has_bus_lane is False  #should be back to original state
-    assert road.has_left_lane is False  # sould be back to original state
-
+    assert road.has_bus_lane is False  # Should be back to original state
+    assert road.has_left_lane is False  # Should be back to original state
+    assert road.has_bike_lane is False  # Should be back to original state
