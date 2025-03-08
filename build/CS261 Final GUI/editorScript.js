@@ -218,7 +218,6 @@ window.getEditorConfiguration = function() {
         // Check for left turn lane
         if (leftmostColumn.querySelector('img[src="arrow.png"]')) {
             leftLaneAttribute = 'left-turn';
-            console.log("setting left lane attribute to left-turn");
         }
         // Check for bus lane
         else if (leftmostColumn.querySelector('.fa-bus')) {

@@ -77,8 +77,8 @@
                                         </span>
                                         <button class="info-button ms-2" 
                                                 aria-label="Wait Times Information"
-                                                data-toggle="tooltip" 
-                                                data-placement="top" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
                                                 title="Average and maximum time vehicles spend waiting at the junction">
                                             <i class="fa-solid fa-circle-info text-secondary"></i>
                                         </button>
@@ -103,8 +103,8 @@
                                         </span>
                                         <button class="info-button ms-2" 
                                                 aria-label="Queue Length Information"
-                                                data-toggle="tooltip" 
-                                                data-placement="top" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
                                                 title="Maximum number of vehicles waiting in queue">
                                             <i class="fa-solid fa-circle-info text-secondary"></i>
                                         </button>
@@ -125,8 +125,8 @@
                                         </span>
                                         <button class="info-button ms-2" 
                                                 aria-label="Performance Score Information"
-                                                data-toggle="tooltip" 
-                                                data-placement="top" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
                                                 title="Overall junction performance rating based on flow metrics">
                                             <i class="fa-solid fa-circle-info text-secondary"></i>
                                         </button>
@@ -145,8 +145,8 @@
                                         </span>
                                         <button class="info-button ms-2" 
                                                 aria-label="Performance Score Information"
-                                                data-toggle="tooltip" 
-                                                data-placement="top" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
                                                 title="Overall junction performance rating based on flow metrics">
                                             <i class="fa-solid fa-circle-info text-secondary"></i>
                                         </button>
@@ -184,7 +184,10 @@
                         <button id="puffin" 
                                 class="puffin-crossing inactive readable"
                                 aria-label="Toggle puffin crossing"
-                                aria-pressed="false">
+                                aria-pressed="false"
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                data-bs-title="Toggle puffin crossing for this arm">
                             Puffin Inactive
                         </button>
                         
@@ -195,13 +198,17 @@
                                 <button id="addLane" 
                                         class="control-btn add-lane readable"
                                         aria-label="Add a new lane"
-                                        title="Add a new lane to the current direction">
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        data-bs-title="Add a new lane to the current direction, up to max 5">
                                     Press to Add Lane
                                 </button>
                                 <button id="removeLane" 
                                         class="control-btn remove-lane readable"
                                         aria-label="Remove a lane"
-                                        title="Remove the last lane from the current direction">
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        data-bs-title="Remove a new lane on the current direction, down to min 1">
                                     Press to<br>Remove<br>Lane
                                 </button>
                             </div>
@@ -220,7 +227,10 @@
                             <div class="col-3">
                                 <div class="container bottom-menu">
                                     <div class="form-group w-100 d-flex flex-column h-100">
-                                        <label for="trafficVolumeInput" id="trafficVolumeLabel" class="traffic-volume-label readable flex-grow-1 text-center">
+                                        <label for="trafficVolumeInput" id="trafficVolumeLabel" class="traffic-volume-label readable flex-grow-1 text-center"
+                                        data-bs-toggle="tooltip" 
+                                            data-bs-placement="top" 
+                                            data-bs-title="How many vehicles on average will pass through this arm in an hour?">
                                             <span id="directionLabel">Direction</span>bound VPH
                                         </label>
                                         <div class="input-group flex-grow-1">
@@ -249,7 +259,10 @@
                                         <nav aria-label="Priority navigation" class="h-100">
                                             <div class="d-flex flex-column h-100">
                                                 <div class="text-center flex-grow-1 d-flex align-items-center justify-content-center">
-                                                    <span class="priority-label readable">Priority Unset</span>
+                                                    <span class="priority-label readable" 
+                                                    data-bs-toggle="tooltip" 
+                                                    data-bs-placement="top" 
+                                                    data-bs-title="Choose priority of arm from 1-4. You can have multiple arms with the same priority.">Priority Unset</span>
                                                 </div>
                                                 <div class="flex-grow-1 d-flex align-items-center">
                                                     <ul class="pagination justify-content-center w-100 mb-0" id="priorityPagination">
@@ -296,8 +309,8 @@
                                         </span>
                                         <button class="info-button ms-2" 
                                                 aria-label="Wait Times Information"
-                                                data-toggle="tooltip" 
-                                                data-placement="top" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
                                                 title="Average and maximum time vehicles spend waiting at the junction">
                                             <i class="fa-solid fa-circle-info text-secondary"></i>
                                         </button>
@@ -322,8 +335,8 @@
                                         </span>
                                         <button class="info-button ms-2" 
                                                 aria-label="Queue Length Information"
-                                                data-toggle="tooltip" 
-                                                data-placement="top" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
                                                 title="Maximum number of vehicles waiting in queue">
                                             <i class="fa-solid fa-circle-info text-secondary"></i>
                                         </button>
@@ -344,8 +357,8 @@
                                         </span>
                                         <button class="info-button ms-2" 
                                                 aria-label="Performance Score Information"
-                                                data-toggle="tooltip" 
-                                                data-placement="top" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
                                                 title="Overall junction performance rating based on flow metrics">
                                             <i class="fa-solid fa-circle-info text-secondary"></i>
                                         </button>
@@ -364,8 +377,8 @@
                                         </span>
                                         <button class="info-button ms-2" 
                                                 aria-label="Performance Score Information"
-                                                data-toggle="tooltip" 
-                                                data-placement="top" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
                                                 title="Overall junction performance rating based on flow metrics">
                                             <i class="fa-solid fa-circle-info text-secondary"></i>
                                         </button>
@@ -542,9 +555,14 @@
             document.getElementById('applyChanges').addEventListener('click', applyChanges);
             document.getElementById('cancelChanges').addEventListener('click', cancelChanges);
             // Initialize tooltips if Bootstrap's tooltip is available
-            if (typeof $().tooltip === 'function') {
-                $('[data-toggle="tooltip"]').tooltip();
-            }
+            // This script properly initializes Bootstrap tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    trigger: 'hover focus',  // Show on hover or focus
+                    placement: tooltipTriggerEl.getAttribute('data-bs-placement') || 'top'
+                });
+            });
         });
 
         // This script connects the metrics display with the chart carousel

@@ -407,35 +407,34 @@ class JunctionSimulation {
                 // Scale arrow size relative to lane width
                 const arrowSize = laneWidth * 0.6;
                 
-                // Always draw the arrow in the leftmost lane (index 0)
-                const laneIndex = 0;
-                
-                const center = this.getLaneCenters(centerX, centerY, lanes, direction === 'north' || direction === 'south')[laneIndex];
                 let arrowX, arrowY, rotation;
+                const arrowOffset = this.junctionSize * 0.4;  // Distance from junction center
                 
-                // Position arrows relative to junction size
-                const arrowOffset = this.junctionSize * 0.4;  // Place arrows 1/4 of the way from junction
-                
+                // Calculate position based on direction
                 switch(direction) {
-                    case 'west':
-                        arrowX = centerX - this.junctionSize/2 - arrowOffset;
-                        arrowY = center.y;
-                        rotation = Math.PI/2;
-                        break;
-                    case 'east':
-                        arrowX = centerX + this.junctionSize/2 + arrowOffset;
-                        arrowY = center.y;
-                        rotation = -Math.PI/2;
-                        break;
                     case 'north':
-                        arrowX = center.x;
+                        // For northbound, place on right edge
+                        arrowX = centerX + this.junctionSize/2 - laneWidth/2;
                         arrowY = centerY - this.junctionSize/2 - arrowOffset;
                         rotation = Math.PI;
                         break;
                     case 'south':
-                        arrowX = center.x;
+                        // For southbound, place on left edge
+                        arrowX = centerX - this.junctionSize/2 + laneWidth/2;
                         arrowY = centerY + this.junctionSize/2 + arrowOffset;
                         rotation = 0;
+                        break;
+                    case 'east':
+                        // For eastbound, place on bottom edge
+                        arrowX = centerX + this.junctionSize/2 + arrowOffset;
+                        arrowY = centerY + this.junctionSize/2 - laneWidth/2;
+                        rotation = -Math.PI/2;
+                        break;
+                    case 'west':
+                        // For westbound, place on top edge
+                        arrowX = centerX - this.junctionSize/2 - arrowOffset;
+                        arrowY = centerY - this.junctionSize/2 + laneWidth/2;
+                        rotation = Math.PI/2;
                         break;
                 }
         
@@ -444,12 +443,9 @@ class JunctionSimulation {
                 this.ctx.rotate(rotation);
                 
                 // Draw the arrow image
-                // Calculate dimensions based on arrowSize
                 const arrowWidth = arrowSize;
                 const arrowHeight = arrowSize;
                 
-                // Draw image centered at the position
-                console.log("drawing arrow")
                 this.ctx.drawImage(
                     this.arrowImage,
                     -arrowWidth / 2,  // Center horizontally
@@ -502,7 +498,7 @@ class JunctionSimulation {
             }
         }
         return centers;
-    }
+    }    
 
     calculateLaneNumber(laneIndex, totalLanes) {
         return totalLanes - laneIndex;
@@ -582,34 +578,34 @@ class JunctionSimulation {
                 const laneWidth = this.calculateLaneWidth(lanes);
                 const busSize = laneWidth * 0.4;
                 
-                // Always draw in the leftmost lane (index 0)
-                const laneIndex = 0;
-                
-                const center = this.getLaneCenters(centerX, centerY, lanes, direction === 'north' || direction === 'south')[laneIndex];
                 let busX, busY, rotation;
-                
                 const busOffset = this.junctionSize * 0.35;
                 
+                // Calculate position based on direction
                 switch(direction) {
-                    case 'west':
-                        busX = centerX - this.junctionSize/2 - busOffset;
-                        busY = center.y;
-                        rotation = Math.PI/2;
-                        break;
-                    case 'east':
-                        busX = centerX + this.junctionSize/2 + busOffset;
-                        busY = center.y;
-                        rotation = -Math.PI/2;
-                        break;
                     case 'north':
-                        busX = center.x;
+                        // For northbound, place on right edge
+                        busX = centerX + this.junctionSize/2 - laneWidth/2;
                         busY = centerY - this.junctionSize/2 - busOffset;
                         rotation = Math.PI;
                         break;
                     case 'south':
-                        busX = center.x;
+                        // For southbound, place on left edge
+                        busX = centerX - this.junctionSize/2 + laneWidth/2;
                         busY = centerY + this.junctionSize/2 + busOffset;
                         rotation = 0;
+                        break;
+                    case 'east':
+                        // For eastbound, place on bottom edge
+                        busX = centerX + this.junctionSize/2 + busOffset;
+                        busY = centerY + this.junctionSize/2 - laneWidth/2;
+                        rotation = -Math.PI/2;
+                        break;
+                    case 'west':
+                        // For westbound, place on top edge
+                        busX = centerX - this.junctionSize/2 - busOffset;
+                        busY = centerY - this.junctionSize/2 + laneWidth/2;
+                        rotation = Math.PI/2;
                         break;
                 }
     
@@ -620,26 +616,18 @@ class JunctionSimulation {
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
                 this.ctx.fillStyle = 'white';
-                this.ctx.fillText('BUS', 0, 0); // FontAwesome icon for bus
+                this.ctx.fillText('BUS', 0, 0);
                 this.ctx.restore();
             }
         });
     }
 
     drawBikeLanes(centerX, centerY) {
-        console.log("Starting drawBikeLanes() with laneAttributes:", 
-                JSON.stringify(this.laneAttributes));
-    
         const directions = ['north', 'south', 'east', 'west'];
         
         directions.forEach(direction => {
-            console.log(`Checking if ${direction} has bike attribute:`, 
-                        this.laneAttributes[direction] === 'bike');
-            
             // Only proceed if this direction has a bike attribute
             if (this.laneAttributes[direction] !== 'bike') return;
-            
-            console.log(`${direction} has bike attribute, rendering...`);
             
             const lanes = this[`${direction}boundLanes`];
             
@@ -648,34 +636,34 @@ class JunctionSimulation {
                 const laneWidth = this.calculateLaneWidth(lanes);
                 const bikeSize = laneWidth * 0.6;
                 
-                // Always draw in the leftmost lane (index 0)
-                const laneIndex = 0;
-                
-                const center = this.getLaneCenters(centerX, centerY, lanes, direction === 'north' || direction === 'south')[laneIndex];
                 let bikeX, bikeY, rotation;
-                
                 const bikeOffset = this.junctionSize * 0.35;
                 
+                // Calculate position based on direction
                 switch(direction) {
-                    case 'west':
-                        bikeX = centerX - this.junctionSize/2 - bikeOffset;
-                        bikeY = center.y;
-                        rotation = Math.PI/2;
-                        break;
-                    case 'east':
-                        bikeX = centerX + this.junctionSize/2 + bikeOffset;
-                        bikeY = center.y;
-                        rotation = -Math.PI/2;
-                        break;
                     case 'north':
-                        bikeX = center.x;
+                        // For northbound, place on right edge
+                        bikeX = centerX + this.junctionSize/2 - laneWidth/2;
                         bikeY = centerY - this.junctionSize/2 - bikeOffset;
                         rotation = Math.PI;
                         break;
                     case 'south':
-                        bikeX = center.x;
+                        // For southbound, place on left edge
+                        bikeX = centerX - this.junctionSize/2 + laneWidth/2;
                         bikeY = centerY + this.junctionSize/2 + bikeOffset;
                         rotation = 0;
+                        break;
+                    case 'east':
+                        // For eastbound, place on bottom edge
+                        bikeX = centerX + this.junctionSize/2 + bikeOffset;
+                        bikeY = centerY + this.junctionSize/2 - laneWidth/2;
+                        rotation = -Math.PI/2;
+                        break;
+                    case 'west':
+                        // For westbound, place on top edge
+                        bikeX = centerX - this.junctionSize/2 - bikeOffset;
+                        bikeY = centerY - this.junctionSize/2 + laneWidth/2;
+                        rotation = Math.PI/2;
                         break;
                 }
     
@@ -686,7 +674,7 @@ class JunctionSimulation {
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
                 this.ctx.fillStyle = 'white';
-                this.ctx.fillText('Bike', 0, 0); // FontAwesome icon for bicycle
+                this.ctx.fillText('Bike', 0, 0);
                 this.ctx.restore();
             }
         });
