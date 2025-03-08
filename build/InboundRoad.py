@@ -1,7 +1,4 @@
-import numpy
-
-import Equations
-import math
+import numpy, Equations, math
 
 class InboundRoad:
     def __init__(self):
