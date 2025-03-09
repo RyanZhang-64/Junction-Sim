@@ -1,4 +1,4 @@
-# Traffinity
+# Traffic Junction Modelling Simulator
 A Flask application that allows for the configuration of junction models and provides insightful metrics.
 
 # Setup instructions
