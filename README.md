@@ -9,8 +9,9 @@ A Flask application that allows for the configuration of junction models and pro
    - Any internet browser (Chrome, Firefox, Edge, Safari, etc.)
 
 ### Steps
-Enter the following into the command prompt (open at .\Junction) to run the Flask App
-alternatively, open and run \Junction-Sim\build\app.py in an appropriate Python IDE
+Download Junction-Sim onto your computer and unzip it
+Enter the following into the command prompt (open at .\Junction-Sim) to run the Flask App:
+(alternatively, open and run .\Junction-Sim\build\app.py in an appropriate Python IDE)
 
 Windows Setup:
 ```bash
