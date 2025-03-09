@@ -13,13 +13,7 @@ Download Junction-Sim onto your computer and unzip it
 Enter the following into the command prompt (open at .\Junction-Sim) to run the Flask App:
 (alternatively, open and run .\Junction-Sim\build\app.py in an appropriate Python IDE)
 
-Windows Setup:
-```bash
-cd build
-py app.py
-```
-
-Linux Setup:
+Windows and Linux Setup:
 ```bash
 cd build
 python app.py
